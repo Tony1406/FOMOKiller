@@ -8,8 +8,15 @@ services:
       MYSQL_DATABASE: fomokiller
       MYSQL_USER: fkuser
       MYSQL_PASSWORD: fkpass
+    #healthcheck para que el contenedor se reinicie si falla
+    healthcheck:
+      test: "mysqladmin ping -h localhost -u$MYSQL_USER -p$MYSQL_PASSWORD > /dev/null 2>&1" # El truco: > /dev/null 2>&1 silencia todo el texto (éxito y errores)
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     ports:
-      - "3307:3306" # CAMBIO: Usamos 3307 en tu PC para evitar el error de puerto ocupado
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
@@ -24,7 +31,8 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy # ¡Perfecto! Esto esperará al healthcheck
 
   client:
     build:

@@ -1,8 +1,36 @@
-import pool from '../config/db.js';
-import type { IGame } from '../interfaces/IGame.js';
+import { DataTypes } from 'sequelize';
+import { sequelize } from '../config/db.js';
 
-export class GameModel {
-    static async findAll() { /* Lógica SQL aquí */ }
-    static async findById(id: number) { /* Lógica SQL aquí */ }
-    static async create(game: IGame) { /* Lógica SQL aquí */ }
-}
+export const Game = sequelize.define('Game', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    title: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+    },
+    description: {
+        type: DataTypes.TEXT
+    },
+    releaseYear: {
+        type: DataTypes.INTEGER,
+        field: 'release_year' // Mapeo explícito a tu columna snake_case
+    },
+    developer: {
+        type: DataTypes.STRING(100)
+    },
+    imageUrl: {
+        type: DataTypes.STRING(255),
+        field: 'image_url'
+    },
+    trailerUrl: {
+        type: DataTypes.STRING(255),
+        field: 'trailer_url'
+    }
+}, {
+    tableName: 'games',
+    timestamps: true,
+    underscored: true
+});

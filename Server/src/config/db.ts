@@ -1,15 +1,15 @@
-import mysql from 'mysql2/promise';
-import dotenv from 'dotenv';
+import { Sequelize } from 'sequelize';
+import 'dotenv/config';
 
-dotenv.config();
+const dbName = process.env.DB_NAME as string;
+const dbUser = process.env.DB_USER as string;
+const dbPassword = process.env.DB_PASS as string;
+const dbHost = process.env.DB_HOST as string;
+const dbPort = Number(process.env.DB_PORT) || 3306;
+const dbDriver = 'mysql';
 
-const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'db',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASS || 'root',
-    database: process.env.DB_NAME || 'Fomokiller',
-    waitForConnections: true,
-    connectionLimit: 10
+export const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
+    host: dbHost,
+    port: dbPort,
+    dialect: dbDriver
 });
-
-export default pool;

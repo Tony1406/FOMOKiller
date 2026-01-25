@@ -1,9 +1,11 @@
+import { Game } from '../models/GameModel.js';
 import type { Request, Response } from 'express';
-import { GameModel } from '../models/GameModel.js';
 
+// GET: Obtener todos los juegos
+// Mongoose: Game.find()
 export const getAllGames = async (req: Request, res: Response) => {
     try {
-        const games = await GameModel.findAll();
+        const games = await Game.findAll();
         res.status(200).json(games);
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
