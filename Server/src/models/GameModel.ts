@@ -16,7 +16,7 @@ export const Game = sequelize.define('Game', {
     },
     releaseYear: {
         type: DataTypes.INTEGER,
-        field: 'release_year' // Mapeo explícito a tu columna snake_case
+        field: 'release_year'
     },
     developer: {
         type: DataTypes.STRING(100)

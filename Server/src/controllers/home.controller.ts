@@ -1,4 +1,4 @@
-import { Game } from '../models/GameModel.js';
+import { Game } from '../models/GameModel.js'
 import type { Request, Response } from 'express';
 
 // GET: Obtener todos los juegos

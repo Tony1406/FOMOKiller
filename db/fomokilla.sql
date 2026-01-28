@@ -11,7 +11,6 @@ CREATE TABLE users (
     role ENUM('admin', 'user') DEFAULT 'user', -- Ojo: Sequelize espera minúsculas según tu modelo
     avatar_url VARCHAR(255),
     banner_url VARCHAR(255),
-    bio TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- <--- AÑADE ESTO
 );
@@ -70,13 +69,13 @@ CREATE TABLE user_games (
     FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
 );
 
--- 5. PREFERENCIAS (Filtro de la "Entrevista Inicial")
-CREATE TABLE user_preferences (
+-- 5. INTERACCIÓN (Plataformas a filtrar según el usuario)
+CREATE TABLE user_platforms (
     user_id INT,
-    genre_id INT,
-    PRIMARY KEY (user_id, genre_id),
+    platform_id INT,
+    PRIMARY KEY (user_id, platform_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (genre_id) REFERENCES genres(id) ON DELETE CASCADE
+    FOREIGN KEY (platform_id) REFERENCES platforms(id) ON DELETE CASCADE
 );
 
 -- 6. COLECCIONES CURADAS (Sección Explore: Game Awards, Moods...)
@@ -87,6 +86,7 @@ CREATE TABLE collections (
     image_url VARCHAR(255),
     is_system BOOLEAN DEFAULT TRUE -- Creadas por Admin
 );
+
 
 CREATE TABLE collection_games (
     collection_id INT,
@@ -120,27 +120,27 @@ CREATE TABLE messages (
 );
 
 -- 8. DATOS DE PRUEBA INICIALES
-INSERT INTO users (username, email, password_hash, bio) VALUES
-('SlayerX', 'slayer@test.com', '$2b$10$X7...', 'Solo juego cosas difíciles. Souls-like lover.'),
-('CozyFarm', 'cozy@test.com', '$2b$10$X7...', 'Buscando paz mental en Stardew Valley.'),
-('ShooterPro', 'fps@test.com', '$2b$10$X7...', 'Global Elite en CS:GO. Solo competitivo.'),
-('RetroDave', 'dave@test.com', '$2b$10$X7...', 'Los gráficos de 8-bits son vida.'),
-('SonyPony', 'sony@test.com', '$2b$10$X7...', 'PlayStation exclusives only.'),
-('NintyGirl', 'mario@test.com', '$2b$10$X7...', 'Zelda y Animal Crossing todo el día.'),
-('PCMaster', 'rgb@test.com', '$2b$10$X7...', 'Si no corre a 144fps no lo quiero.'),
-('CasualDad', 'dad@test.com', '$2b$10$X7...', 'Tengo 30 min al día para jugar.'),
-('HorrorFan', 'boo@test.com', '$2b$10$X7...', 'Quiero pasar miedo de verdad.'),
-('IndieHipster', 'indie@test.com', '$2b$10$X7...', 'No juego AAA comerciales.'),
-('FIFA_King', 'fut@test.com', '$2b$10$X7...', 'Solo FIFA y COD.'),
-('LoreSeeker', 'book@test.com', '$2b$10$X7...', 'Leo todos los objetos del inventario.'),
-('SpeedRunner', 'fast@test.com', '$2b$10$X7...', 'Gotta go fast.'),
-('MobileGamer', 'phone@test.com', '$2b$10$X7...', 'Clash Royale en el baño.'),
-('Strategist', 'civ@test.com', '$2b$10$X7...', 'Un turno más y a dormir.'),
-('JRPG_Fan', 'weeb@test.com', '$2b$10$X7...', 'Persona y Final Fantasy son mi religión.'),
-('Explorer', 'open@test.com', '$2b$10$X7...', 'Mundos abiertos gigantes.'),
-('Achievement', 'plat@test.com', '$2b$10$X7...', 'Cazador de trofeos.'),
-('OldSchool', 'boomer@test.com', '$2b$10$X7...', 'Antes los juegos venían completos.'),
-('TechDemo', 'demo@test.com', '$2b$10$X7...', 'Probando esta app nueva.');
+INSERT INTO users (username, email, password_hash, role, avatar_url, bio) VALUES
+('SlayerX', 'slayer@test.com', '$2b$10$X7...', 'admin', 'https://ui-avatars.com/api/?name=Slayer+X&background=random', 'Solo juego cosas difíciles. Souls-like lover.'),
+('CozyFarm', 'cozy@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Cozy+Farm&background=random', 'Buscando paz mental en Stardew Valley.'),
+('ShooterPro', 'fps@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Shooter+Pro&background=random', 'Global Elite en CS:GO. Solo competitivo.'),
+('RetroDave', 'dave@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Retro+Dave&background=random', 'Los gráficos de 8-bits son vida.'),
+('SonyPony', 'sony@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Sony+Pony&background=random', 'PlayStation exclusives only.'),
+('NintyGirl', 'mario@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Ninty+Girl&background=random', 'Zelda y Animal Crossing todo el día.'),
+('PCMaster', 'rgb@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=PC+Master&background=random', 'Si no corre a 144fps no lo quiero.'),
+('CasualDad', 'dad@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Casual+Dad&background=random', 'Tengo 30 min al día para jugar.'),
+('HorrorFan', 'boo@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Horror+Fan&background=random', 'Quiero pasar miedo de verdad.'),
+('IndieHipster', 'indie@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Indie+Hipster&background=random', 'No juego AAA comerciales.'),
+('FIFA_King', 'fut@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=FIFA+King&background=random', 'Solo FIFA y COD.'),
+('LoreSeeker', 'book@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Lore+Seeker&background=random', 'Leo todos los objetos del inventario.'),
+('SpeedRunner', 'fast@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Speed+Runner&background=random', 'Gotta go fast.'),
+('MobileGamer', 'phone@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Mobile+Gamer&background=random', 'Clash Royale en el baño.'),
+('Strategist', 'civ@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Strategist&background=random', 'Un turno más y a dormir.'),
+('JRPG_Fan', 'weeb@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=JRPG+Fan&background=random', 'Persona y Final Fantasy son mi religión.'),
+('Explorer', 'open@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Explorer&background=random', 'Mundos abiertos gigantes.'),
+('Achievement', 'plat@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Achievement&background=random', 'Cazador de trofeos.'),
+('OldSchool', 'boomer@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Old+School&background=random', 'Antes los juegos venían completos.'),
+('TechDemo', 'demo@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Tech+Demo&background=random', 'Probando esta app nueva.');
 
 INSERT INTO games (title, developer, release_year, description, image_url, trailer_url) VALUES
 ('Elden Ring', 'FromSoftware', 2022, 'Obra maestra de mundo abierto y dificultad extrema.', 'https://placehold.co/600x400?text=EldenRing', 'https://youtube.com'),
@@ -185,7 +185,14 @@ INSERT INTO games (title, developer, release_year, description, image_url, trail
 ('XCOM 2', 'Firaxis', 2016, 'Estrategia táctica contra aliens. Muy difícil.', 'https://placehold.co/600x400?text=XCOM2', 'https://youtube.com'),
 ('Super Mario Odyssey', 'Nintendo', 2017, 'Plataformas 3D lleno de alegría y creatividad.', 'https://placehold.co/600x400?text=MarioOdyssey', 'https://youtube.com'),
 ('Mario Kart 8 Deluxe', 'Nintendo', 2017, 'Carreras de karts divertidas para todos.', 'https://placehold.co/600x400?text=MarioKart', 'https://youtube.com'),
-('Super Smash Bros. Ultimate', 'Nintendo', 2018, 'Lucha crossover con todos los personajes de la historia.', 'https://placehold.co/600x400?text=Smash', 'https://youtube.com');
+('Super Smash Bros. Ultimate', 'Nintendo', 2018, 'Lucha crossover con todos los personajes de la historia.', 'https://placehold.co/600x400?text=Smash', 'https://youtube.com'),
+('Animal Crossing: New Horizons', 'Nintendo', 2020, 'Simulador de vida en una isla desierta.', 'https://placehold.co/600x400?text=AnimalCrossing', 'https://youtube.com'), -- ID 44
+('Splatoon 3', 'Nintendo', 2022, 'Guerra de pintura multijugador.', 'https://placehold.co/600x400?text=Splatoon', 'https://youtube.com'), -- ID 45
+('Fire Emblem Engage', 'Nintendo', 2023, 'Rol táctico y estrategia por turnos.', 'https://placehold.co/600x400?text=FireEmblem', 'https://youtube.com'), -- ID 46
+('Marvels Spider-Man 2', 'Insomniac', 2023, 'Acción y aventura con Peter y Miles.', 'https://placehold.co/600x400?text=Spiderman', 'https://youtube.com'), -- ID 47
+('Horizon Forbidden West', 'Guerrilla', 2022, 'Aventura en un mundo post-apocalíptico.', 'https://placehold.co/600x400?text=Horizon', 'https://youtube.com'), -- ID 48
+('Uncharted 4', 'Naughty Dog', 2016, 'El final de la historia de Nathan Drake.', 'https://placehold.co/600x400?text=Uncharted', 'https://youtube.com'), -- ID 49
+('Dark Souls III', 'FromSoftware', 2016, 'El cierre épico de la saga Souls.', 'https://placehold.co/600x400?text=DarkSouls3', 'https://youtube.com'); -- ID 50
 
 INSERT INTO platforms (name) VALUES 
 ('PC'), 
@@ -345,19 +352,18 @@ INSERT INTO collection_games (collection_id, game_id) VALUES
 (3, 43), -- Super Smash Bros Ultimate
 (3, 20); -- Phasmophobia
 
-INSERT INTO messages (sender_id, receiver_id, content, recommended_game_id, is_read) VALUES 
+INSERT INTO messages (sender_id, receiver_id, content, recommended_game_id) VALUES 
 -- 1. SlayerX saluda (Solo texto)
-(1, 2, '¡Hey! Tienes que probar esto, es una obra maestra.', NULL, 1),
+(1, 2, '¡Hey! Tienes que probar esto, es una obra maestra.', NULL),
 
 -- 2. SlayerX envía la recomendación de Elden Ring (ID 1)
--- Aquí es donde la magia ocurre: el frontend dibujará la tarjeta del juego
-(1, 2, 'Mira, es difícil pero vale la pena.', 1, 1),
+(1, 2, 'Mira, es difícil pero vale la pena.', 1),
 
 -- 3. CozyFarm responde (Texto)
-(2, 1, 'Uff, se ve demasiado estresante para mí ahora mismo...', NULL, 1),
+(2, 1, 'Uff, se ve demasiado estresante para mí ahora mismo...', NULL),
 
 -- 4. CozyFarm contraataca con Stardew Valley (ID 8)
-(2, 1, 'Yo estoy viciado a esto, es pura paz.', 8, 0);
+(2, 1, 'Yo estoy viciado a esto, es pura paz.', 8);
 
 INSERT INTO user_games (user_id, game_id, status, is_priority, is_finished) VALUES 
 -- === ESCENARIO A: El Jugador Hardcore (User 1 - SlayerX) ===
@@ -392,41 +398,6 @@ INSERT INTO user_games (user_id, game_id, status, is_priority, is_finished) VALU
 -- Juegos Dropeados (Empezó y lo dejó)
 (3, 1, 'DROPPED', 0, 0); -- Elden Ring (Muy difícil, lo borró)
 
-INSERT INTO user_preferences (user_id, genre_id) VALUES 
--- === 1. SlayerX (El Hardcore) ===
-(1, 1), -- Ama los RPG (Dark Souls)
-(1, 2), -- Ama la Acción
-
--- === 2. CozyFarm (El Relax) ===
-(2, 4), -- Ama los Indies (Stardew)
-(2, 6), -- Ama la Estrategia/Simulación
-(2, 3), -- Ama la Aventura
-
--- === 3. ShooterPro (El Competitivo) ===
-(3, 5), -- Ama los Shooters (Valorant, COD)
-(3, 2), -- Ama la Acción
-
--- === 4. RetroDave (El Nostálgico) ===
-(4, 4), -- Ama los Indies (Pixel art)
-(4, 3), -- Ama la Aventura
-
--- === 5. SonyPony (El Cinematográfico) ===
-(5, 2), -- Ama la Acción
-(5, 3), -- Ama la Aventura (Uncharted, TLOU)
-
--- === 6. NintyGirl (La Nintendera) ===
-(6, 3), -- Ama la Aventura (Zelda)
-(6, 9), -- Ama los Puzzles
-(6, 4), -- Ama los Indies
-
--- === 7. PCMaster (El Gráfico) ===
-(7, 5), -- Shooters
-(7, 6), -- Estrategia (RTS)
-
--- === 9. HorrorFan (El Miedoso) ===
-(9, 8), -- Horror (Obvio)
-(9, 3); -- Aventura
-
 INSERT INTO friendships (user_id_1, user_id_2, status) VALUES 
 -- === AMISTADES CONFIRMADAS (Ya pueden chatear) ===
 (1, 2, 'ACCEPTED'), -- SlayerX y CozyFarm (Ya tienen mensajes en la DB)
@@ -441,3 +412,40 @@ INSERT INTO friendships (user_id_1, user_id_2, status) VALUES
 
 -- === BLOQUEOS (Para probar privacidad) ===
 (6, 5, 'BLOCKED');  -- NintyGirl bloqueó a SonyPony (La guerra de consolas se puso fea)
+
+INSERT INTO user_platforms (user_id, platform_id) VALUES
+-- 1. SlayerX (Hardcore): Tiene PC y PS5 para no perderse nada
+(1, 1), (1, 2),
+
+-- 2. CozyFarm (Relax): Switch (Animal Crossing) y Mobile (Jugar en la cama)
+(2, 4), (2, 5),
+
+-- 3. ShooterPro (Competitivo): Solo PC (Valorant/CS no están en consola)
+(3, 1),
+
+-- 4. RetroDave: PC (Emulación) y Switch (Juegos pixel art)
+(4, 1), (4, 4),
+
+-- 5. SonyPony: Fiel a la marca, solo PS5
+(5, 2),
+
+-- 6. NintyGirl: Solo Switch
+(6, 4),
+
+-- 7. PCMaster: Solo PC (Odia las consolas)
+(7, 1),
+
+-- 8. CasualDad: Xbox (GamePass es barato/fácil) y Mobile (Tiempos muertos)
+(8, 3), (8, 5),
+
+-- 9. HorrorFan: PC (Phasmophobia) y PS5 (Silent Hill/RE)
+(9, 1), (9, 2),
+
+-- 10. IndieHipster: Switch y PC (Donde salen los indies raros)
+(10, 1), (10, 4),
+
+-- 14. MobileGamer: Solo Mobile
+(14, 5),
+
+-- 15. Strategist (Civ/XCOM): Solo PC (Mejor jugar con mouse)
+(15, 1);

@@ -7,8 +7,9 @@ import './models/UserModel.js';
 import './models/GameModel.js';
 
 // Rutas
-import gameRoutes from './routes/game.routes.js';
+import gameRoutes from './routes/home.routes.js';
 import userRoutes from './routes/user.routes.js';
+
 
 const app = express();
 const PORT = process.env.PORT || 3000; // Siempre ten un fallback por seguridad
@@ -17,9 +18,10 @@ const PORT = process.env.PORT || 3000; // Siempre ten un fallback por seguridad
 app.use(cors());
 app.use(express.json());
 
+
 // Rutas
-app.use('/api/games', gameRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/home', gameRoutes);
+app.use('/api/admin', userRoutes);
 
 // Arranque del Servidor
 sequelize.sync({ alter: true }) // alter: true -> actualiza la tabla si existe, si no existe la crea
