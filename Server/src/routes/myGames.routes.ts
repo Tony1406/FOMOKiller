@@ -1,33 +1,26 @@
 import { Router } from 'express';
-// import { UserGameController } from '../controllers/userGame.controller';
-
+import { getBacklog, getPriorities, updateStatus, setPriority, markFinished, dropGame } from '../controllers/myGames.controller.js';
 const router = Router();
 
 // ==========================================
-// 📋 LECTURA (Estado)
+// LECTURA (Estado)
 // ==========================================
 
-// Ver todo mi Backlog (Juegos con status 'LIKED')
-// router.get('/', UserGameController.getBacklog);
+router.get('/backlog', getBacklog);
 
-// Ver SOLO mis 5 prioridades activas
-// router.get('/priorities', UserGameController.getPriorities);
+router.get('/priorities', getPriorities);
 
 
 // ==========================================
-// ⚡ ACCIONES (Mecánicas)
+// ACCIONES (Mecánicas)
 // ==========================================
 
-// Acción de SWIPE: Dar Like o Dislike
-// router.post('/status', UserGameController.updateStatus);
+router.put('/status', updateStatus);
 
-// Mover un juego al Top 5 (Valida si hay hueco)
-// router.patch('/priority', UserGameController.setPriority);
+router.put('/priority', setPriority);
 
-// Marcar juego como 'COMPLETED' (Libera hueco en Top 5)
-// router.patch('/finish', UserGameController.markFinished);
+router.put('/finish', markFinished);
 
-// Eliminar juego del backlog ('Dropear')
-// router.delete('/:gameId', UserGameController.dropGame);
+router.delete('/delete/:gameId', dropGame);
 
 export default router;

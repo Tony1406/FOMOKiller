@@ -1,41 +1,33 @@
 import { Router } from 'express';
-// import { UserController } from '../controllers/user.controller';
-
+import { register, login, getProfile, updateProfile, getFriends, sendFriendRequest, acceptFriendRequest } from '../controllers/user.controller.js';
 const router = Router();
 
 // ==========================================
-// 🔐 AUTENTICACIÓN
+// AUTENTICACIÓN
 // ==========================================
 
-// Registro de usuario nuevo
-// router.post('/register', UserController.register);
+router.post('/register', register);
 
-// Iniciar sesión (Devuelve Token)
-// router.post('/login', UserController.login);
+router.post('/login', login);
 
 
 // ==========================================
-// 👤 PERFIL
+// PERFIL
 // ==========================================
 
-// Ver perfil de usuario (Avatar, Banner, Bio, Top 5)
-// router.get('/profile/:id', UserController.getProfile);
+router.get('/profile/:userId', getProfile);
 
-// Editar mi propio perfil
-// router.patch('/profile', UserController.updateProfile);
+router.put('/profile/:userId', updateProfile);
 
 
 // ==========================================
-// 🤝 AMIGOS (Social Básico)
+// AMIGOS (Social Básico)
 // ==========================================
 
-// Listar mis amigos confirmados
-// router.get('/friends', UserController.getFriends);
+router.get('/friends', getFriends);
 
-// Enviar solicitud de amistad
-// router.post('/friends/request', UserController.sendFriendRequest);
+router.post('/friends/request', sendFriendRequest);
 
-// Aceptar solicitud de amistad
-// router.patch('/friends/accept', UserController.acceptFriendRequest);
+router.put('/friends/accept', acceptFriendRequest);
 
 export default router;

@@ -9,7 +9,7 @@ export const User = sequelize.define('User', {
     },
     username: {
         type: DataTypes.STRING(50),
-        allowNull: false // Equivalente a required: true
+        allowNull: false
     },
     email: {
         type: DataTypes.STRING(100),
@@ -19,7 +19,7 @@ export const User = sequelize.define('User', {
     passwordHash: {
         type: DataTypes.STRING(255),
         allowNull: false,
-        field: 'password_hash' // Nombre real en la BBDD
+        field: 'password_hash'
     },
     role: {
         type: DataTypes.ENUM('admin', 'user'),
@@ -37,7 +37,7 @@ export const User = sequelize.define('User', {
         type: DataTypes.TEXT
     }
 }, {
-    tableName: 'users',      // Nombre de la tabla en MySQL
-    timestamps: true,        // Crea createdAt y updatedAt
-    underscored: true        // Convierte automáticamente camelCase a snake_case (createdAt -> created_at)
+    tableName: 'users',
+    timestamps: true,
+    underscored: true
 });

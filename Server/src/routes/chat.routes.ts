@@ -1,27 +1,22 @@
 import { Router } from 'express';
-// import { ChatController } from '../controllers/chat.controller';
-
+import { getContacts, getHistory, sendMessage, askAI } from '../controllers/chat.controller.js';
 const router = Router();
 
 // ==========================================
-// 📨 MENSAJERÍA
+// MENSAJERÍA
 // ==========================================
 
-// Obtener lista de contactos con chat abierto
-// router.get('/contacts', ChatController.getContacts);
+router.get('/contacts', getContacts);
 
-// Obtener historial de mensajes con un amigo
-// router.get('/history/:friendId', ChatController.getHistory);
+router.get('/history/:friendId', getHistory);
 
-// Enviar mensaje (Texto o Social Card de juego)
-// router.post('/send', ChatController.sendMessage);
+router.post('/send', sendMessage);
 
 
 // ==========================================
-// 🤖 INTELIGENCIA ARTIFICIAL
+// INTELIGENCIA ARTIFICIAL
 // ==========================================
 
-// Aun no se implementa
-
+router.post('/askAI', askAI);
 
 export default router;

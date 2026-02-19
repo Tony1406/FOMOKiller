@@ -1,30 +1,24 @@
 import { Router } from 'express';
-// import { GameController } from '../controllers/game.controller';
-
+import { getSwipeDeck, getGameDetails, createGame, updateGame, deleteGame } from '../controllers/home.controller.js';
 const router = Router();
 
 // ==========================================
-// 👤 ZONA USUARIO (Jugar)
+// ZONA USUARIO (Jugar)
 // ==========================================
 
-// Obtener el mazo de cartas para el Swipe
-// router.get('/swipe', GameController.getSwipeDeck);
+router.get('/swipe', getSwipeDeck);
 
-// Ver ficha técnica detallada de un juego
-// router.get('/:id', GameController.getGameDetails);
+router.get('/details/:id', getGameDetails);
 
 
 // ==========================================
-// 🛡️ ZONA ADMIN (Gestión del Catálogo)
+// ZONA ADMIN (Gestión del Catálogo)
 // ==========================================
 
-// Crear un nuevo juego en la BBDD
-// router.post('/', GameController.createGame);
+router.post('/create', createGame);
 
-// Editar datos de un juego (ej. corregir fecha o imagen)
-// router.put('/:id', GameController.updateGame);
+router.put('/update/:id', updateGame);
 
-// Borrar un juego del catálogo
-// router.delete('/:id', GameController.deleteGame);
+router.delete('/delete/:id', deleteGame);
 
 export default router;

@@ -1,33 +1,26 @@
 import { Router } from 'express';
-// import { ExploreController } from '../controllers/explore.controller';
-
+import { getCollections, getCollectionGames, searchGames, createCollection, updateCollection, deleteCollection } from '../controllers/explore.controller.js';
 const router = Router();
 
 // ==========================================
-// 🧭 NAVEGACIÓN
+// NAVEGACIÓN
 // ==========================================
 
-// Obtener lista de colecciones (Cajas temáticas: 'Relax', 'Shooter', etc.)
-// router.get('/collections', ExploreController.getCollections);
+router.get('/collections', getCollections);
 
-// Obtener juegos dentro de una colección específica
-// router.get('/collections/:id', ExploreController.getCollectionGames);
+router.get('/collections/:collectionId', getCollectionGames);
 
-// Buscador global (por título o desarrollador)
-// router.get('/search', ExploreController.searchGames);
+router.get('/search', searchGames);
 
 
 // ==========================================
-// 🛡️ ZONA ADMIN
+// ZONA ADMIN
 // ==========================================
 
-// Crear una nueva colección temática
-// router.post('/collections', ExploreController.createCollection);
+router.post('/collections', createCollection);
 
-// Editar una colección
-// router.put('/collections/:id', ExploreController.updateCollection);
+router.put('/collections/:collectionId', updateCollection);
 
-// Eliminar una colección
-// router.delete('/collections/:id', ExploreController.deleteCollection);
+router.delete('/collections/:collectionId', deleteCollection);
 
 export default router;

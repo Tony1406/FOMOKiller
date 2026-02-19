@@ -1,0 +1,310 @@
+/* =============================================
+   NAVIGATION (BOTTOM BAR & SIDEBAR)
+============================================= */
+.app-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 8px 0 20px;
+    background: rgba(3, 13, 31, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.04);
+    order: 2;
+    flex-shrink: 0;
+    z-index: 100;
+}
+
+.nav-logo {
+    display: none;
+}
+
+.nav-footer-items {
+    display: none;
+}
+
+/* Mobile logo button styles */
+.nav-logo-btn {
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 12px;
+    gap: 3px;
+    background: transparent;
+    border: none;
+}
+
+.nav-logo-btn:hover {
+    background: transparent;
+}
+
+.nav-logo-simple {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+/* Hide text on mobile */
+.nav-logo .app-logo-text {
+    display: none;
+}
+
+.nav-main-items {
+    display: flex;
+    flex: 1;
+    justify-content: space-around;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .app-nav {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        width: 88px;
+        /* Ancho colapsado */
+        height: 100%;
+        padding: 24px 0 20px;
+        border-top: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 1px 0 0 rgba(255, 255, 255, 0.04);
+        background: rgba(3, 13, 31, 0.45);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        order: 0;
+        transition: width 0.4s cubic-bezier(0.2, 0, 0, 1);
+        overflow: hidden;
+        z-index: 50;
+    }
+
+    .app-nav:hover {
+        width: 260px;
+        /* Ancho expandido */
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.3);
+        background: rgba(3, 13, 31, 0.85);
+        /* Un poco más sólido al abrir */
+    }
+
+    .nav-logo {
+        display: flex;
+        width: 100%;
+        padding: 4px 0 16px;
+        align-items: center;
+        justify-content: flex-start;
+        margin-bottom: 8px;
+    }
+
+    .nav-logo-btn {
+        flex-direction: row !important;
+        width: 100% !important;
+        gap: 0 !important;
+        padding: 10px 0 !important;
+        margin-bottom: 0;
+        background: transparent !important;
+        border-left: none !important;
+        justify-content: flex-start !important;
+    }
+
+    .nav-logo-btn:hover,
+    .nav-logo-btn:focus,
+    .nav-logo-btn.active {
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    .nav-logo-btn.active::before {
+        display: none !important;
+    }
+
+    .nav-logo-simple {
+        width: 44px;
+        /* Icono más pequeño y elegante */
+        height: 44px;
+        object-fit: contain;
+        flex-shrink: 0;
+        margin-left: 22px;
+        /* (88px - 44px) / 2 = Centrado en colapsado */
+        transition: all var(--t-base) var(--ease-smooth);
+    }
+
+    .nav-logo .app-logo-text {
+        display: inline-block;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateX(-10px);
+        transition: all 0.2s ease-out;
+        margin-left: 16px;
+        pointer-events: none;
+    }
+
+    .app-nav:hover .nav-logo .app-logo-text {
+        opacity: 1;
+        transform: translateX(0);
+        pointer-events: auto;
+    }
+
+    .nav-main-items {
+        width: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .nav-footer-items {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+        margin-top: auto;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+        opacity: 0.8;
+    }
+
+    .nav-item {
+        flex-direction: row;
+        width: 100%;
+        gap: 0;
+        /* Gap manejado por margin-left del label para transición limpia */
+        padding: 12px 0;
+        /* Padding vertical, horizontal manejado por icono */
+        justify-content: flex-start;
+        position: relative;
+    }
+
+    .nav-item:hover {
+        background: var(--cobalt-subtle);
+        color: var(--text-primary);
+    }
+
+    .nav-item.active {
+        background: var(--cobalt-subtle);
+    }
+
+    /* Indicador de activo (borde izquierdo) */
+    .nav-item.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 10%;
+        height: 80%;
+        width: 3px;
+        background: var(--cobalt-bright);
+        border-radius: 0 4px 4px 0;
+        box-shadow: 0 0 10px var(--cobalt);
+    }
+
+    .nav-icon {
+        width: 88px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0.3;
+        font-size: 24px;
+        transition: transform var(--t-base) var(--ease-spring);
+    }
+
+    .nav-label {
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: 0;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateX(-10px);
+        transition: all 0.2s ease-out;
+    }
+
+    .app-nav:hover .nav-label {
+        opacity: 1;
+        transform: translateX(0);
+        transition-delay: 50ms;
+    }
+
+    /* Ajuste específico para el footer cuando está colapsado */
+    .app-nav:not(:hover) .nav-footer-items {
+        border-top-color: transparent;
+        /* Ocultar borde divisible cuando colapsado si se prefiere minimalismo */
+    }
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    transition: all var(--t-base) var(--ease-smooth);
+    position: relative;
+    text-decoration: none;
+    color: var(--text-muted);
+    border: none;
+    background: transparent;
+    width: auto;
+}
+
+@media (min-width: 768px) {
+    .nav-item {
+        flex-direction: row;
+        width: 100%;
+        gap: 14px;
+        padding: 12px 16px;
+    }
+
+    .nav-item:hover {
+        background: var(--cobalt-subtle);
+        color: var(--text-primary);
+    }
+
+    .nav-item.active {
+        background: var(--cobalt-subtle);
+        border-left: 2px solid var(--cobalt);
+    }
+}
+
+.nav-item:hover {
+    color: var(--text-secondary);
+}
+
+.nav-item.active {
+    color: var(--cobalt-bright);
+}
+
+.nav-item.active .nav-icon {
+    filter: drop-shadow(0 0 6px var(--cobalt-glow));
+}
+
+.nav-icon {
+    font-size: 30px;
+    line-height: 0;
+}
+
+.nav-icon-img {
+    width: 33px;
+    height: 33px;
+    object-fit: contain;
+    display: block;
+}
+
+.nav-item.active .nav-icon {
+    transform: scale(1.15);
+}
+
+.nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+@media (min-width: 768px) {
+    .nav-label {
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: 0;
+    }
+}
