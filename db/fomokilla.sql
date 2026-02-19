@@ -120,27 +120,27 @@ CREATE TABLE messages (
 );
 
 -- 8. DATOS DE PRUEBA INICIALES
-INSERT INTO users (username, email, password_hash, role, avatar_url, bio) VALUES
-('SlayerX', 'slayer@test.com', '$2b$10$X7...', 'admin', 'https://ui-avatars.com/api/?name=Slayer+X&background=random', 'Solo juego cosas difíciles. Souls-like lover.'),
-('CozyFarm', 'cozy@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Cozy+Farm&background=random', 'Buscando paz mental en Stardew Valley.'),
-('ShooterPro', 'fps@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Shooter+Pro&background=random', 'Global Elite en CS:GO. Solo competitivo.'),
-('RetroDave', 'dave@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Retro+Dave&background=random', 'Los gráficos de 8-bits son vida.'),
-('SonyPony', 'sony@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Sony+Pony&background=random', 'PlayStation exclusives only.'),
-('NintyGirl', 'mario@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Ninty+Girl&background=random', 'Zelda y Animal Crossing todo el día.'),
-('PCMaster', 'rgb@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=PC+Master&background=random', 'Si no corre a 144fps no lo quiero.'),
-('CasualDad', 'dad@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Casual+Dad&background=random', 'Tengo 30 min al día para jugar.'),
-('HorrorFan', 'boo@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Horror+Fan&background=random', 'Quiero pasar miedo de verdad.'),
-('IndieHipster', 'indie@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Indie+Hipster&background=random', 'No juego AAA comerciales.'),
-('FIFA_King', 'fut@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=FIFA+King&background=random', 'Solo FIFA y COD.'),
-('LoreSeeker', 'book@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Lore+Seeker&background=random', 'Leo todos los objetos del inventario.'),
-('SpeedRunner', 'fast@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Speed+Runner&background=random', 'Gotta go fast.'),
-('MobileGamer', 'phone@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Mobile+Gamer&background=random', 'Clash Royale en el baño.'),
-('Strategist', 'civ@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Strategist&background=random', 'Un turno más y a dormir.'),
-('JRPG_Fan', 'weeb@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=JRPG+Fan&background=random', 'Persona y Final Fantasy son mi religión.'),
-('Explorer', 'open@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Explorer&background=random', 'Mundos abiertos gigantes.'),
-('Achievement', 'plat@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Achievement&background=random', 'Cazador de trofeos.'),
-('OldSchool', 'boomer@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Old+School&background=random', 'Antes los juegos venían completos.'),
-('TechDemo', 'demo@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Tech+Demo&background=random', 'Probando esta app nueva.');
+INSERT INTO users (username, email, password_hash, role, avatar_url) VALUES
+('SlayerX', 'slayer@test.com', '$2b$10$X7...', 'admin', 'https://ui-avatars.com/api/?name=Slayer+X&background=random'),
+('CozyFarm', 'cozy@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Cozy+Farm&background=random'),
+('ShooterPro', 'fps@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Shooter+Pro&background=random'),
+('RetroDave', 'dave@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Retro+Dave&background=random'),
+('SonyPony', 'sony@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Sony+Pony&background=random'),
+('NintyGirl', 'mario@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Ninty+Girl&background=random'),
+('PCMaster', 'rgb@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=PC+Master&background=random'),
+('CasualDad', 'dad@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Casual+Dad&background=random'),
+('HorrorFan', 'boo@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Horror+Fan&background=random'),
+('IndieHipster', 'indie@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Indie+Hipster&background=random'),
+('FIFA_King', 'fut@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=FIFA+King&background=random'),
+('LoreSeeker', 'book@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Lore+Seeker&background=random'),
+('SpeedRunner', 'fast@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Speed+Runner&background=random'),
+('MobileGamer', 'phone@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Mobile+Gamer&background=random'),
+('Strategist', 'civ@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Strategist&background=random'),
+('JRPG_Fan', 'weeb@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=JRPG+Fan&background=random'),
+('Explorer', 'open@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Explorer&background=random'),
+('Achievement', 'plat@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Achievement&background=random'),
+('OldSchool', 'boomer@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Old+School&background=random'),
+('TechDemo', 'demo@test.com', '$2b$10$X7...', 'user', 'https://ui-avatars.com/api/?name=Tech+Demo&background=random');
 
 INSERT INTO games (title, developer, release_year, description, image_url, trailer_url) VALUES
 ('Elden Ring', 'FromSoftware', 2022, 'Obra maestra de mundo abierto y dificultad extrema.', 'https://placehold.co/600x400?text=EldenRing', 'https://youtube.com'),
@@ -370,8 +370,8 @@ INSERT INTO user_games (user_id, game_id, status, is_priority, is_finished) VALU
 -- Tiene sus 5 huecos de prioridad LLENOS (Para probar el bloqueo de la app)
 (1, 1, 'LIKED', 1, 0),  -- Elden Ring (Jugando)
 (1, 50, 'LIKED', 1, 0), -- Dark Souls 3 (Jugando)
-(1, 7, 'LIKED', 1, 0),  -- Hades (Jugando)
-(1, 6, 'LIKED', 1, 0),  -- Hollow Knight (Jugando)
+(1, 7, 'LIKED', 0, 0),  -- Hades (Jugando)
+(1, 6, 'LIKED', 0, 0),  -- Hollow Knight (Jugando)
 (1, 17, 'LIKED', 1, 0), -- Doom Eternal (Jugando)
 -- Tiene juegos en el Backlog esperando (Liked pero no priority)
 (1, 2, 'LIKED', 0, 0),  -- Baldurs Gate 3 (En cola)

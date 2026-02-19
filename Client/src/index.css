@@ -1,68 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Oxanium:wght@400;600;700;800&display=swap');
+
+/* =============================================
+   DESIGN TOKENS — FOMOKILLER
+   Theme: 70% Cobalt Blue · 30% Black
+============================================= */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* === PRIMARY: Cobalt Blue === */
+  --cobalt: #0047AB;
+  --cobalt-light: #1565C0;
+  --cobalt-bright: #2979FF;
+  --cobalt-dark: #003080;
+  --cobalt-deeper: #001F60;
+  --cobalt-glow: rgba(0, 71, 171, 0.45);
+  --cobalt-subtle: rgba(0, 71, 171, 0.18);
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* === BASE: Vivid Cobalt-Navy Backgrounds (70% blue, 30% black) === */
+  --bg-base: #030D1F;
+  --bg-card: #071C3A;
+  --bg-surface: #0D2550;
+  --bg-elevated: #153068;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* === ACCENT (lighter cobalt for highlights) === */
+  --accent: #5B9BD5;
+  --accent-glow: rgba(91, 155, 213, 0.2);
+
+  /* Legacy compatibility */
+  --cyan: #5B9BD5;
+  --cyan-glow: rgba(91, 155, 213, 0.2);
+  --purple: #0047AB;
+  --purple-light: #1565C0;
+
+  /* === FEEDBACK === */
+  --like: #00C853;
+  --like-glow: rgba(0, 200, 83, 0.25);
+  --pass: #F44336;
+  --pass-glow: rgba(244, 67, 54, 0.25);
+  --boost: #FFA726;
+
+  /* === TEXT === */
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.55);
+  --text-muted: rgba(255, 255, 255, 0.30);
+
+  /* === BORDERS === */
+  --border: rgba(255, 255, 255, 0.07);
+  --border-cobalt: rgba(0, 71, 171, 0.45);
+  --border-active: rgba(41, 121, 255, 0.65);
+
+  /* === RADIUS === */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 36px;
+  --radius-pill: 999px;
+
+  /* === SHADOWS === */
+  --shadow-card: 0 16px 48px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--border);
+  --shadow-cobalt: 0 6px 28px var(--cobalt-glow);
+  --shadow-cyan: 0 4px 16px var(--accent-glow);
+
+  /* === TRANSITIONS === */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --t-fast: 150ms;
+  --t-base: 250ms;
+  --t-slow: 420ms;
+
+  font-family: 'Oxanium', 'Outfit', system-ui, sans-serif;
+  font-size: 18px;
+  color-scheme: dark;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+/* =============================================
+   RESET & BASE
+============================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-a:hover {
-  color: #535bf2;
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: block;
 }
 
 body {
-  margin: 0;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+#root {
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  flex-direction: column;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* =============================================
+   SCROLLBAR
+============================================= */
+::-webkit-scrollbar {
+  width: 0;
+  display: none;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+/* =============================================
+   UTILITY CLASSES
+============================================= */
+.gradient-text {
+  background: linear-gradient(135deg, var(--cobalt-bright), var(--cobalt-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.glass {
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+}
+
+.glass-cobalt {
+  background: var(--cobalt-subtle);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-cobalt);
+}
+
+/* Pill badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.badge-cobalt {
+  background: var(--cobalt-subtle);
+  color: #fff;
+  border: 1px solid var(--border-cobalt);
+}
+
+.badge-green {
+  background: rgba(0, 200, 83, 0.12);
+  color: var(--like);
+  border: 1px solid rgba(0, 200, 83, 0.25);
+}
+
+.badge-yellow {
+  background: rgba(255, 167, 38, 0.12);
+  color: var(--boost);
+  border: 1px solid rgba(255, 167, 38, 0.25);
+}
+
+.badge-red {
+  background: rgba(244, 67, 54, 0.12);
+  color: var(--pass);
+  border: 1px solid rgba(244, 67, 54, 0.25);
+}
+
+/* =============================================
+   APP LAYOUT (SHELL)
+============================================= */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.app-header {
+  flex-shrink: 0;
+  padding: 16px 20px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 10;
+}
+
+@media (min-width: 768px) {
+  .app-layout {
+    flex-direction: row;
   }
-  a:hover {
-    color: #747bff;
+
+  .app-header {
+    display: none;
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+
+.app-logo-text {
+  font-family: 'Oxanium', 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 2px;
+}
+
+.app-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .app-content {
+    padding: 0;
   }
+}
+
+/* Page Containers */
+.page {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.page-padded {
+  padding: 16px 20px;
+}
+
+@media (min-width: 768px) {
+  .page-padded {
+    padding: 16px 200px;
+  }
+}
+
+/* Section Title Utility */
+.section-title {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.section-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+/* Page Transitions */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: fadeSlideIn var(--t-base) var(--ease-smooth);
 }

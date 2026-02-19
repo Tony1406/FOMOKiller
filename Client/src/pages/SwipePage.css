@@ -1,0 +1,183 @@
+/* =============================================
+   SWIPE PAGE
+============================================= */
+.swipe-page {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0 16px 16px;
+    gap: 16px;
+}
+
+.swipe-stack {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1200px;
+}
+
+.swipe-card {
+    position: absolute;
+    width: 100%;
+    max-width: 380px;
+    height: 100%;
+    max-height: 520px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    cursor: grab;
+    user-select: none;
+    transition: transform var(--t-base) var(--ease-smooth);
+}
+
+.swipe-card:active {
+    cursor: grabbing;
+}
+
+.swipe-card-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom,
+            transparent 30%,
+            rgba(0, 0, 0, 0.55) 60%,
+            rgba(0, 0, 0, 0.96) 100%);
+}
+
+.swipe-card-behind {
+    transform: scale(0.93) translateY(20px);
+    z-index: 1;
+    filter: brightness(0.5);
+}
+
+.swipe-card-behind2 {
+    transform: scale(0.86) translateY(40px);
+    z-index: 0;
+    filter: brightness(0.3);
+}
+
+.swipe-card-front {
+    z-index: 2;
+}
+
+.swipe-card-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px;
+}
+
+.swipe-card-title {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.swipe-card-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.swipe-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-left: 3px;
+}
+
+/* Swipe stamps */
+.stamp {
+    position: absolute;
+    top: 32px;
+    padding: 8px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 3px solid;
+    opacity: 0;
+    transition: opacity var(--t-fast);
+    pointer-events: none;
+}
+
+.stamp-like {
+    left: 24px;
+    color: var(--like);
+    border-color: var(--like);
+    transform: rotate(-20deg);
+}
+
+.stamp-pass {
+    right: 24px;
+    color: var(--pass);
+    border-color: var(--pass);
+    transform: rotate(20deg);
+}
+
+/* Action buttons */
+.swipe-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding-bottom: 4px;
+}
+
+.swipe-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all var(--t-base) var(--ease-spring);
+    font-size: 22px;
+}
+
+.swipe-btn:hover {
+    transform: scale(1.1);
+}
+
+.swipe-btn-pass {
+    width: 60px;
+    height: 60px;
+    background: #0D0D0D;
+    border: 1.5px solid var(--pass);
+    color: var(--pass);
+    box-shadow: 0 0 16px var(--pass-glow);
+}
+
+.swipe-btn-like {
+    width: 70px;
+    height: 70px;
+    background: var(--cobalt);
+    border: 1.5px solid var(--cobalt-light);
+    color: #fff;
+    font-size: 28px;
+    box-shadow: var(--shadow-cobalt);
+}
+
+.swipe-btn-boost {
+    width: 52px;
+    height: 52px;
+    background: #0D0D0D;
+    border: 1.5px solid var(--boost);
+    color: var(--boost);
+    box-shadow: 0 0 12px rgba(255, 167, 38, 0.25);
+}
+
+.swipe-btn-info {
+    width: 52px;
+    height: 52px;
+    background: #0D0D0D;
+    border: 1.5px solid var(--border);
+    color: var(--text-secondary);
+}

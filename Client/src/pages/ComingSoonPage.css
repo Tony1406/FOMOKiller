@@ -1,0 +1,70 @@
+/* =============================================
+   COMING SOON PAGE
+============================================= */
+.coming-soon-wrap {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    text-align: center;
+    gap: 20px;
+}
+
+.coming-soon-icon {
+    font-size: 72px;
+    filter: drop-shadow(0 0 20px var(--cobalt-glow));
+}
+
+.coming-soon-img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 30px var(--cobalt-glow));
+}
+
+.coming-soon-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.coming-soon-desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 280px;
+    line-height: 1.6;
+}
+
+.coming-soon-badge {
+    padding: 10px 24px;
+    background: var(--cobalt);
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-cobalt);
+}
+
+.coming-soon-features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-width: 280px;
+}
+
+.coming-soon-feat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    color: var(--text-secondary);
+}
