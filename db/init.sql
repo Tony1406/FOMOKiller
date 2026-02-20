@@ -331,8 +331,8 @@ INSERT INTO messages (sender_id, receiver_id, content, recommended_game_id) VALU
 INSERT INTO user_games (user_id, game_id, status, is_priority, is_finished) VALUES 
 (1, 1, 'LIKED', 1, 0),
 (1, 50, 'LIKED', 1, 0),
-(1, 7, 'LIKED', 0, 0),  -- Hades (Jugando)
-(1, 6, 'LIKED', 0, 0),  -- Hollow Knight (Jugando)
+(1, 7, 'LIKED', 0, 0),  
+(1, 6, 'LIKED', 0, 0), 
 (1, 17, 'LIKED', 1, 0),
 (1, 2, 'LIKED', 0, 0),
 (1, 5, 'LIKED', 0, 0),

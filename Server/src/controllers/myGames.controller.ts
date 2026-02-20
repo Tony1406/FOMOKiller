@@ -44,25 +44,83 @@ export const getPriorities = async (req: Request, res: Response) => {
 
 export const updateStatus = async (req: Request, res: Response) => {
     try {
-        res.send('');
+        const { gameId, status } = req.body;
+        const userId = req.query.userId;
+
+        if (!userId || !gameId || !status) {
+            res.status(400).json({ error: "Faltan parámetros (userId en query, gameId y status en body)" });
+            return;
+        }
+
+        const [updated] = await UserGame.update({ status }, {
+            where: { userId: Number(userId), gameId: Number(gameId) }
+        });
+
+        if (updated) {
+            res.status(200).json({ message: "Estado actualizado correctamente" });
+        } else {
+            res.status(404).json({ message: "No se encontró el juego en tu lista" });
+        }
     } catch (error) {
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ error: "Error al actualizar el estado" });
     }
 };
 
 export const setPriority = async (req: Request, res: Response) => {
     try {
-        res.send('');
+        const { gameId, isPriority } = req.body;
+        const userId = req.query.userId;
+
+        if (!userId || !gameId) {
+            res.status(400).json({ error: "Faltan parámetros (userId en query, gameId en body)" });
+            return;
+        }
+
+        if (isPriority) {
+            const priorityCount = await UserGame.count({
+                where: { userId: Number(userId), isPriority: true }
+            });
+            if (priorityCount >= 5) {
+                res.status(400).json({ error: "Ya tienes 5 juegos prioritarios. Elimina uno primero." });
+                return;
+            }
+        }
+
+        const [updated] = await UserGame.update({ isPriority }, {
+            where: { userId: Number(userId), gameId: Number(gameId) }
+        });
+
+        if (updated) {
+            res.status(200).json({ message: "Prioridad actualizada" });
+        } else {
+            res.status(404).json({ message: "Juego no encontrado en tu lista" });
+        }
     } catch (error) {
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ error: "Error al actualizar la prioridad" });
     }
 };
 
 export const markFinished = async (req: Request, res: Response) => {
     try {
-        res.send('');
+        const { gameId, isFinished } = req.body;
+        const userId = req.query.userId;
+
+        if (!userId || !gameId) {
+            res.status(400).json({ error: "Faltan parámetros (userId en query, gameId en body)" });
+            return;
+        }
+
+        const [updated] = await UserGame.update({ isFinished }, {
+            where: { userId: Number(userId), gameId: Number(gameId) }
+        });
+
+        if (updated) {
+            res.status(200).json({ message: isFinished ? "¡Juego completado! 🎉" : "Juego vuelto a pendientes" });
+        } else {
+            res.status(404).json({ message: "Relación no encontrada" });
+        }
     } catch (error) {
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ error: "Error al marcar como terminado" });
     }
 };
 
@@ -78,8 +136,8 @@ export const dropGame = async (req: Request, res: Response) => {
 
         const deleted = await UserGame.destroy({
             where: {
-                userId: userId,
-                gameId: gameId
+                userId: Number(userId),
+                gameId: Number(gameId)
             }
         });
 

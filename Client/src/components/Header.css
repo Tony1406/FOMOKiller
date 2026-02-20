@@ -1,0 +1,59 @@
+.app-header {
+    flex-shrink: 0;
+    padding: 16px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 10;
+}
+
+@media (min-width: 768px) {
+    .app-header {
+        display: none;
+    }
+}
+
+.app-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.app-logo-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+}
+
+.app-logo-text {
+    font-family: 'Oxanium', 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 2px;
+}
+
+.app-user-info {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.app-user-name {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.app-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cobalt), var(--cyan));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}

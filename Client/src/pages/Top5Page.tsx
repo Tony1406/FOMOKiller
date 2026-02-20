@@ -28,7 +28,7 @@ export default function Top5Page() {
             <div className="priority-slots">
                 <div className="priority-slot">
                     <div className="priority-num priority-num-1">1</div>
-                    <div className="game-thumb-placeholder" style={{ width: 44, height: 44, fontSize: 20 }}>⚔️</div>
+                    <div className="game-thumb-placeholder" style={{ width: 44, height: 44, fontSize: 20 }}>E</div>
                     <div className="game-info">
                         <div className="game-title">Elden Ring</div>
                         <div className="game-subtitle">RPG</div>
@@ -37,7 +37,7 @@ export default function Top5Page() {
                 </div>
                 <div className="priority-slot">
                     <div className="priority-num priority-num-2">2</div>
-                    <div className="game-thumb-placeholder" style={{ width: 44, height: 44, fontSize: 20 }}>🔱</div>
+                    <div className="game-thumb-placeholder" style={{ width: 44, height: 44, fontSize: 20 }}>H</div>
                     <div className="game-info">
                         <div className="game-title">Hades II</div>
                         <div className="game-subtitle">Roguelike</div>

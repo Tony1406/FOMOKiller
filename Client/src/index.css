@@ -1,11 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Oxanium:wght@400;600;700;800&display=swap');
 
-/* =============================================
-   DESIGN TOKENS — FOMOKILLER
-   Theme: 70% Cobalt Blue · 30% Black
-============================================= */
+
 :root {
-  /* === PRIMARY: Cobalt Blue === */
   --cobalt: #0047AB;
   --cobalt-light: #1565C0;
   --cobalt-bright: #2979FF;
@@ -14,52 +10,42 @@
   --cobalt-glow: rgba(0, 71, 171, 0.45);
   --cobalt-subtle: rgba(0, 71, 171, 0.18);
 
-  /* === BASE: Vivid Cobalt-Navy Backgrounds (70% blue, 30% black) === */
   --bg-base: #030D1F;
   --bg-card: #071C3A;
   --bg-surface: #0D2550;
   --bg-elevated: #153068;
 
-  /* === ACCENT (lighter cobalt for highlights) === */
   --accent: #5B9BD5;
   --accent-glow: rgba(91, 155, 213, 0.2);
 
-  /* Legacy compatibility */
   --cyan: #5B9BD5;
   --cyan-glow: rgba(91, 155, 213, 0.2);
   --purple: #0047AB;
   --purple-light: #1565C0;
 
-  /* === FEEDBACK === */
   --like: #00C853;
   --like-glow: rgba(0, 200, 83, 0.25);
   --pass: #F44336;
   --pass-glow: rgba(244, 67, 54, 0.25);
   --boost: #FFA726;
 
-  /* === TEXT === */
   --text-primary: rgba(255, 255, 255, 0.95);
   --text-secondary: rgba(255, 255, 255, 0.55);
   --text-muted: rgba(255, 255, 255, 0.30);
-
-  /* === BORDERS === */
   --border: rgba(255, 255, 255, 0.07);
   --border-cobalt: rgba(0, 71, 171, 0.45);
   --border-active: rgba(41, 121, 255, 0.65);
 
-  /* === RADIUS === */
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 24px;
   --radius-xl: 36px;
   --radius-pill: 999px;
 
-  /* === SHADOWS === */
   --shadow-card: 0 16px 48px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--border);
   --shadow-cobalt: 0 6px 28px var(--cobalt-glow);
   --shadow-cyan: 0 4px 16px var(--accent-glow);
 
-  /* === TRANSITIONS === */
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   --t-fast: 150ms;
@@ -71,9 +57,6 @@
   color-scheme: dark;
 }
 
-/* =============================================
-   RESET & BASE
-============================================= */
 *,
 *::before,
 *::after {
@@ -106,17 +89,11 @@ body {
   flex-direction: column;
 }
 
-/* =============================================
-   SCROLLBAR
-============================================= */
 ::-webkit-scrollbar {
   width: 0;
   display: none;
 }
 
-/* =============================================
-   UTILITY CLASSES
-============================================= */
 .gradient-text {
   background: linear-gradient(135deg, var(--cobalt-bright), var(--cobalt-light));
   -webkit-background-clip: text;
@@ -137,7 +114,6 @@ body {
   border: 1px solid var(--border-cobalt);
 }
 
-/* Pill badge */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -174,9 +150,6 @@ body {
   border: 1px solid rgba(244, 67, 54, 0.25);
 }
 
-/* =============================================
-   APP LAYOUT (SHELL)
-============================================= */
 .app-layout {
   display: flex;
   flex-direction: column;
@@ -192,46 +165,12 @@ body {
   position: relative;
 }
 
-.app-header {
-  flex-shrink: 0;
-  padding: 16px 20px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  z-index: 10;
-}
-
 @media (min-width: 768px) {
   .app-layout {
     flex-direction: row;
   }
-
-  .app-header {
-    display: none;
-  }
 }
 
-.app-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.app-logo-img {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-  border-radius: var(--radius-sm);
-}
-
-.app-logo-text {
-  font-family: 'Oxanium', 'Outfit', sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: 2px;
-}
 
 .app-content {
   flex: 1;
@@ -245,7 +184,6 @@ body {
   }
 }
 
-/* Page Containers */
 .page {
   height: 100%;
   overflow-y: auto;
@@ -262,7 +200,6 @@ body {
   }
 }
 
-/* Section Title Utility */
 .section-title {
   font-size: 30px;
   font-weight: 700;
@@ -275,7 +212,6 @@ body {
   margin-bottom: 16px;
 }
 
-/* Page Transitions */
 @keyframes fadeSlideIn {
   from {
     opacity: 0;

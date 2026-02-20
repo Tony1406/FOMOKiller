@@ -6,7 +6,9 @@ import type { Request, Response } from 'express';
 
 export const getAllGames = async (req: Request, res: Response) => {
     try {
-        const games = await Game.findAll();
+        const games = await Game.findAll({
+            include: [{ model: Genre }]
+        });
         res.status(200).json(games);
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
