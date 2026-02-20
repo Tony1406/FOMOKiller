@@ -2,18 +2,9 @@ import { Router } from 'express';
 import { getBacklog, getPriorities, updateStatus, setPriority, markFinished, dropGame } from '../controllers/myGames.controller.js';
 const router = Router();
 
-// ==========================================
-// LECTURA (Estado)
-// ==========================================
-
 router.get('/backlog', getBacklog);
 
 router.get('/priorities', getPriorities);
-
-
-// ==========================================
-// ACCIONES (Mecánicas)
-// ==========================================
 
 router.put('/status', updateStatus);
 
