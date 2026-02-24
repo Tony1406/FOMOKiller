@@ -1,6 +1,6 @@
 .app-header {
     flex-shrink: 0;
-    padding: 16px 20px 12px;
+    padding: 12px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -18,42 +18,51 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    cursor: default;
 }
 
 .app-logo-img {
     width: 32px;
     height: 32px;
     object-fit: contain;
-    border-radius: var(--radius-sm);
 }
 
 .app-logo-text {
-    font-family: 'Oxanium', 'Outfit', sans-serif;
-    font-size: 20px;
+    font-family: 'Oxanium', sans-serif;
+    font-size: 18px;
     font-weight: 700;
     color: var(--text-primary);
-    letter-spacing: 2px;
+    letter-spacing: 1px;
 }
 
 .app-user-info {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
 }
 
 .app-user-name {
-    font-size: 12px;
-    color: var(--text-muted);
-    font-weight: 500;
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 600;
 }
 
 .app-user-avatar {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--cobalt), var(--cyan));
+    background: var(--bg-elevated);
+    border: 1px solid var(--cobalt-light);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 14px;
+    overflow: hidden;
+    color: #fff;
+}
+
+.header-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }

@@ -64,4 +64,42 @@
     border-radius: var(--radius-md);
     font-size: 13px;
     color: var(--text-secondary);
+    text-align: left;
+}
+
+/* Pantallas grandes y monitores externos */
+@media (min-width: 1600px) and (min-height: 900px) {
+    .coming-soon-wrap {
+        gap: 32px;
+    }
+
+    .coming-soon-icon {
+        font-size: 110px;
+    }
+
+    .coming-soon-title {
+        font-size: 42px;
+    }
+
+    .coming-soon-desc {
+        font-size: 20px;
+        max-width: 400px;
+    }
+
+    .coming-soon-badge {
+        padding: 16px 36px;
+        font-size: 18px;
+    }
+
+    .coming-soon-features {
+        max-width: 400px;
+        gap: 16px;
+        margin-top: 16px;
+    }
+
+    .coming-soon-feat-item {
+        padding: 16px 20px;
+        font-size: 18px;
+        gap: 16px;
+    }
 }

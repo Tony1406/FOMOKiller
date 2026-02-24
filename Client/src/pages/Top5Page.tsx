@@ -14,46 +14,60 @@ export default function Top5Page() {
                 </span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-                <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>3 de 5 slots ocupados</span>
-                <div style={{ display: 'flex', gap: 6 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--cyan)', boxShadow: '0 0 6px var(--cyan-glow)' }} />
-                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--cyan)', boxShadow: '0 0 6px var(--cyan-glow)' }} />
-                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--cyan)', boxShadow: '0 0 6px var(--cyan-glow)' }} />
-                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--bg-elevated)', border: '1px solid var(--border)' }} />
-                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--bg-elevated)', border: '1px solid var(--border)' }} />
+            <div className="top5-status-bar">
+                <span className="top5-status-text">2 de 5 slots ocupados</span>
+                <div className="top5-dots-container">
+                    <div className="top5-dot-active" />
+                    <div className="top5-dot-active" />
+                    <div className="top5-dot-inactive" />
+                    <div className="top5-dot-inactive" />
+                    <div className="top5-dot-inactive" />
                 </div>
             </div>
 
             <div className="priority-slots">
                 <div className="priority-slot">
                     <div className="priority-num priority-num-1">1</div>
-                    <div className="game-thumb-placeholder" style={{ width: 44, height: 44, fontSize: 20 }}>E</div>
+                    <div className="game-thumb-placeholder">E</div>
                     <div className="game-info">
                         <div className="game-title">Elden Ring</div>
                         <div className="game-subtitle">RPG</div>
                     </div>
-                    <button style={{ background: 'none', border: 'none', color: 'var(--like)', fontSize: 16 }}>☑</button>
+                    <div className="top5-actions">
+                        <button className="top5-btn top5-btn-drop"><i className="fa-solid fa-times"></i></button>
+                        <button className="top5-btn top5-btn-complete"><i className="fa-solid fa-check"></i></button>
+                    </div>
                 </div>
                 <div className="priority-slot">
                     <div className="priority-num priority-num-2">2</div>
-                    <div className="game-thumb-placeholder" style={{ width: 44, height: 44, fontSize: 20 }}>H</div>
+                    <div className="game-thumb-placeholder">H</div>
                     <div className="game-info">
                         <div className="game-title">Hades II</div>
                         <div className="game-subtitle">Roguelike</div>
                     </div>
-                    <button style={{ background: 'none', border: 'none', color: 'var(--like)', fontSize: 16 }}>☑</button>
+                    <div className="top5-actions">
+                        <button className="top5-btn top5-btn-drop"><i className="fa-solid fa-times"></i></button>
+                        <button className="top5-btn top5-btn-complete"><i className="fa-solid fa-check"></i></button>
+                    </div>
                 </div>
                 <div className="priority-slot empty">
                     <div className="priority-num priority-num-4">3</div>
-                    <div className="game-thumb-placeholder" style={{ width: 44, height: 44, fontSize: 20, opacity: 0.3 }}>+</div>
+                    <div className="game-thumb-placeholder game-thumb-opacity"></div>
+                    <span className="empty-slot-text">Slot disponible</span>
+                </div>
+                <div className="priority-slot empty">
+                    <div className="priority-num priority-num-4">4</div>
+                    <div className="game-thumb-placeholder game-thumb-opacity"></div>
+                    <span className="empty-slot-text">Slot disponible</span>
+                </div>
+                <div className="priority-slot empty">
+                    <div className="priority-num priority-num-5">5</div>
+                    <div className="game-thumb-placeholder game-thumb-opacity"></div>
                     <span className="empty-slot-text">Slot disponible</span>
                 </div>
             </div>
 
-            <button style={{ width: '100%', marginTop: 20, padding: 14, background: 'linear-gradient(135deg, var(--cobalt), var(--cobalt-light))', border: 'none', borderRadius: 'var(--radius-md)', color: '#fff', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>
-                + Añadir desde Backlog
-            </button>
+
         </div>
     );
 }

@@ -1,19 +1,27 @@
+.explore-scrollable {
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
 .search-bar {
     margin-top: 40px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 0 14px;
-    height: 48px;
-    background: var(--bg-surface);
+    gap: 16px;
+    padding: 0 24px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--border);
-    border-radius: var(--radius-pill);
-    transition: border-color var(--t-base);
+    border-radius: var(--radius-sm);
+    /* Brutal: less round */
+    transition: all var(--t-base);
+    backdrop-filter: blur(10px);
 }
 
 .search-bar:focus-within {
     border-color: var(--cobalt);
-    box-shadow: 0 0 0 3px var(--cobalt-subtle);
+    box-shadow: 0 0 20px rgba(0, 112, 243, 0.2);
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .search-bar input {
@@ -23,7 +31,8 @@
     outline: none;
     color: var(--text-primary);
     font-family: inherit;
-    font-size: 15px;
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .search-bar input::placeholder {
@@ -31,30 +40,61 @@
 }
 
 .search-icon {
-    color: var(--text-muted);
-    font-size: 18px;
+    color: var(--cobalt);
+    font-size: 20px;
 }
 
+/* Standard Grid Layout */
 .collections-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    padding: 16px 0;
+    grid-template-columns: 1fr;
+    /* Mobile: 1 column */
+    gap: 20px;
+    padding: 24px 0;
 }
 
 .collection-card {
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     overflow: hidden;
     position: relative;
-    height: 140px;
+    height: 180px;
+    /* Uniform height */
     cursor: pointer;
     border: 1px solid var(--border);
-    transition: transform var(--t-base) var(--ease-spring), border-color var(--t-base);
+    background: var(--bg-card);
+    transition: all var(--t-base) var(--ease-spring);
+}
+
+/* On medium and large screens, use 3 columns */
+@media (min-width: 768px) {
+    .collections-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 .collection-card:hover {
-    transform: scale(1.03);
-    border-color: var(--border-cobalt);
+    transform: translateY(-8px) scale(1.01);
+    border-color: var(--cobalt);
+    box-shadow: 0 10px 30px rgba(0, 112, 243, 0.3);
+    z-index: 10;
+}
+
+.collection-card-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.4;
+    filter: saturate(1.2) contrast(1.1);
+    transition: transform var(--t-base) var(--ease-smooth), opacity var(--t-base);
+    z-index: 0;
+}
+
+.collection-card:hover .collection-card-bg {
+    transform: scale(1.1);
+    opacity: 0.6;
 }
 
 .collection-card-overlay {
@@ -63,23 +103,252 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 14px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, transparent 55%);
+    padding: 24px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, transparent 60%);
+    z-index: 1;
 }
 
 .collection-name {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 2px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .collection-count {
-    font-size: 11px;
-    color: var(--accent);
-    font-weight: 500;
+    font-size: 13px;
+    color: var(--cobalt-light);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.collection-card-wide {
-    grid-column: span 2;
-    height: 160px;
+.collection-icon-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+}
+
+.collection-icon-lg {
+    font-size: 80px;
+}
+
+.collection-icon-md {
+    font-size: 50px;
+}
+
+.bg-gradient-blue {
+    background: linear-gradient(135deg, #020617 0%, #0047AB 100%);
+}
+
+.bg-gradient-purple {
+    background: linear-gradient(135deg, #2e1065 0%, #6E3AFA 100%);
+}
+
+.bg-gradient-green {
+    background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
+}
+
+/* Collection View Controls */
+.collection-view-header {
+    margin: 32px 0 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.back-btn-icon {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all var(--t-fast);
+}
+
+.back-btn-icon:hover {
+    background: var(--cobalt);
+    border-color: var(--cobalt-light);
+    transform: translateX(-6px);
+    box-shadow: var(--shadow-cobalt);
+}
+
+/* Brutal Game List Styles */
+.game-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.game-list-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: all var(--t-fast);
+}
+
+.game-thumb-placeholder {
+    width: 50px;
+    height: 50px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--cobalt-light);
+    border-radius: var(--radius-sm);
+}
+
+.game-info {
+    flex: 1;
+}
+
+.game-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.game-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.game-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn-secondary,
+.action-btn-completado {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--t-fast);
+}
+
+.action-btn-secondary:hover {
+    background: rgba(0, 112, 243, 0.1);
+    color: var(--cobalt-light);
+    border-color: var(--cobalt);
+    transform: scale(1.1);
+}
+
+.action-btn-completado:hover {
+    background: rgba(0, 200, 83, 0.1);
+    color: var(--like);
+    border-color: var(--like);
+    transform: scale(1.1);
+}
+
+.action-btn-secondary:active,
+.action-btn-completado:active {
+    transform: scale(0.95);
+}
+
+.search-bar-spacing {
+    margin-bottom: 32px;
+}
+
+/* Toast Styles */
+.toast-container {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.toast {
+    background: var(--cobalt);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0, 71, 171, 0.4);
+    border: 1px solid var(--cobalt-light);
+    animation: toastAppear 0.3s var(--ease-spring), toastFade 0.3s var(--ease-smooth) 2s forwards;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+@keyframes toastAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes toastFade {
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+/* Animations */
+.page-enter {
+    animation: brutalAppear 0.4s var(--ease-spring);
+}
+
+@keyframes brutalAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Desktop sizing corrections */
+@media (min-width: 1600px) {
+    .collections-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+    }
+
+    .collection-card {
+        height: 220px;
+    }
+
+    .collection-name {
+        font-size: 28px;
+    }
 }

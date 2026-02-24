@@ -1,0 +1,61 @@
+.profile-edit-modal {
+    max-width: 500px;
+    width: 90%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+.edit-profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-group input,
+.form-group textarea {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 14px;
+    transition: all var(--t-base);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--cobalt);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.char-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    align-self: flex-end;
+}
+
+.modal-actions-fixed {
+    margin-top: 10px;
+    display: flex;
+    gap: 12px;
+}
+
+.modal-actions-fixed button {
+    flex: 1;
+}

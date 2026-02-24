@@ -1,5 +1,6 @@
 import { UserGame } from '../models/UserGameModel.js';
 import { Game } from '../models/GameModel.js';
+import { Op } from 'sequelize';
 import type { Request, Response } from 'express';
 
 export const getBacklog = async (req: Request, res: Response) => {
@@ -11,7 +12,12 @@ export const getBacklog = async (req: Request, res: Response) => {
         }
 
         const backlog = await UserGame.findAll({
-            where: { userId: Number(userId) },
+            where: {
+                userId: Number(userId),
+                status: {
+                    [Op.ne]: 'DROPPED'
+                }
+            },
             include: [{ model: Game }]
         });
         res.status(200).json(backlog);
@@ -52,15 +58,17 @@ export const updateStatus = async (req: Request, res: Response) => {
             return;
         }
 
-        const [updated] = await UserGame.update({ status }, {
-            where: { userId: Number(userId), gameId: Number(gameId) }
+        const userGameDef = { userId: Number(userId), gameId: Number(gameId) };
+        const [userGame, created] = await UserGame.findOrCreate({
+            where: userGameDef,
+            defaults: { ...userGameDef, status, isPriority: false, isFinished: false }
         });
 
-        if (updated) {
-            res.status(200).json({ message: "Estado actualizado correctamente" });
-        } else {
-            res.status(404).json({ message: "No se encontró el juego en tu lista" });
+        if (!created) {
+            await userGame.update({ status });
         }
+
+        res.status(200).json({ message: "Estado guardado o actualizado correctamente" });
     } catch (error) {
         res.status(500).json({ error: "Error al actualizar el estado" });
     }
@@ -121,6 +129,54 @@ export const markFinished = async (req: Request, res: Response) => {
         }
     } catch (error) {
         res.status(500).json({ error: "Error al marcar como terminado" });
+    }
+};
+
+export const checkIsPriority = async (req: Request, res: Response) => {
+    try {
+        const { gameId } = req.params;
+        const userId = req.query.userId;
+
+        if (!userId || !gameId) {
+            res.status(400).json({ error: "Faltan parámetros (userId en query, gameId en params)" });
+            return;
+        }
+
+        const userGame = await UserGame.findOne({
+            where: { userId: Number(userId), gameId: Number(gameId) }
+        });
+
+        if (userGame) {
+            res.status(200).json({ isPriority: (userGame as any).isPriority });
+        } else {
+            res.status(404).json({ message: "Juego no encontrado en tu lista" });
+        }
+    } catch (error) {
+        res.status(500).json({ error: "Error al verificar prioridad" });
+    }
+};
+
+export const checkIsFinished = async (req: Request, res: Response) => {
+    try {
+        const { gameId } = req.params;
+        const userId = req.query.userId;
+
+        if (!userId || !gameId) {
+            res.status(400).json({ error: "Faltan parámetros (userId en query, gameId en params)" });
+            return;
+        }
+
+        const userGame = await UserGame.findOne({
+            where: { userId: Number(userId), gameId: Number(gameId) }
+        });
+
+        if (userGame) {
+            res.status(200).json({ isFinished: (userGame as any).isFinished });
+        } else {
+            res.status(404).json({ message: "Juego no encontrado en tu lista" });
+        }
+    } catch (error) {
+        res.status(500).json({ error: "Error al verificar completado" });
     }
 };
 

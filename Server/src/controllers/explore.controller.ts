@@ -7,9 +7,27 @@ import type { Request, Response } from 'express';
 
 export const getCollections = async (req: Request, res: Response) => {
     try {
-        const collections = await Collection.findAll();
-        res.status(200).json(collections);
+        const collections = await Collection.findAll({
+            include: [
+                {
+                    model: Game,
+                    attributes: ['id'], // Solo necesitamos saber cuántos hay
+                    through: { attributes: [] }
+                }
+            ]
+        });
+
+        // Formatear para enviar el conteo
+        const formatted = collections.map((col: any) => {
+            const data = col.toJSON();
+            data.gameCount = data.Games ? data.Games.length : 0;
+            delete data.Games;
+            return data;
+        });
+
+        res.status(200).json(formatted);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: "Error al obtener colecciones" });
     }
 };

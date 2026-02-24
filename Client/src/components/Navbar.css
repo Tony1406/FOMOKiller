@@ -28,6 +28,7 @@
     gap: 3px;
     background: transparent;
     border: none;
+    cursor: default;
 }
 
 .nav-logo-btn:hover {
@@ -104,6 +105,7 @@
         background: transparent !important;
         box-shadow: none !important;
         border: none !important;
+        cursor: default !important;
     }
 
     .nav-logo-btn.active::before {
@@ -276,6 +278,12 @@
     display: block;
 }
 
+.chat-nav-img {
+    transform: scale(1.15) translateX(3px);
+
+    /* Hace el icono de chat específicamente un poco más grande y lo centra */
+}
+
 .nav-item.active .nav-icon {
     transform: scale(1.15);
 }
@@ -291,5 +299,51 @@
         font-size: 16px;
         font-weight: 500;
         letter-spacing: 0;
+    }
+}
+
+/* Pantallas grandes y monitores externos */
+@media (min-width: 1600px) and (min-height: 900px) {
+    .app-nav {
+        width: 104px;
+        /* Un poco más ancha para alojar iconos grandes */
+    }
+
+    .app-nav:hover {
+        width: 300px;
+        /* Más ancha al expandirse */
+    }
+
+    .nav-icon {
+        font-size: 38px;
+        /* Iconos más grandes (eran 30px) */
+        width: 104px;
+    }
+
+    .nav-icon-img {
+        width: 44px;
+        /* El logo img más grande */
+        height: 44px;
+    }
+
+    .nav-label {
+        font-size: 20px;
+        /* Texto más grande (era 16px) */
+    }
+
+    .nav-item {
+        padding: 16px 20px;
+    }
+
+    .nav-logo-simple {
+        width: 54px;
+        height: 54px;
+        margin-left: 25px;
+        /* Ajuste para centrar con el nuevo ancho */
+    }
+
+    .nav-logo .app-logo-text {
+        font-size: 24px;
+        margin-left: 20px;
     }
 }

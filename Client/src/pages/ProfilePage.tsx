@@ -1,68 +1,108 @@
+import { useState, useEffect } from 'react';
+import { getUserProfile, getBacklog, updateUserProfile } from '../services/api';
+import EditProfileModal from '../components/EditProfileModal';
 import './ProfilePage.css';
 
+const TEMP_USER_ID = 1;
+
 export default function ProfilePage() {
+    const [user, setUser] = useState<any>(null);
+    const [completedCount, setCompletedCount] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            try {
+                const userData = await getUserProfile(TEMP_USER_ID);
+                setUser(userData);
+
+                const backlogData = await getBacklog(TEMP_USER_ID);
+                const count = backlogData.filter((game: any) => game.isFinished || game.status === 'COMPLETED').length;
+                setCompletedCount(count);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfileData();
+    }, []);
+
+    const handleEditProfile = () => {
+        setIsEditModalOpen(true);
+    };
+
+    const handleSaveProfile = async (updatedData: any) => {
+        try {
+            const savedUser = await updateUserProfile(TEMP_USER_ID, updatedData);
+            setUser(savedUser);
+            setIsEditModalOpen(false);
+        } catch (error) {
+            console.error("Error al guardar perfil:", error);
+        }
+    };
+
     return (
-        <div className="page page-enter" style={{ overflowY: 'auto' }}>
+        <div className="page page-enter profile-page-scrollable">
             <div className="page-padded">
-                <div className="profile-hero">
-                    <div className="profile-avatar-wrap">
-                        <div className="profile-avatar-ring" />
-                        <div className="profile-avatar">🎮</div>
-                    </div>
-                    <div className="profile-name">SlayerX</div>
-                    <div className="profile-handle">@slayerx · Jugador desde 2024</div>
-
-                </div>
-
-                <div className="profile-stats">
-
-                    <div className="stat-box"><div className="stat-value">0</div><div className="stat-label">En Cola</div></div>
-                    <div className="stat-box"><div className="stat-value">0</div><div className="stat-label">Completados</div></div>
-                    <div className="stat-box"><div className="stat-value">0</div><div className="stat-label">Activos</div></div>
-                </div>
-
-                <div style={{ paddingTop: 20 }}>
-                    <div className="profile-section-title">Mi cuenta</div>
-                    {[
-                        { icon: '👤', text: 'Editar perfil' },
-                        { icon: '📊', text: 'Estadísticas detalladas' },
-                    ].map(item => (
-                        <div key={item.text} className="profile-menu-item">
-                            <span className="menu-icon">{item.icon}</span>
-                            <span className="menu-text">{item.text}</span>
-                            <span className="menu-chevron">›</span>
+                <div className="profile-content-wrapper">
+                    <div className="profile-header-layout">
+                        <div className="profile-avatar-column">
+                            <div className="profile-avatar-wrap">
+                                <div className="profile-avatar-ring" />
+                                <div className="profile-avatar">
+                                    {user?.avatarUrl ? (
+                                        <img src={user.avatarUrl} alt="Avatar" className="profile-avatar-img" />
+                                    ) : (
+                                        user?.username ? user.username.charAt(0).toUpperCase() : ''
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                    ))}
 
-                    <div className="profile-section-title" style={{ marginTop: 20 }}>Preferencias</div>
-                    {[
-                        { icon: '🎯', text: 'Géneros favoritos' },
-                        { icon: '🌐', text: 'Idioma y región' },
-                    ].map(item => (
-                        <div key={item.text} className="profile-menu-item">
-                            <span className="menu-icon">{item.icon}</span>
-                            <span className="menu-text">{item.text}</span>
-                            <span className="menu-chevron">›</span>
+                        <div className="profile-info-column">
+                            <div className="profile-info-top">
+                                <span className="profile-username">{loading ? 'Cargando...' : user?.username || 'Usuario'}</span>
+                            </div>
+
+                            <div className="profile-realname">
+                                @{user?.username?.toLowerCase() || 'user'}
+                            </div>
+
+                            <div className="profile-stats-row">
+                                <span className="profile-stat-item"><strong>{completedCount}</strong>     completados</span>
+                                <span className="profile-stat-item"><strong> Miembro desde {user?.createdAt ? new Date(user.createdAt).getFullYear() : '2024'}</strong>  </span>
+                            </div>
+
+                            {user?.bio && (
+                                <div className="profile-bio">
+                                    {user.bio}
+                                </div>
+                            )}
                         </div>
-                    ))}
-
-                    <div className="profile-section-title" style={{ marginTop: 20 }}>Social</div>
-                    <div className="profile-menu-item" style={{ borderColor: 'rgba(110,58,250,0.3)' }}>
-                        <span className="menu-icon">👥</span>
-                        <span className="menu-text">Amigos y Social</span>
-                        <span className="badge badge-purple" style={{ fontSize: 10 }}>Pronto</span>
-                    </div>
-                    <div className="profile-menu-item" style={{ borderColor: 'rgba(110,58,250,0.3)' }}>
-                        <span className="menu-icon">💬</span>
-                        <span className="menu-text">Mensajes</span>
-                        <span className="badge badge-purple" style={{ fontSize: 10 }}>Pronto</span>
                     </div>
 
-                    <button style={{ width: '100%', marginTop: 24, marginBottom: 8, padding: '14px', background: 'rgba(255,23,68,0.1)', border: '1px solid rgba(255,23,68,0.2)', borderRadius: 'var(--radius-md)', color: 'var(--pass)', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>
-                        Cerrar sesión
-                    </button>
+                    <div className="profile-actions-row">
+                        <button className="profile-action-btn" onClick={handleEditProfile}>Editar perfil</button>
+                        <button className="profile-action-btn">Preferencias</button>
+                    </div>
+
+                    <div className="profile-section-spacing">
+                        <button className="btn-logout">
+                            Cerrar sesión
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            <EditProfileModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                user={user}
+                onSave={handleSaveProfile}
+            />
         </div>
     );
 }

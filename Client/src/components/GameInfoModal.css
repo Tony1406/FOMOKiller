@@ -21,7 +21,8 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     width: 100%;
-    max-width: 440px;
+    max-width: 650px;
+    /* Ensanchado para la imagen expansiva */
     max-height: 85vh;
     display: flex;
     flex-direction: column;
@@ -53,6 +54,40 @@
     background: rgba(255, 255, 255, 0.2);
     color: #fff;
     transform: scale(1.05);
+}
+
+.modal-hero-image-container {
+    width: 100%;
+    height: 380px;
+    /* Mas alto para apreciar mas el arte */
+    position: relative;
+    flex-shrink: 0;
+}
+
+.modal-hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 20%;
+    /* Enfocar la parte superior que tiene mas cara del logo/keyart */
+    display: block;
+}
+
+.modal-hero-gradient {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(to top, var(--surface) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.modal-content.has-image .modal-header {
+    padding-top: 16px;
+    /* Menos espacio arriba si hay imagen tapándolo por encima con el degradado */
+    border-bottom: none;
+    /* Quitamos la linea si hay imagen para que parezca más fluido */
 }
 
 .modal-header {

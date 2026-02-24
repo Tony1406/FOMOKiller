@@ -141,7 +141,6 @@ export default function Aurora({
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     (gl.canvas as HTMLCanvasElement).style.backgroundColor = 'transparent';
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let program: any;
 
     function resize() {
@@ -205,7 +204,6 @@ export default function Aurora({
       }
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <div ref={ctnDom} className="aurora-container" />;

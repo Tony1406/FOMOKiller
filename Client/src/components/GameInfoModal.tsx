@@ -9,9 +9,9 @@ interface Game {
     id: number;
     title: string;
     description: string;
-    release_year: number;
+    releaseYear: number;
     developer: string;
-    image_url?: string;
+    imageUrl?: string;
     Genres?: Genre[];
 }
 
@@ -26,15 +26,22 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className={`modal-content ${game.imageUrl ? 'has-image' : ''}`} onClick={(e) => e.stopPropagation()}>
                 <button className="modal-close-btn" onClick={onClose}>✕</button>
+
+                {game.imageUrl && (
+                    <div className="modal-hero-image-container">
+                        <img src={game.imageUrl} alt={game.title} className="modal-hero-image" />
+                        <div className="modal-hero-gradient"></div>
+                    </div>
+                )}
 
                 <div className="modal-header">
                     <h2>{game.title}</h2>
                     <div className="modal-meta-row">
                         <span className="modal-developer">{game.developer || 'Desconocido'}</span>
                         <span className="modal-dot">•</span>
-                        <span className="modal-year">{game.release_year || 'N/A'}</span>
+                        <span className="modal-year">{game.releaseYear || 'N/A'}</span>
                     </div>
                 </div>
 

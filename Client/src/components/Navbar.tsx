@@ -53,7 +53,7 @@ export default function Navbar() {
                 </NavLink>
                 <NavLink to="/chat" className="nav-item">
                     <span className="nav-icon">
-                        <img src={chatIcon} alt="chat" className="nav-icon-img" />
+                        <img src={chatIcon} alt="chat" className="nav-icon-img chat-nav-img" />
                     </span>
                     <span className="nav-label">Mensajes</span>
                 </NavLink>
