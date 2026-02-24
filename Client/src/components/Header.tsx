@@ -8,6 +8,7 @@ export default function Header() {
     const [user, setUser] = useState<any>(null);
 
     useEffect(() => {
+        console.log("Header USER_ID:", USER_ID);
         getUserProfile(USER_ID)
             .then(setUser)
             .catch(console.error);
@@ -20,13 +21,9 @@ export default function Header() {
                 <span className="app-logo-text">FOMOKiller</span>
             </div>
             <div className="app-user-info">
-                <span className="app-user-name">{user?.username || 'SlayerX'}</span>
+                <span className="app-user-name">{user?.username}</span>
                 <div className="app-user-avatar">
-                    {user?.avatarUrl ? (
-                        <img src={user.avatarUrl} alt="Avatar" className="header-avatar-img" />
-                    ) : (
-                        user?.username ? user.username.charAt(0).toUpperCase() : '🎮'
-                    )}
+                    <img src={user.avatarUrl} alt="Avatar" className="header-avatar-img" />
                 </div>
             </div>
         </header>
