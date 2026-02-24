@@ -1,5 +1,5 @@
 const URL = 'http://localhost:3000/api';
-export const USER_ID = 2;
+export const USER_ID = 7;
 
 export const getCollections = async () => {
     const response = await fetch(`${URL}/explore/collections`);
