@@ -1,93 +1,74 @@
 import { useState, useEffect } from 'react';
-import { getCollections, getCollectionGames, searchGames, updateStatus } from '../services/api';
-import GameInfoModal from '../components/GameInfoModal';
+import { getCollections, getCollectionGames, searchGames, updateStatus, USER_ID } from '../services/api';
+import GameInfoModal from '../components/modals/GameInfoModal';
 import './ExplorePage.css';
 
-const TEMP_USER_ID = 1;
 
 export default function ExplorePage() {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [collections, setCollections] = useState<any[]>([]);
-    const [selectedCollection, setSelectedCollection] = useState<any>(null);
-    const [searchResults, setSearchResults] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [selectedGame, setSelectedGame] = useState<any>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [showToast, setShowToast] = useState(false);
+    const [buscar, setBuscar] = useState('');
+    const [colecciones, setColecciones] = useState<any[]>([]);
+    const [coleccionSeleccionada, setColeccionSeleccionada] = useState<any>(null);
+    const [buscarResultados, setBuscarResultados] = useState<any[]>([]);
+    const [juegoSeleccionado, setJuegoSeleccionado] = useState<any>(null);
+    const [mostrarToast, setMostrarToast] = useState(false);
+
+    const cargaInicial = async () => {
+        const data = await getCollections();
+        setColecciones(data);
+    };
 
     useEffect(() => {
-        getCollections().then(setCollections).catch(console.error);
+        cargaInicial();
     }, []);
 
-    useEffect(() => {
-        if (searchTerm.trim().length > 2) {
-            setLoading(true);
-            searchGames(searchTerm)
-                .then(setSearchResults)
-                .catch(console.error)
-                .finally(() => setLoading(false));
-            setSelectedCollection(null);
+    const busquedaAfinada = async () => {
+        if (buscar.trim().length >= 1) {
+            const results = await searchGames(buscar);
+            setBuscarResultados(results);
+            setColeccionSeleccionada(null);
         } else {
-            setSearchResults([]);
+            setBuscarResultados([]);
         }
-    }, [searchTerm]);
+    };
 
-    const handleCollectionClick = async (col: any) => {
-        setLoading(true);
-        try {
-            const data = await getCollectionGames(col.id);
-            setSelectedCollection(data);
-            setSearchTerm('');
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
+    useEffect(() => {
+        const delayBusqueda = setTimeout(() => {
+            busquedaAfinada();
+        }, 300);
+        return () => clearTimeout(delayBusqueda);
+    }, [buscar]);
+
+    const handleOpenCollection = async (collection: any) => {
+        const coleccionCompleta = await getCollectionGames(collection.id);
+        setColeccionSeleccionada(coleccionCompleta);
+        setBuscar('');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleAddGame = async (gameId: number) => {
-        try {
-            await updateStatus(TEMP_USER_ID, gameId, 'LIKED');
-            setShowToast(true);
-            setTimeout(() => setShowToast(false), 2500);
-        } catch (error) {
-            console.error("Error al añadir juego:", error);
-        }
+        await updateStatus(USER_ID, gameId, 'LIKED');
+        setMostrarToast(true);
+        setTimeout(() => setMostrarToast(false), 1500);
     };
 
-    const handleOpenInfo = (game: any) => {
-        setSelectedGame(game);
-        setIsModalOpen(true);
-    };
-
-    const renderGameList = (games: any[]) => (
+    const renderGames = (games: any[]) => (
         <div className="game-list">
             {games.map((game: any) => (
                 <div className="game-list-item" key={game.id}>
                     <div className="game-thumb-placeholder game-thumb-letter">
-                        {game.title ? game.title.charAt(0).toUpperCase() : '?'}
+                        {game.title[0].toUpperCase()}
                     </div>
                     <div className="game-info">
                         <div className="game-title">{game.title}</div>
                         <div className="game-subtitle">
-                            {game.developer ?? 'Desconocido'} {game.releaseYear ? `· ${game.releaseYear}` : ''}
+                            {game.developer} {game.releaseYear}
                         </div>
                     </div>
                     <div className="game-actions">
-                        <button
-                            className="action-btn-secondary"
-                            title="Ver info"
-                            onClick={(e) => { e.stopPropagation(); handleOpenInfo(game); }}
-                        >
+                        <button className="action-btn-secondary" onClick={() => setJuegoSeleccionado(game)} >
                             <i className="fa-solid fa-info-circle"></i>
                         </button>
-                        <button
-                            className="action-btn-completado"
-                            title="Añadir al Backlog"
-                            onClick={(e) => { e.stopPropagation(); handleAddGame(game.id); }}
-                        >
+                        <button className="action-btn-completado" onClick={() => handleAddGame(game.id)}>
                             <i className="fa-solid fa-heart"></i>
                         </button>
                     </div>
@@ -96,91 +77,87 @@ export default function ExplorePage() {
         </div>
     );
 
+    let vistaPrincipal;
+
+    if (buscar.trim().length > 0) {
+        vistaPrincipal = (
+            <div className="search-results-container">
+                <div className="section-title">Resultados de búsqueda</div>
+                {buscarResultados.length > 0 ? (
+                    renderGames(buscarResultados)
+                ) : (
+                    <div className="section-sub">No hemos encontrado nada para "{buscar}"</div>
+                )}
+            </div>
+        );
+    } else if (coleccionSeleccionada !== null) {
+        vistaPrincipal = (
+            <div className="collection-view-container page-enter">
+                <div className="collection-view-header">
+                    <button className="back-btn-icon" onClick={() => setColeccionSeleccionada(null)}>
+                        <i className="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div className="section-title">{coleccionSeleccionada.title}</div>
+                    <div className="section-sub">{coleccionSeleccionada.description}</div>
+                </div>
+
+                {renderGames(coleccionSeleccionada.Games)}
+            </div>
+        );
+    } else {
+        vistaPrincipal = (
+            <div className="collections-container page-enter">
+                <div className="section-title">Explorar</div>
+                <div className="section-sub">Descubre nuevos juegos por categorías</div>
+
+                <div className="collections-grid">
+                    {colecciones.map((coleccion) => (
+                        <div key={coleccion.id} className="collection-card" onClick={() => handleOpenCollection(coleccion)}>
+                            <img src={coleccion.imageUrl} className="collection-card-bg" />
+                            <div className="collection-card-overlay">
+                                <div className="collection-name">{coleccion.title}</div>
+                                <div className="collection-count">{coleccion.gameCount} juegos</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    let avisoToast = null;
+    if (mostrarToast === true) {
+        avisoToast = (
+            <div className="toast-container">
+                <div className="toast">
+                    <i className="fa-solid fa-heart"></i>
+                    Añadido a tu backlog
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="page page-padded page-enter explore-scrollable">
-            {/* Search Bar */}
             <div className="search-bar search-bar-spacing">
                 <i className="fa-solid fa-search search-icon"></i>
                 <input
                     type="text"
                     placeholder="Busca tu próximo juego..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    value={buscar}
+                    onChange={(e) => setBuscar(e.target.value)}
                 />
             </div>
 
-            {/* Resultados de Búsqueda */}
-            {searchTerm.trim().length > 0 ? (
-                <div className="search-results-container">
-                    <div className="section-title">Resultados de búsqueda</div>
-                    {loading ? (
-                        <div className="section-sub">Buscando...</div>
-                    ) : searchResults.length > 0 ? (
-                        renderGameList(searchResults)
-                    ) : (
-                        <div className="section-sub">No se encontraron juegos para "{searchTerm}"</div>
-                    )}
-                </div>
-            ) : selectedCollection ? (
-                /* Vista de una Colección específica */
-                <div className="collection-view-container page-enter">
-                    <div className="collection-view-header">
-                        <button className="back-btn-icon" onClick={() => setSelectedCollection(null)} title="Volver">
-                            <i className="fa-solid fa-arrow-left"></i>
-                        </button>
-                        <div className="section-title" style={{ marginTop: '16px' }}>{selectedCollection.title}</div>
-                        <div className="section-sub">{selectedCollection.description || "Explora los juegos de esta colección"}</div>
-                    </div>
-
-                    {loading ? (
-                        <div className="section-sub">Cargando juegos...</div>
-                    ) : selectedCollection.Games && selectedCollection.Games.length > 0 ? (
-                        renderGameList(selectedCollection.Games)
-                    ) : (
-                        <div className="section-sub">Esta colección aún no tiene juegos</div>
-                    )}
-                </div>
-            ) : (
-                /* Vista de Colecciones */
-                <div className="collections-container page-enter">
-                    <div className="section-title">Colecciones</div>
-                    <div className="section-sub">Descubre juegos curados por categoría</div>
-                    <div className="collections-grid">
-                        {collections.map((col) => (
-                            <div
-                                className={`collection-card ${col.isSystem ? 'collection-card-wide' : ''}`}
-                                key={col.id}
-                                onClick={() => handleCollectionClick(col)}
-                            >
-                                {col.imageUrl ? (
-                                    <img src={col.imageUrl} alt={col.title} className="collection-card-bg" />
-                                ) : (
-                                    <div className="collection-icon-container bg-gradient-blue collection-icon-lg">💎</div>
-                                )}
-                                <div className="collection-card-overlay">
-                                    <div className="collection-name">{col.title}</div>
-                                    <div className="collection-count">{col.gameCount || 0} juegos</div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
+            {vistaPrincipal}
 
             <GameInfoModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                game={selectedGame}
+                isOpen={juegoSeleccionado !== null}
+                onClose={() => setJuegoSeleccionado(null)}
+                game={juegoSeleccionado}
             />
 
-            {showToast && (
-                <div className="toast-container">
-                    <div className="toast">
-                        <i className="fa-solid fa-heart"></i>
-                        Añadido a tu backlog
-                    </div>
-                </div>
-            )}
+            {avisoToast}
         </div>
     );
 }

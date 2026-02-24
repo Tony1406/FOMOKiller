@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
-import { getUserProfile } from '../services/api';
+import { getUserProfile, USER_ID } from '../services/api';
 import logoSimple from '../assets/Logo_simple.png';
 import './Header.css';
 
-const TEMP_USER_ID = 1;
 
 export default function Header() {
     const [user, setUser] = useState<any>(null);
 
     useEffect(() => {
-        getUserProfile(TEMP_USER_ID)
+        getUserProfile(USER_ID)
             .then(setUser)
             .catch(console.error);
     }, []);

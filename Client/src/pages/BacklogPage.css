@@ -93,23 +93,11 @@
     font-weight: bold;
 }
 
-.game-status-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
-}
-
-.game-finished-icon {
-    font-size: 14px;
-}
-
 .game-actions {
     display: flex;
     gap: 8px;
     align-items: center;
     margin-left: auto;
-    /* Empujar hacia la derecha */
 }
 
 .action-btn-secondary,
@@ -152,13 +140,7 @@
     transform: scale(0.95);
 }
 
-.action-btn-completado.active {
-    background: rgba(0, 112, 243, 0.12);
-    border-color: var(--cobalt-light);
-    color: var(--cobalt-light);
-    box-shadow: var(--shadow-cobalt);
-}
-
+.action-btn-completado.active,
 .action-btn-secondary.active {
     background: rgba(0, 112, 243, 0.12);
     border-color: var(--cobalt-light);
@@ -174,9 +156,6 @@
 }
 
 @media (max-width: 768px) {
-    .btn-text {
-        display: none;
-    }
 
     .action-btn-secondary,
     .action-btn-drop,
@@ -243,15 +222,6 @@
     .game-subtitle {
         font-size: 16px;
         margin-top: 6px;
-    }
-
-    .badge {
-        padding: 6px 16px;
-        font-size: 14px;
-    }
-
-    .game-finished-icon {
-        font-size: 20px;
     }
 
     .action-btn-secondary,

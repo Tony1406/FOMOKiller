@@ -22,19 +22,33 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
     });
 
     useEffect(() => {
-        if (user && isOpen) {
-            setFormData({
-                username: user.username || '',
-                bio: user.bio || '',
-                avatarUrl: user.avatarUrl || ''
-            });
+        if (user) {
+            if (isOpen) {
+                setFormData({
+                    username: user.username || '',
+                    bio: user.bio || '',
+                    avatarUrl: user.avatarUrl || ''
+                });
+            }
         }
     }, [user, isOpen]);
 
-    if (!isOpen || !user) return null;
+    if (isOpen === false) {
+        return null;
+    }
+    if (user === null) {
+        return null;
+    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const nombreDelCampo = e.target.name;
+        const valorNuevo = e.target.value;
+        setFormData((prevData) => {
+            return {
+                ...prevData,
+                [nombreDelCampo]: valorNuevo
+            };
+        });
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -61,7 +75,6 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
                             name="username"
                             value={formData.username}
                             onChange={handleChange}
-                            placeholder="Tu nombre ninja..."
                             maxLength={30}
                         />
                     </div>
@@ -74,7 +87,6 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
                             name="avatarUrl"
                             value={formData.avatarUrl}
                             onChange={handleChange}
-                            placeholder="https://ejemplo.com/mifoto.jpg"
                         />
                     </div>
 
@@ -86,7 +98,6 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
                             value={formData.bio}
                             onChange={handleChange}
                             rows={3}
-                            placeholder="¡Cuéntanos a qué te gusta jugar!"
                             maxLength={150}
                         ></textarea>
                         <span className="char-count">{formData.bio.length}/150</span>

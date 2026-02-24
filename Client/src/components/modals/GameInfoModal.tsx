@@ -22,41 +22,49 @@ interface GameInfoModalProps {
 }
 
 export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalProps) {
-    if (!isOpen || !game) return null;
+    if (isOpen === false) {
+        return null;
+    }
+    if (game === null) {
+        return null;
+    }
 
+
+    let claseContenido = "modal-content";
+    if (game.imageUrl) {
+        claseContenido = "modal-content has-image";
+    }
+
+    let textoDescripcion = game.description;
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className={`modal-content ${game.imageUrl ? 'has-image' : ''}`} onClick={(e) => e.stopPropagation()}>
+            <div className={claseContenido} onClick={(e) => e.stopPropagation()}>
                 <button className="modal-close-btn" onClick={onClose}>✕</button>
 
-                {game.imageUrl && (
-                    <div className="modal-hero-image-container">
-                        <img src={game.imageUrl} alt={game.title} className="modal-hero-image" />
-                        <div className="modal-hero-gradient"></div>
-                    </div>
-                )}
+                <div className="modal-hero-image-container">
+                    <img src={game.imageUrl} className="modal-hero-image" />
+                    <div className="modal-hero-gradient"></div>
+                </div>
 
                 <div className="modal-header">
                     <h2>{game.title}</h2>
                     <div className="modal-meta-row">
-                        <span className="modal-developer">{game.developer || 'Desconocido'}</span>
+                        <span className="modal-developer">{game.developer}</span>
                         <span className="modal-dot">•</span>
-                        <span className="modal-year">{game.releaseYear || 'N/A'}</span>
+                        <span className="modal-year">{game.releaseYear}</span>
                     </div>
                 </div>
 
                 <div className="modal-body">
-                    {game.Genres && game.Genres.length > 0 && (
-                        <div className="modal-tags">
-                            {game.Genres.map((genre) => (
-                                <span key={genre.id} className="badge badge-cobalt">{genre.name}</span>
-                            ))}
-                        </div>
-                    )}
+                    <div className="modal-tags">
+                        {game.Genres?.map((genre) => (
+                            <span key={genre.id} className="badge badge-cobalt">{genre.name}</span>
+                        ))}
+                    </div>
 
                     <div className="modal-description">
                         <h3>Sobre el juego</h3>
-                        <p>{game.description || 'No hay descripción disponible para este título.'}</p>
+                        <p>{textoDescripcion}</p>
                     </div>
                 </div>
 

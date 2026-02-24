@@ -15,7 +15,10 @@ export const getBacklog = async (req: Request, res: Response) => {
             where: {
                 userId: Number(userId),
                 status: {
-                    [Op.ne]: 'DROPPED'
+                    [Op.and]: [
+                        { [Op.ne]: 'DROPPED' },
+                        { [Op.ne]: 'DISLIKED' }
+                    ]
                 }
             },
             include: [{ model: Game }]

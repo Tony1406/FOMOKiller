@@ -1,5 +1,4 @@
 import './ChatPage.css';
-import chatIcon from '../assets/chat.png';
 
 export default function ChatPage() {
     return (

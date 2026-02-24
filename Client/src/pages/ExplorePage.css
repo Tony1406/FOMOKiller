@@ -126,40 +126,15 @@
     letter-spacing: 1px;
 }
 
-.collection-icon-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.8;
-}
-
-.collection-icon-lg {
-    font-size: 80px;
-}
-
-.collection-icon-md {
-    font-size: 50px;
-}
-
-.bg-gradient-blue {
-    background: linear-gradient(135deg, #020617 0%, #0047AB 100%);
-}
-
-.bg-gradient-purple {
-    background: linear-gradient(135deg, #2e1065 0%, #6E3AFA 100%);
-}
-
-.bg-gradient-green {
-    background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
-}
-
 /* Collection View Controls */
 .collection-view-header {
     margin: 32px 0 24px;
     padding-bottom: 24px;
     border-bottom: 1px solid var(--border);
+}
+
+.collection-view-header .section-title {
+    margin-top: 16px;
 }
 
 .back-btn-icon {
