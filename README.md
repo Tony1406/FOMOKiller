@@ -1,17 +1,17 @@
-# 🦍 FOMOKiller - Tu Gestor de Backlog Definitivo
+# FOMOKiller - Tu Gestor de Backlog Definitivo
 
 FOMOKiller es una aplicación diseñada para gamers que sufren de "parálisis por análisis". Olvídate de mirar tu biblioteca de Steam durante horas sin saber a qué jugar. Explora, añade y gestiona tu backlog de forma brutal y sencilla.
 
-## 🚀 Características Actuales
+## Características Actuales
 
-*   **🔍 Exploración Inteligente**: Buscador de juegos con *debounce* (para no saturar la API) y filtrado por colecciones temáticas (GOTYs, Indies, Soulslike, etc.).
-*   **💎 Colecciones Curadas**: Parrilla de categorías con imágenes reales para descubrir tu próximo vicio.
-*   **🕹️ Gestión de Backlog**: Clasifica los juegos en "Me gusta", "No me gusta" o "Completado".
-*   **👤 Perfil de Usuario**: Personaliza tu bio y avatar para fardar de biblioteca.
-*   **📱 Diseño "Brutalista" & Responsive**: Una interfaz limpia, directa y que se adapta a cualquier pantalla.
-*   **📦 Modales Detallados**: Consulta toda la info de un juego (desarrollador, año, géneros) sin salir de la página.
+*   ** Exploración Inteligente**: Buscador de juegos con *debounce* (para no saturar la API) y filtrado por colecciones temáticas (GOTYs, Indies, Soulslike, etc.).
+*   ** Colecciones Curadas**: Parrilla de categorías con imágenes reales para descubrir tu próximo vicio.
+*   ** Gestión de Backlog**: Clasifica los juegos en "Me gusta", "No me gusta" o "Completado".
+*   ** Perfil de Usuario**: Personaliza tu bio y avatar para fardar de biblioteca.
+*   ** Diseño "Brutalista" & Responsive**: Una interfaz limpia, directa y que se adapta a cualquier pantalla.
+*   ** Modales Detallados**: Consulta toda la info de un juego (desarrollador, año, géneros) sin salir de la página.
 
-## 🛠️ Stack Tecnológico
+##  Stack Tecnológico
 
 *   **Frontend**: React + TypeScript + Vanilla CSS (estilo premium).
 *   **Backend**: Node.js + Express + TypeScript + Sequelize ORM.
@@ -20,7 +20,7 @@ FOMOKiller es una aplicación diseñada para gamers que sufren de "parálisis po
 
 ---
 
-## 🏗️ Guía de Inicio Rápido
+##  Guía de Inicio Rápido
 
 Tienes dos formas de hacer correr esta bestia:
 
@@ -35,7 +35,7 @@ Tienes dos formas de hacer correr esta bestia:
     *   **Server**: `cd Server && npm install && npm run dev`
     *   **Client**: `cd Client && npm install && npm run dev`
 
-### Opción B: Modo Docker (Ideal para clase/despliegue) 🐳
+### Opción B: Modo Docker (Ideal para clase/despliegue) 
 1.  **Configura el entorno**: Cambia el `Server/.env` para que apunte al contenedor de la base de datos:
     ```env
     DB_HOST=db
@@ -52,7 +52,7 @@ Tienes dos formas de hacer correr esta bestia:
 
 ---
 
-## 🔮 Lo que está por venir (Próximamente)
+## Lo que está por venir (Próximamente)
 
 - [ ] **Sistema de Autenticación**: Registro y login real con JWT.
 - [ ] **Sistema de Amigos**: Agrega a tus panas y mira a qué están jugando.
@@ -60,10 +60,10 @@ Tienes dos formas de hacer correr esta bestia:
  
 ---
 
-## 🧹 Comandos de mantenimiento (Docker)
+## Comandos de mantenimiento (Docker)
 
 *   `docker-compose down -v`: Apaga todo y **limpia la base de datos** (por si quieres resetear el `init.sql`).
 *   `docker ps`: Mira qué contenedores están vivos.
 
 ---
-Hecho con 🦍 por **Tony1406**
+Hecho con por **Tony1406**
