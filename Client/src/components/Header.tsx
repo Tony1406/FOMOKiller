@@ -22,9 +22,7 @@ export default function Header() {
             </div>
             <div className="app-user-info">
                 <span className="app-user-name">{user?.username}</span>
-                <div className="app-user-avatar">
-                    <img src={user.avatarUrl} alt="Avatar" className="header-avatar-img" />
-                </div>
+
             </div>
         </header>
     );
