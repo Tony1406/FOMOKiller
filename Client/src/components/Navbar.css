@@ -117,7 +117,7 @@
         height: 44px;
         object-fit: contain;
         flex-shrink: 0;
-        margin-left: 22px;
+        margin-left: 16px;
         transition: all var(--t-base) var(--ease-smooth);
     }
 
@@ -175,17 +175,10 @@
         background: var(--cobalt-subtle);
     }
 
-    .nav-item.active::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 10%;
-        height: 80%;
-        width: 3px;
-        background: var(--cobalt-bright);
-        border-radius: 0 4px 4px 0;
-        box-shadow: 0 0 10px var(--cobalt);
+    .nav-item.active {
+        background: var(--cobalt-subtle);
     }
+
 
     .nav-icon {
         width: 88px;
@@ -240,7 +233,7 @@
         flex-direction: row;
         width: 100%;
         gap: 14px;
-        padding: 12px 16px;
+        padding: 12px 10px;
     }
 
     .nav-item:hover {
@@ -250,7 +243,6 @@
 
     .nav-item.active {
         background: var(--cobalt-subtle);
-        border-left: 2px solid var(--cobalt);
     }
 }
 

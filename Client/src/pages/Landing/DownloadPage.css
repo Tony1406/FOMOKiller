@@ -1,0 +1,126 @@
+/* ─── DOWNLOAD PAGE ─── */
+.download-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 2rem 80px;
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    min-height: calc(100vh - 200px);
+}
+
+.download-content {
+    flex: 1;
+}
+
+.dl-badges {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.dl-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    background: rgba(7, 28, 58, .6);
+    border: 1px solid rgba(41, 121, 255, .15);
+    border-radius: 12px;
+    cursor: default;
+    transition: all .3s ease;
+}
+
+.dl-badge:hover {
+    border-color: rgba(41, 121, 255, .4);
+    background: rgba(7, 28, 58, .9);
+}
+
+.dl-badge i {
+    font-size: 1.8rem;
+    color: rgba(255, 255, 255, .8);
+}
+
+.dl-badge-sub {
+    display: block;
+    font-size: .6rem;
+    color: rgba(255, 255, 255, .4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.dl-badge-main {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Oxanium', sans-serif;
+}
+
+.dl-web-btn {
+    margin-top: .5rem;
+}
+
+.download-visual {
+    flex: .6;
+    display: flex;
+    justify-content: center;
+}
+
+.dl-phone-frame {
+    width: 220px;
+    height: 280px;
+    border-radius: 24px;
+    background: rgba(7, 28, 58, .7);
+    border: 1px solid rgba(41, 121, 255, .2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, .4), 0 0 60px rgba(0, 71, 171, .1);
+    animation: dlFloat 6s ease-in-out infinite;
+}
+
+@keyframes dlFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.dl-phone-logo {
+    width: 120px;
+    height: 120px;
+    filter: drop-shadow(0 0 20px rgba(41, 121, 255, .4));
+    animation: dlGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes dlGlow {
+    from {
+        filter: drop-shadow(0 0 10px rgba(41, 121, 255, .2));
+    }
+
+    to {
+        filter: drop-shadow(0 0 30px rgba(41, 121, 255, .6));
+    }
+}
+
+@media (max-width: 1024px) {
+    .download-page {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .land-section-desc {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .dl-badges {
+        justify-content: center;
+    }
+}

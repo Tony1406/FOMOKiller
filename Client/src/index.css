@@ -79,10 +79,11 @@ body,
 body {
   background: var(--bg-base);
   color: var(--text-primary);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Oxanium', sans-serif;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
 }
+
 
 #root {
   display: flex;

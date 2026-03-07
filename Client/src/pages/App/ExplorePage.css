@@ -247,6 +247,20 @@
     transform: scale(0.95);
 }
 
+/* Juego ya en el backlog → corazón rojo */
+.action-btn-completado--active {
+    background: rgba(244, 67, 54, 0.15) !important;
+    color: var(--pass) !important;
+    border-color: var(--pass) !important;
+    box-shadow: 0 0 10px var(--pass-glow);
+}
+
+.action-btn-completado--active:hover {
+    background: rgba(244, 67, 54, 0.25) !important;
+    transform: scale(1.1);
+}
+
+
 .search-bar-spacing {
     margin-bottom: 32px;
 }

@@ -1,0 +1,127 @@
+/* ─── FEATURES PAGE ─── */
+.features-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 2rem 80px;
+}
+
+.features-header {
+    margin-bottom: 3rem;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.feat-card {
+    padding: 2rem;
+    background: rgba(7, 28, 58, .5);
+    border: 1px solid rgba(41, 121, 255, .08);
+    border-radius: 16px;
+    transition: all .4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.feat-card:hover {
+    border-color: rgba(41, 121, 255, .25);
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, .3);
+}
+
+.feat-card-hero {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, rgba(0, 71, 171, .15), rgba(7, 28, 58, .8));
+    border-color: rgba(41, 121, 255, .2);
+}
+
+.feat-card-glow {
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(41, 121, 255, .15), transparent 70%);
+    pointer-events: none;
+}
+
+.feat-icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0047AB, #2979FF);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: white;
+    margin-bottom: 1rem;
+    box-shadow: 0 8px 24px rgba(0, 71, 171, .3);
+}
+
+.feat-icon-cyan {
+    background: linear-gradient(135deg, #0277BD, #29B6F6);
+    box-shadow: 0 8px 24px rgba(2, 119, 189, .3);
+}
+
+.feat-icon-purple {
+    background: linear-gradient(135deg, #6A1B9A, #AB47BC);
+    box-shadow: 0 8px 24px rgba(106, 27, 154, .3);
+}
+
+.feat-icon-green {
+    background: linear-gradient(135deg, #2E7D32, #66BB6A);
+    box-shadow: 0 8px 24px rgba(46, 125, 50, .3);
+}
+
+.feat-icon-orange {
+    background: linear-gradient(135deg, #E65100, #FFA726);
+    box-shadow: 0 8px 24px rgba(230, 81, 0, .3);
+}
+
+.feat-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: .5rem;
+    font-family: 'Oxanium', sans-serif;
+}
+
+.feat-card p {
+    font-size: .85rem;
+    color: rgba(255, 255, 255, .45);
+    line-height: 1.7;
+}
+
+.feat-tag {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: .6rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #FFA726;
+    background: rgba(255, 167, 38, .1);
+    border: 1px solid rgba(255, 167, 38, .25);
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+
+@media (max-width: 1024px) {
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}

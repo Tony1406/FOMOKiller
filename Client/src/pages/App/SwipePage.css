@@ -164,9 +164,10 @@
 /* Pantallas grandes */
 @media (min-width: 1600px) and (min-height: 900px) {
     .swipe-card {
-        max-width: 480px;
+        max-width: 1300px;
         max-height: 680px;
     }
+
 
     .swipe-card-info {
         padding: 32px;

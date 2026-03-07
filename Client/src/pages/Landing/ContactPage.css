@@ -1,0 +1,68 @@
+/* ─── CONTACT PAGE ─── */
+.contact-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 60px 2rem 80px;
+}
+
+.contact-header {
+    margin-bottom: 2rem;
+}
+
+.ct-form {
+    max-width: 700px;
+}
+
+.ct-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.ct-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 1rem;
+}
+
+.ct-field label {
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, .5);
+}
+
+.ct-field input,
+.ct-field textarea {
+    padding: 14px 16px;
+    background: rgba(7, 28, 58, .6);
+    border: 1px solid rgba(41, 121, 255, .12);
+    border-radius: 10px;
+    color: white;
+    font-size: .9rem;
+    font-family: 'Oxanium', sans-serif;
+    outline: none;
+    transition: all .3s ease;
+    resize: vertical;
+}
+
+.ct-field input::placeholder,
+.ct-field textarea::placeholder {
+    color: rgba(255, 255, 255, .25);
+}
+
+.ct-field input:focus,
+.ct-field textarea:focus {
+    border-color: #2979FF;
+    box-shadow: 0 0 20px rgba(41, 121, 255, .15);
+    background: rgba(7, 28, 58, .9);
+}
+
+@media (max-width: 768px) {
+    .ct-form-row {
+        grid-template-columns: 1fr;
+    }
+}

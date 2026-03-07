@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import GameInfoModal from '../components/modals/GameInfoModal';
-import { getAllGames, updateStatus, USER_ID } from '../services/api';
+import GameInfoModal from '../../components/modals/GameInfoModal';
+import { getAllGames, updateStatus, USER_ID } from '../../services/api';
 import './SwipePage.css';
 
+const STORAGE_JUEGOS = 'swipe_deck';
+const STORAGE_INDICE = 'swipe_index';
 
 export default function SwipePage() {
     const [juegos, setJuegos] = useState<any[]>([]);
@@ -11,21 +13,39 @@ export default function SwipePage() {
     const [mostrarInfo, setMostrarInfo] = useState(false);
 
     const cargarJuegos = async () => {
+        // ¿Tenemos un mazo guardado?
+        const deckGuardado = sessionStorage.getItem(STORAGE_JUEGOS);
+        const indiceGuardado = sessionStorage.getItem(STORAGE_INDICE);
+
+        if (deckGuardado) {
+            setJuegos(JSON.parse(deckGuardado));
+            setIdJuego(indiceGuardado ? Number(indiceGuardado) : 0);
+            setCargando(false);
+            return;
+        }
+
+        // Si no hay nada guardado, descargamos y barajamos
         const data = await getAllGames();
         const juegosMezclados = data.sort(() => Math.random() - 0.5);
-
+        sessionStorage.setItem(STORAGE_JUEGOS, JSON.stringify(juegosMezclados));
+        sessionStorage.setItem(STORAGE_INDICE, '0');
         setJuegos(juegosMezclados);
         setCargando(false);
     };
+
     useEffect(() => {
         cargarJuegos();
     }, []);
 
+
     const handleVote = async (status: 'LIKED' | 'DISLIKED') => {
         const juego = juegos[idJuego];
         await updateStatus(USER_ID, juego.id, status);
-        setIdJuego(idJuego + 1);
+        const nuevoIndice = idJuego + 1;
+        setIdJuego(nuevoIndice);
+        sessionStorage.setItem(STORAGE_INDICE, String(nuevoIndice));
     };
+
 
     if (cargando) {
         return (

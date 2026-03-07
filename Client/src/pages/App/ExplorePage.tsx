@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getCollections, getCollectionGames, searchGames, updateStatus, USER_ID } from '../services/api';
-import GameInfoModal from '../components/modals/GameInfoModal';
+import { getCollections, getCollectionGames, searchGames, updateStatus, USER_ID } from '../../services/api';
+import GameInfoModal from '../../components/modals/GameInfoModal';
 import './ExplorePage.css';
 
 
@@ -11,6 +11,7 @@ export default function ExplorePage() {
     const [buscarResultados, setBuscarResultados] = useState<any[]>([]);
     const [juegoSeleccionado, setJuegoSeleccionado] = useState<any>(null);
     const [mostrarToast, setMostrarToast] = useState(false);
+    const [enBacklog, setEnBacklog] = useState<Set<number>>(new Set());
 
     const cargaInicial = async () => {
         const data = await getCollections();
@@ -46,36 +47,56 @@ export default function ExplorePage() {
     };
 
     const handleAddGame = async (gameId: number) => {
-        await updateStatus(USER_ID, gameId, 'LIKED');
-        setMostrarToast(true);
-        setTimeout(() => setMostrarToast(false), 1500);
+        if (enBacklog.has(gameId)) {
+            // Ya está en el backlog → quitarlo
+            await updateStatus(USER_ID, gameId, 'DROPPED');
+            setEnBacklog(prev => {
+                const next = new Set(prev);
+                next.delete(gameId);
+                return next;
+            });
+        } else {
+            // No está → añadirlo
+            await updateStatus(USER_ID, gameId, 'LIKED');
+            setEnBacklog(prev => new Set(prev).add(gameId));
+            setMostrarToast(true);
+            setTimeout(() => setMostrarToast(false), 1500);
+        }
     };
 
     const renderGames = (games: any[]) => (
         <div className="game-list">
-            {games.map((game: any) => (
-                <div className="game-list-item" key={game.id}>
-                    <div className="game-thumb-placeholder game-thumb-letter">
-                        {game.title[0].toUpperCase()}
-                    </div>
-                    <div className="game-info">
-                        <div className="game-title">{game.title}</div>
-                        <div className="game-subtitle">
-                            {game.developer} {game.releaseYear}
+            {games.map((game: any) => {
+                const estaEnBacklog = enBacklog.has(game.id);
+                return (
+                    <div className="game-list-item" key={game.id}>
+                        <div className="game-thumb-placeholder game-thumb-letter">
+                            {game.title[0].toUpperCase()}
+                        </div>
+                        <div className="game-info">
+                            <div className="game-title">{game.title}</div>
+                            <div className="game-subtitle">
+                                {game.developer} {game.releaseYear}
+                            </div>
+                        </div>
+                        <div className="game-actions">
+                            <button className="action-btn-secondary" onClick={() => setJuegoSeleccionado(game)} >
+                                <i className="fa-solid fa-info-circle"></i>
+                            </button>
+                            <button
+                                className={`action-btn-completado${estaEnBacklog ? ' action-btn-completado--active' : ''}`}
+                                onClick={() => handleAddGame(game.id)}
+                                title={estaEnBacklog ? 'Quitar del backlog' : 'Añadir al backlog'}
+                            >
+                                <i className="fa-solid fa-heart"></i>
+                            </button>
                         </div>
                     </div>
-                    <div className="game-actions">
-                        <button className="action-btn-secondary" onClick={() => setJuegoSeleccionado(game)} >
-                            <i className="fa-solid fa-info-circle"></i>
-                        </button>
-                        <button className="action-btn-completado" onClick={() => handleAddGame(game.id)}>
-                            <i className="fa-solid fa-heart"></i>
-                        </button>
-                    </div>
-                </div>
-            ))}
+                );
+            })}
         </div>
     );
+
 
     let vistaPrincipal;
 
@@ -138,6 +159,7 @@ export default function ExplorePage() {
     }
 
     return (
+
         <div className="page page-padded page-enter explore-scrollable">
             <div className="search-bar search-bar-spacing">
                 <i className="fa-solid fa-search search-icon"></i>
@@ -148,7 +170,6 @@ export default function ExplorePage() {
                     onChange={(e) => setBuscar(e.target.value)}
                 />
             </div>
-
             {vistaPrincipal}
 
             <GameInfoModal

@@ -1,0 +1,26 @@
+/* Reutilizamos el 90% de login.css para consistencia */
+@import './login.css';
+
+/* Ajustes específicos para registro si fueran necesarios */
+.login-logo i {
+    color: #00AB47;
+    /* Un verde para diferenciar ? */
+    filter: drop-shadow(0 0 8px rgba(0, 171, 71, 0.5));
+}
+
+.login-btn {
+    background: #0066CC;
+}
+
+.login-btn:hover {
+    background: #007FFF;
+    box-shadow: 0 8px 20px rgba(0, 102, 204, 0.4);
+}
+
+.login-link {
+    color: #00AB47;
+}
+
+.login-link:hover {
+    color: #00D156;
+}

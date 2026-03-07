@@ -11,13 +11,12 @@ export const getCollections = async (req: Request, res: Response) => {
             include: [
                 {
                     model: Game,
-                    attributes: ['id'], // Solo necesitamos saber cuántos hay
+                    attributes: ['id'],
                     through: { attributes: [] }
                 }
             ]
         });
 
-        // Formatear para enviar el conteo
         const formatted = collections.map((col: any) => {
             const data = col.toJSON();
             data.gameCount = data.Games ? data.Games.length : 0;

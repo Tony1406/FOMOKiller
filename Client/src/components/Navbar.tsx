@@ -14,44 +14,44 @@ export default function Navbar() {
     return (
         <nav className="app-nav">
             <div className="nav-logo">
-                <NavLink to="/" end className="nav-item nav-logo-btn">
-                    <img src={logoSimple} alt="Home" className="nav-logo-simple" />
+                <div className="nav-item nav-logo-btn">
+                    <img src={logoSimple} alt="FOMOKiller" className="nav-logo-simple" />
                     <span className="app-logo-text">FOMOKiller</span>
-                </NavLink>
+                </div>
             </div>
 
             <div className="nav-main-items">
-                <NavLink to="/" end className="nav-item">
+                <NavLink to="/app/swipe" end className="nav-item">
                     <span className="nav-icon">
                         <img src={swipeIcon} alt="swipe" className="nav-icon-img" />
                     </span>
                     <span className="nav-label">Swipe</span>
                 </NavLink>
-                <NavLink to="/explore" className="nav-item">
+                <NavLink to="/app/explore" className="nav-item">
                     <span className="nav-icon">
                         <img src={exploreIcon} alt="Explore" className="nav-icon-img" />
                     </span>
                     <span className="nav-label">Explorar</span>
                 </NavLink>
-                <NavLink to="/backlog" className="nav-item">
+                <NavLink to="/app/backlog" className="nav-item">
                     <span className="nav-icon">
                         <img src={backlogIcon} alt="Backlog" className="nav-icon-img" />
                     </span>
                     <span className="nav-label">Backlog</span>
                 </NavLink>
-                <NavLink to="/top5" className="nav-item">
+                <NavLink to="/app/top5" className="nav-item">
                     <span className="nav-icon">
                         <img src={top5Icon} alt="top5" className="nav-icon-img" />
                     </span>
                     <span className="nav-label">Top 5</span>
                 </NavLink>
-                <NavLink to="/profile" className="nav-item">
+                <NavLink to="/app/profile" className="nav-item">
                     <span className="nav-icon">
                         <img src={profileIcon} alt="profile" className="nav-icon-img" />
                     </span>
                     <span className="nav-label">Perfil</span>
                 </NavLink>
-                <NavLink to="/chat" className="nav-item">
+                <NavLink to="/app/chat" className="nav-item">
                     <span className="nav-icon">
                         <img src={chatIcon} alt="chat" className="nav-icon-img chat-nav-img" />
                     </span>

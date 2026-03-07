@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getUserProfile, getBacklog, updateUserProfile, USER_ID } from '../services/api';
-import EditProfileModal from '../components/modals/EditProfileModal';
+import { getUserProfile, getBacklog, updateUserProfile, USER_ID } from '../../services/api';
+import EditProfileModal from '../../components/modals/EditProfileModal';
 import './ProfilePage.css';
 
 export default function ProfilePage() {

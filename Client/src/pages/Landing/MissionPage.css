@@ -1,0 +1,185 @@
+/* ─── MISSION PAGE ─── */
+.mission-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 2rem 80px;
+}
+
+.mission-header {
+    margin-bottom: 3rem;
+}
+
+.mission-values {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+}
+
+.mission-card {
+    padding: 2rem;
+    background: rgba(7, 28, 58, .6);
+    border: 1px solid rgba(41, 121, 255, .12);
+    border-radius: 16px;
+    transition: all .4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.mission-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #2979FF, transparent);
+    opacity: 0;
+    transition: opacity .4s ease;
+}
+
+.mission-card:hover::before {
+    opacity: 1;
+}
+
+.mission-card:hover {
+    background: rgba(7, 28, 58, .9);
+    border-color: rgba(41, 121, 255, .3);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .3);
+}
+
+.mission-card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(0, 71, 171, .2), rgba(41, 121, 255, .1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #2979FF;
+    margin-bottom: 1.2rem;
+    border: 1px solid rgba(41, 121, 255, .2);
+}
+
+.mission-card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: .6rem;
+    font-family: 'Oxanium', sans-serif;
+}
+
+.mission-card p {
+    font-size: .85rem;
+    color: rgba(255, 255, 255, .5);
+    line-height: 1.7;
+}
+
+/* Manifesto */
+.manifesto-card {
+    padding: 3rem;
+    background: linear-gradient(135deg, rgba(0, 71, 171, .1), rgba(7, 28, 58, .8));
+    border: 1px solid rgba(41, 121, 255, .15);
+    border-radius: 20px;
+    text-align: center;
+}
+
+.manifesto-card h2 {
+    color: rgba(41, 121, 255, .3);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.manifesto-text {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, .7);
+    line-height: 1.8;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+.manifesto-text strong {
+    color: #2979FF;
+}
+
+.manifesto-values-list {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.manifesto-value {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .85rem;
+    color: rgba(255, 255, 255, .6);
+    font-weight: 600;
+}
+
+.manifesto-icon {
+    color: #2979FF;
+}
+
+/* Audience / Target */
+.mission-audience {
+    margin-bottom: 4rem;
+}
+
+.audience-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.audience-card {
+    padding: 2rem;
+    background: rgba(7, 28, 58, .4);
+    border: 1px solid rgba(41, 121, 255, .08);
+    border-radius: 16px;
+    transition: all .4s ease;
+}
+
+.audience-card:hover {
+    border-color: rgba(41, 121, 255, .25);
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, .3);
+    background: rgba(7, 28, 58, .8);
+}
+
+.audience-emoji {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    line-height: 1;
+}
+
+.audience-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: .5rem;
+    font-family: 'Oxanium', sans-serif;
+    color: #2979FF;
+}
+
+.audience-card p {
+    font-size: .85rem;
+    color: rgba(255, 255, 255, .5);
+    line-height: 1.7;
+}
+
+@media (max-width: 768px) {
+    .mission-values {
+        grid-template-columns: 1fr;
+    }
+
+    .audience-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .manifesto-values-list {
+        flex-direction: column;
+        align-items: center;
+    }
+}

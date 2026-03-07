@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getBacklog, updateStatus, markFinished, USER_ID } from '../services/api';
-import GameInfoModal from '../components/modals/GameInfoModal';
+import { getBacklog, updateStatus, markFinished, USER_ID } from '../../services/api';
+import GameInfoModal from '../../components/modals/GameInfoModal';
 import './BacklogPage.css';
 
 export default function BacklogPage() {
