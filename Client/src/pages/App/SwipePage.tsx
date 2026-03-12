@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import GameInfoModal from '../../components/modals/GameInfoModal';
-import { getAllGames, updateStatus, USER_ID } from '../../services/api';
+import { getAllGames, updateStatus } from '../../services/api';
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 import './SwipePage.css';
 
 const STORAGE_JUEGOS = 'swipe_deck';
 const STORAGE_INDICE = 'swipe_index';
 
 export default function SwipePage() {
+    const { user } = useContext(AuthContext);
     const [juegos, setJuegos] = useState<any[]>([]);
     const [idJuego, setIdJuego] = useState(0);
     const [cargando, setCargando] = useState(true);
@@ -39,8 +42,9 @@ export default function SwipePage() {
 
 
     const handleVote = async (status: 'LIKED' | 'DISLIKED') => {
+        if (!user) return;
         const juego = juegos[idJuego];
-        await updateStatus(USER_ID, juego.id, status);
+        await updateStatus(user.id, juego.id, status);
         const nuevoIndice = idJuego + 1;
         setIdJuego(nuevoIndice);
         sessionStorage.setItem(STORAGE_INDICE, String(nuevoIndice));

@@ -69,6 +69,36 @@ export default function MissionPage() {
                 </div>
             </section>
 
+            {/* Nueva Sección de Investigación */}
+            <section className="mission-research">
+                <div className="section-tag">INVESTIGACIÓN Y DATOS</div>
+                <h2 className="land-section-title">El impacto del <span className="text-glow">"Pile of Shame"</span></h2>
+
+                <div className="research-grid">
+                    <div className="research-item">
+                        <div className="research-value">$19B</div>
+                        <div className="research-label">Inversión Perdida</div>
+                        <p>Se estima que los usuarios de Steam han gastado más de 19 mil millones de dólares en juegos que nunca se han ejecutado ni una sola vez.</p>
+                    </div>
+
+                    <div className="research-item">
+                        <div className="research-value">51%</div>
+                        <div className="research-label">Bibliotecas Intactas</div>
+                        <p>Más de la mitad de los juegos en la biblioteca del jugador promedio permanecen sin jugar debido a la fatiga de decisión.</p>
+                    </div>
+
+                    <div className="research-item">
+                        <div className="research-value">25%</div>
+                        <div className="research-label">Abandono Total</div>
+                        <p>Uno de cada cuatro juegos comprados digitalmente jamás llega a iniciarse, víctimas de compras impulsivas y ofertas masivas.</p>
+                    </div>
+                </div>
+
+                <div className="research-source">
+                    <p>* Datos basados en análisis de cuentas públicas de Steam y estudios de consumo digital (2024).</p>
+                </div>
+            </section>
+
             <div className="mission-manifesto">
                 <div className="manifesto-card">
                     <h2><i className="fa-solid fa-quote-left"></i></h2>

@@ -195,7 +195,7 @@
     font-size: 1.3rem;
     font-weight: 800;
     letter-spacing: -.5px;
-    font-family: 'Oxanium', sans-serif;
+    font-family: var(--font-primary);
 }
 
 .land-nav-logo-accent {
@@ -297,56 +297,124 @@
 .land-footer {
     position: relative;
     z-index: 10;
-    border-top: 1px solid rgba(41, 121, 255, .1);
-    padding: 3rem 2rem;
-    background: transparent;
+    border-top: 1px solid rgba(41, 121, 255, 0.2);
+    padding: 5rem 2rem 2rem;
+    background: rgba(2, 10, 24, 0.85);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    margin-top: auto;
 }
 
-.land-footer-inner {
-    max-width: 1200px;
+.land-footer-grid {
+    max-width: 1300px;
     margin: 0 auto;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
+    gap: 4rem;
+}
+
+.land-footer-col {
+    display: flex;
+    flex-direction: column;
     gap: 1.5rem;
 }
 
 .land-footer-brand {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 1.1rem;
-    font-weight: 800;
-    font-family: 'Oxanium', sans-serif;
+    gap: 12px;
 }
 
 .land-footer-logo {
-    width: 28px;
-    height: 28px;
-    filter: drop-shadow(0 0 8px rgba(0, 71, 171, .4));
+    width: 40px;
+    height: 40px;
+    filter: drop-shadow(0 0 10px rgba(41, 121, 255, 0.5));
 }
 
-.land-footer-links {
+.land-footer-desc {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-width: 320px;
+}
+
+.land-footer-social {
     display: flex;
-    gap: 2rem;
+    gap: 1.2rem;
 }
 
-.land-footer-links a {
+.social-link {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
     text-decoration: none;
-    color: rgba(255, 255, 255, .4);
-    font-size: .8rem;
-    font-weight: 500;
-    transition: color .3s ease;
 }
 
-.land-footer-links a:hover {
+.social-link:hover {
+    background: rgba(41, 121, 255, 0.1);
+    border-color: #2979FF;
     color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(41, 121, 255, 0.3);
 }
 
-.land-footer-copy {
-    font-size: .75rem;
-    color: rgba(255, 255, 255, .25);
+.footer-title {
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.footer-links a {
+    color: rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: white;
+    padding-left: 5px;
+}
+
+.land-footer-bottom {
+    max-width: 1300px;
+    margin: 4rem auto 0;
+}
+
+.land-footer-separator {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(41, 121, 255, 0.2), transparent);
+    margin-bottom: 2rem;
+}
+
+.land-footer-bottom-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.8rem;
+}
+
+.land-footer-bottom-extra {
+    display: flex;
+    gap: 1.5rem;
 }
 
 /* ─── SHARED COMPONENTS (buttons, tags, etc.) ─── */
@@ -367,7 +435,7 @@
 .land-section-title {
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 800;
-    font-family: 'Oxanium', sans-serif;
+    font-family: var(--font-primary);
     margin-bottom: 1rem;
     color: white;
     line-height: 1.2;
@@ -400,7 +468,7 @@
     transition: all .3s cubic-bezier(.34, 1.56, .64, 1);
     cursor: pointer;
     border: none;
-    font-family: 'Oxanium', sans-serif;
+    font-family: var(--font-primary);
 }
 
 .land-btn-primary {
@@ -461,13 +529,41 @@
         display: block;
     }
 
-    .land-footer-inner {
+    .land-footer-grid {
         flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 3.5rem;
+    }
+
+    .land-footer-col {
+        align-items: center;
+        width: 100%;
+    }
+
+    .land-footer-social {
+        margin-top: 1rem;
+        justify-content: center;
+    }
+
+    .social-link {
+        background: rgba(41, 121, 255, 0.08);
+        border-color: rgba(41, 121, 255, 0.2);
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .footer-links {
+        align-items: center;
+        gap: 1.2rem;
+    }
+
+    .land-footer-bottom-inner {
+        flex-direction: column;
+        gap: 1.5rem;
         text-align: center;
     }
 
-    .land-footer-links {
-        flex-wrap: wrap;
+    .land-footer-bottom-extra {
         justify-content: center;
     }
 }

@@ -17,10 +17,6 @@
     display: none;
 }
 
-.nav-footer-items {
-    display: none;
-}
-
 .nav-logo-btn {
     flex-direction: column;
     align-items: center;
@@ -146,17 +142,6 @@
         gap: 8px;
     }
 
-    .nav-footer-items {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        gap: 8px;
-        margin-top: auto;
-        padding-top: 12px;
-        border-top: 1px solid var(--border);
-        opacity: 0.8;
-    }
-
     .nav-item {
         flex-direction: row;
         width: 100%;
@@ -204,10 +189,6 @@
         opacity: 1;
         transform: translateX(0);
         transition-delay: 50ms;
-    }
-
-    .app-nav:not(:hover) .nav-footer-items {
-        border-top-color: transparent;
     }
 }
 

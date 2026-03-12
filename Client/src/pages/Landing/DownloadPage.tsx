@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom';
-import logoSimple from '../../assets/Logo_simple.png';
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
+import downloadImage from '../../assets/image.png';
 import './DownloadPage.css';
 
 export default function DownloadPage() {
+    const { user } = useContext(AuthContext);
     return (
         <div className="download-page">
             <div className="download-content">
@@ -30,15 +33,13 @@ export default function DownloadPage() {
                         </div>
                     </div>
                 </div>
-                <Link to="/app" className="land-btn land-btn-primary dl-web-btn">
+                <Link to={user ? "/app" : "/login"} className="land-btn land-btn-primary dl-web-btn">
                     <i className="fa-solid fa-globe"></i>
                     Usar versión web ahora
                 </Link>
             </div>
             <div className="download-visual">
-                <div className="dl-phone-frame">
-                    <img src={logoSimple} alt="FOMOKiller" className="dl-phone-logo" />
-                </div>
+                <img src={downloadImage} alt="FOMOKiller App" className="dl-main-image" />
             </div>
         </div>
     );

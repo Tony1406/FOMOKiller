@@ -9,18 +9,6 @@
     gap: 20px;
 }
 
-.coming-soon-icon {
-    font-size: 72px;
-    filter: drop-shadow(0 0 20px var(--cobalt-glow));
-}
-
-.coming-soon-img {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
-    filter: drop-shadow(0 0 30px var(--cobalt-glow));
-}
-
 .coming-soon-title {
     font-size: 26px;
     font-weight: 800;
@@ -71,10 +59,6 @@
 @media (min-width: 1600px) and (min-height: 900px) {
     .coming-soon-wrap {
         gap: 32px;
-    }
-
-    .coming-soon-icon {
-        font-size: 110px;
     }
 
     .coming-soon-title {

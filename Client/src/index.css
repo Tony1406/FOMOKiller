@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Oxanium:wght@400;600;700;800&display=swap');
-
+@import url('https://fonts.cdnfonts.com/css/zrnic');
 
 :root {
   --cobalt: #0047AB;
@@ -52,9 +52,9 @@
   --t-base: 250ms;
   --t-slow: 420ms;
 
-  font-family: 'Oxanium', 'Outfit', system-ui, sans-serif;
-  font-size: 18px;
-  color-scheme: dark;
+  --font-primary: 'Zrnic', 'Outfit', 'Oxanium', system-ui, sans-serif;
+  font-family: var(--font-primary);
+  font-size: 20px;
 }
 
 *,
@@ -79,11 +79,10 @@ body,
 body {
   background: var(--bg-base);
   color: var(--text-primary);
-  font-family: 'Oxanium', sans-serif;
+  font-family: var(--font-primary);
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
 }
-
 
 #root {
   display: flex;
@@ -93,26 +92,6 @@ body {
 ::-webkit-scrollbar {
   width: 0;
   display: none;
-}
-
-.gradient-text {
-  background: linear-gradient(135deg, var(--cobalt-bright), var(--cobalt-light));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.glass {
-  background: rgba(10, 10, 10, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border);
-}
-
-.glass-cobalt {
-  background: var(--cobalt-subtle);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--border-cobalt);
 }
 
 .badge {
@@ -131,24 +110,6 @@ body {
   background: var(--cobalt-subtle);
   color: #fff;
   border: 1px solid var(--border-cobalt);
-}
-
-.badge-green {
-  background: rgba(0, 200, 83, 0.12);
-  color: var(--like);
-  border: 1px solid rgba(0, 200, 83, 0.25);
-}
-
-.badge-yellow {
-  background: rgba(255, 167, 38, 0.12);
-  color: var(--boost);
-  border: 1px solid rgba(255, 167, 38, 0.25);
-}
-
-.badge-red {
-  background: rgba(244, 67, 54, 0.12);
-  color: var(--pass);
-  border: 1px solid rgba(244, 67, 54, 0.25);
 }
 
 .app-layout {
@@ -171,7 +132,6 @@ body {
     flex-direction: row;
   }
 }
-
 
 .app-content {
   flex: 1;

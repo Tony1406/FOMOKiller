@@ -1,26 +1,32 @@
-import { useState, useEffect } from 'react';
-import { getBacklog, updateStatus, markFinished, USER_ID } from '../../services/api';
+import { useState, useEffect, useContext } from 'react';
+import { getBacklog, updateStatus, markFinished } from '../../services/api';
 import GameInfoModal from '../../components/modals/GameInfoModal';
+import { AuthContext } from '../../context/AuthContext';
 import './BacklogPage.css';
 
 export default function BacklogPage() {
+    const { user } = useContext(AuthContext);
     const [backlog, setBacklog] = useState<any[]>([]);
     const [pestañaActiva, setPestañaActiva] = useState('Todos');
     const [juegoSeleccionado, setJuegoSeleccionado] = useState<any>(null);
 
 
     const cargarBacklog = async () => {
-        const data = await getBacklog(USER_ID);
+        if (!user) return;
+        const data = await getBacklog(user.id);
         setBacklog(data);
     };
 
     useEffect(() => {
-        cargarBacklog();
-    }, []);
+        if (user) {
+            cargarBacklog();
+        }
+    }, [user]);
 
     const handleUpdateStatus = async (gameId: number, status: string) => {
+        if (!user) return;
         try {
-            await updateStatus(USER_ID, gameId, status);
+            await updateStatus(user.id, gameId, status);
 
             let terminado = false;
             if (status === 'COMPLETED') {
@@ -28,7 +34,7 @@ export default function BacklogPage() {
             } else {
                 terminado = false;
             }
-            await markFinished(USER_ID, gameId, terminado);
+            await markFinished(user.id, gameId, terminado);
 
             cargarBacklog();
         } catch (error) {

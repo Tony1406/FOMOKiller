@@ -77,7 +77,6 @@
 
 .priority-num-1,
 .priority-num-2,
-.priority-num-3,
 .priority-num-4,
 .priority-num-5 {
     background: var(--cobalt);
@@ -142,14 +141,6 @@
 
 .game-thumb-opacity {
     opacity: 0.3;
-}
-
-.priority-btn {
-    background: none;
-    border: none;
-    color: var(--like);
-    font-size: 16px;
-    cursor: pointer;
 }
 
 .top5-actions {
@@ -254,11 +245,6 @@
 
     .empty-slot-text {
         font-size: 18px;
-    }
-
-    /* Asume que las clases game-info se heredan del backlog/index */
-    .priority-btn {
-        font-size: 24px;
     }
 
     .top5-btn {

@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
-import { getCollections, getCollectionGames, searchGames, updateStatus, USER_ID } from '../../services/api';
+import { useState, useEffect, useContext } from 'react';
+import { getCollections, getCollectionGames, searchGames, updateStatus } from '../../services/api';
 import GameInfoModal from '../../components/modals/GameInfoModal';
+import { AuthContext } from '../../context/AuthContext';
 import './ExplorePage.css';
 
 
 export default function ExplorePage() {
+    const { user } = useContext(AuthContext);
     const [buscar, setBuscar] = useState('');
     const [colecciones, setColecciones] = useState<any[]>([]);
     const [coleccionSeleccionada, setColeccionSeleccionada] = useState<any>(null);
@@ -47,9 +49,10 @@ export default function ExplorePage() {
     };
 
     const handleAddGame = async (gameId: number) => {
+        if (!user) return;
         if (enBacklog.has(gameId)) {
             // Ya está en el backlog → quitarlo
-            await updateStatus(USER_ID, gameId, 'DROPPED');
+            await updateStatus(user.id, gameId, 'DROPPED');
             setEnBacklog(prev => {
                 const next = new Set(prev);
                 next.delete(gameId);
@@ -57,7 +60,7 @@ export default function ExplorePage() {
             });
         } else {
             // No está → añadirlo
-            await updateStatus(USER_ID, gameId, 'LIKED');
+            await updateStatus(user.id, gameId, 'LIKED');
             setEnBacklog(prev => new Set(prev).add(gameId));
             setMostrarToast(true);
             setTimeout(() => setMostrarToast(false), 1500);

@@ -17,18 +17,11 @@
 
 .feat-card {
     padding: 2rem;
-    background: rgba(7, 28, 58, .5);
-    border: 1px solid rgba(41, 121, 255, .08);
+    background: rgba(7, 28, 58, .85);
+    border: 1px solid rgba(41, 121, 255, .15);
     border-radius: 16px;
-    transition: all .4s ease;
     position: relative;
     overflow: hidden;
-}
-
-.feat-card:hover {
-    border-color: rgba(41, 121, 255, .25);
-    transform: translateY(-6px);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, .3);
 }
 
 .feat-card-hero {
@@ -91,7 +84,7 @@
     font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: .5rem;
-    font-family: 'Oxanium', sans-serif;
+    font-family: var(--font-primary);
 }
 
 .feat-card p {
