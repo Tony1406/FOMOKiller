@@ -134,8 +134,7 @@
     color: var(--text-secondary);
 }
 
-.swipe-loading-container,
-.swipe-empty-container {
+.swipe-loading-container {
     display: flex;
     height: 100%;
     align-items: center;
@@ -145,20 +144,6 @@
 .swipe-loading-text {
     font-weight: bold;
     font-size: 20px;
-}
-
-.swipe-empty-content {
-    text-align: center;
-    font-weight: bold;
-}
-
-.swipe-empty-title {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.swipe-empty-subtitle {
-    color: var(--text-secondary);
 }
 
 /* Pantallas grandes */

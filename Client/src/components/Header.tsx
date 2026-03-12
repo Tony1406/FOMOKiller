@@ -1,18 +1,20 @@
-import { useState, useEffect } from 'react';
-import { getUserProfile, USER_ID } from '../services/api';
+import { useState, useEffect, useContext } from 'react';
+import { getUserProfile } from '../services/api';
+import { AuthContext } from '../context/AuthContext';
 import logoSimple from '../assets/Logo_simple.png';
 import './Header.css';
 
 
 export default function Header() {
+    const { user: authUser } = useContext(AuthContext);
     const [user, setUser] = useState<any>(null);
 
     useEffect(() => {
-        console.log("Header USER_ID:", USER_ID);
-        getUserProfile(USER_ID)
+        if (!authUser) return;
+        getUserProfile(authUser.id)
             .then(setUser)
             .catch(console.error);
-    }, []);
+    }, [authUser]);
 
     return (
         <header className="app-header">

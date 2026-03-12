@@ -28,7 +28,7 @@
 }
 
 .app-logo-text {
-    font-family: 'Oxanium', sans-serif;
+    font-family: var(--font-primary);
     font-size: 18px;
     font-weight: 700;
     color: var(--text-primary);
@@ -45,24 +45,4 @@
     font-size: 14px;
     color: var(--text-primary);
     font-weight: 600;
-}
-
-.app-user-avatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: var(--bg-elevated);
-    border: 1px solid var(--cobalt-light);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    overflow: hidden;
-    color: #fff;
-}
-
-.header-avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
 }
