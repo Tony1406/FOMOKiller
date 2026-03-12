@@ -54,7 +54,6 @@ Tienes dos formas de hacer correr esta bestia:
 
 ## Lo que está por venir (Próximamente)
 
-- [ ] **Sistema de Autenticación**: Registro y login real con JWT.
 - [ ] **Sistema de Amigos**: Agrega a tus panas y mira a qué están jugando.
 - [ ] **Chat en Tiempo Real**: Recomienda juegos directamente por mensaje privado.
  
