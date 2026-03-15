@@ -42,28 +42,36 @@ export default function MissionPage() {
             <section className="mission-audience">
                 <div className="section-tag">¿PARA QUIÉN ES FOMOKILLER?</div>
                 <h2 className="land-section-title">
-                    Creado para <span className="text-glow">gamers reales</span>
+                    Creado para:
                 </h2>
 
                 <div className="audience-grid">
                     <div className="audience-card">
-                        <div className="audience-emoji">🎮</div>
+                        <div className="mission-card-icon">
+                            <i className="fa-solid fa-cubes"></i>
+                        </div>
                         <h3>El Acumulador</h3>
-                        <p>Tienes 200 juegos en Steam y no sabes por cuál empezar. Sales llenan tu biblioteca pero nunca juegas nada.</p>
+                        <p>Tienes 200 juegos en Steam y no sabes por cuál empezar. Los descuentos llenan tu biblioteca pero nunca juegas a nada.</p>
                     </div>
                     <div className="audience-card">
-                        <div className="audience-emoji">📱</div>
-                        <h3>El Casual Ocupado</h3>
-                        <p>Solo tienes 1-2 horas al día para jugar y no quieres perderlas eligiendo. Necesitas un filtro rápido y eficaz.</p>
+                        <div className="mission-card-icon">
+                            <i className="fa-solid fa-clock"></i>
+                        </div>
+                        <h3>El Ocupado</h3>
+                        <p>Tienes poco tiempo para jugar y no quieres perderlo eligiendo. Necesitas un filtro rápido y eficaz.</p>
                     </div>
                     <div className="audience-card">
-                        <div className="audience-emoji">🏆</div>
+                        <div className="mission-card-icon">
+                            <i className="fa-solid fa-medal"></i>
+                        </div>
                         <h3>El Completista</h3>
                         <p>Quieres terminar lo que empiezas antes de comprar otro juego. El Top 5 es tu herramienta perfecta.</p>
                     </div>
                     <div className="audience-card">
-                        <div className="audience-emoji">👥</div>
-                        <h3>El Social Gamer</h3>
+                        <div className="mission-card-icon">
+                            <i className="fa-solid fa-headset"></i>
+                        </div>
+                        <h3>El Social</h3>
                         <p>Te importa lo que juegan tus amigos y quieres compartir descubrimientos. El chat y las recomendaciones son para ti.</p>
                     </div>
                 </div>
@@ -103,21 +111,21 @@ export default function MissionPage() {
                 <div className="manifesto-card">
                     <h2><i className="fa-solid fa-quote-left"></i></h2>
                     <p className="manifesto-text">
-                        No necesitas jugar todos los juegos. Necesitas jugar <strong>los juegos correctos</strong>.
-                        FOMOKiller existe para que dejes de acumular y empieces a disfrutar.
+                        "No necesitas jugar todos los juegos. Necesitas jugar <strong>los juegos correctos</strong>.
+                        FOMOKiller existe para que dejes de acumular y empieces a disfrutar."
                     </p>
                     <div className="manifesto-values-list">
                         <div className="manifesto-value">
                             <span className="manifesto-icon">✦</span>
-                            Simplicidad sobre el ruido
+                            Simplicidad
                         </div>
                         <div className="manifesto-value">
                             <span className="manifesto-icon">✦</span>
-                            Comunidad sobre el algoritmo
+                            Comunidad
                         </div>
                         <div className="manifesto-value">
                             <span className="manifesto-icon">✦</span>
-                            Disfrute sobre la obligación
+                            Disfrute
                         </div>
                     </div>
                 </div>

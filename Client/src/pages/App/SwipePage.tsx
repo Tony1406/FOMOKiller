@@ -62,6 +62,8 @@ export default function SwipePage() {
     }
 
     const juegoActual = juegos[idJuego];
+    const juegoSiguiente = juegos[idJuego + 1];
+    const juegoTercero = juegos[idJuego + 2];
 
     return (
         <div className="swipe-page page-enter">
@@ -73,6 +75,26 @@ export default function SwipePage() {
             />
 
             <div className="swipe-stack">
+                {/* Carta 3 – fondo más lejano */}
+                {juegoTercero && (
+                    <div className="swipe-card swipe-card-back-2">
+                        <div className="swipe-card-bg">
+                            <img src={juegoTercero.imageUrl} alt="" className="swipe-card-image" />
+                        </div>
+                        <div className="swipe-card-overlay" />
+                    </div>
+                )}
+
+                {/* Carta 2 – fondo cercano */}
+                {juegoSiguiente && (
+                    <div className="swipe-card swipe-card-back-1">
+                        <div className="swipe-card-bg">
+                            <img src={juegoSiguiente.imageUrl} alt="" className="swipe-card-image" />
+                        </div>
+                        <div className="swipe-card-overlay" />
+                    </div>
+                )}
+
                 {/* Carta principal */}
                 <div className="swipe-card swipe-card-front">
                     <div className="swipe-card-bg">

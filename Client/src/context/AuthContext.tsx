@@ -4,12 +4,14 @@ export const AuthContext = createContext<any>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('fomokiller_user');
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
+        setLoading(false);
     }, []);
 
     const logout = () => {
@@ -19,7 +21,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, setUser, logout }}>
+        <AuthContext.Provider value={{ user, setUser, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );

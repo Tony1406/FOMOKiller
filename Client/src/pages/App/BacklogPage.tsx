@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { getBacklog, updateStatus, markFinished } from '../../services/api';
+import { getBacklog, updateStatus, markFinished, setPriority } from '../../services/api';
 import GameInfoModal from '../../components/modals/GameInfoModal';
 import { AuthContext } from '../../context/AuthContext';
 import './BacklogPage.css';
@@ -9,6 +9,8 @@ export default function BacklogPage() {
     const [backlog, setBacklog] = useState<any[]>([]);
     const [pestañaActiva, setPestañaActiva] = useState('Todos');
     const [juegoSeleccionado, setJuegoSeleccionado] = useState<any>(null);
+    const [toastMsg, setToastMsg] = useState<string | null>(null);
+    const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
 
     const cargarBacklog = async () => {
@@ -22,6 +24,12 @@ export default function BacklogPage() {
             cargarBacklog();
         }
     }, [user]);
+
+    const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
+        setToastMsg(msg);
+        setToastType(type);
+        setTimeout(() => setToastMsg(null), 2000);
+    };
 
     const handleUpdateStatus = async (gameId: number, status: string) => {
         if (!user) return;
@@ -42,8 +50,31 @@ export default function BacklogPage() {
         }
     };
 
-    const handleSetPriority = (gameId: number) => {
-        console.log("Clic en prioridad para el juego:", gameId);
+    const handleSetPriority = async (juego: any) => {
+        if (!user) return;
+        const newPriority = !juego.isPriority;
+        try {
+            const response = await setPriority(user.id, juego.gameId, newPriority);
+
+            if (response.ok) {
+                if (newPriority) {
+                    showToast('Enviado a Top 5', 'success');
+                } else {
+                    showToast('Eliminado de Top 5', 'success');
+                }
+                cargarBacklog();
+            } else {
+                const data = await response.json();
+                if (response.status === 400) {
+                    showToast('Ya tienes 5 juegos en Top 5', 'error');
+                } else {
+                    showToast(data.error || 'Error al cambiar prioridad', 'error');
+                }
+            }
+        } catch (error) {
+            console.error("Error cambiando prioridad:", error);
+            showToast('Error de conexión', 'error');
+        }
     };
 
     const filteredGames = backlog.filter((juego) => {
@@ -110,8 +141,9 @@ export default function BacklogPage() {
                                 </button>
 
                                 <button
-                                    className='action-btn-secondary'
+                                    className={`action-btn-secondary${juego.isPriority ? ' action-btn-star--active' : ''}`}
                                     onClick={() => handleSetPriority(juego)}
+                                    title={juego.isPriority ? 'Quitar de Top 5' : 'Añadir a Top 5'}
                                 >
                                     <i className="fa-solid fa-star"></i>
                                 </button>
@@ -125,6 +157,7 @@ export default function BacklogPage() {
 
                                 <button
                                     className={juego.status === 'COMPLETED' ? 'action-btn-completado active' : 'action-btn-completado'}
+                                    disabled={juego.isPriority}
                                     onClick={() => {
                                         let siguienteEstado = 'COMPLETED';
                                         if (juego.status === 'COMPLETED') {
@@ -146,6 +179,14 @@ export default function BacklogPage() {
                 onClose={() => setJuegoSeleccionado(null)}
                 game={juegoSeleccionado}
             />
+
+            {toastMsg && (
+                <div className="toast-container">
+                    <div className={`toast ${toastType === 'error' ? 'toast-error' : ''}`}>
+                        {toastMsg}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
