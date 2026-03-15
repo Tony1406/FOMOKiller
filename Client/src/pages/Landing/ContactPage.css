@@ -3,6 +3,10 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 60px 2rem 80px;
+    margin-top: 100px;
+    background: rgba(7, 28, 58, .75);
+    border: 1px solid rgba(41, 121, 255, .15);
+    border-radius: 16px;
 }
 
 .contact-header {
@@ -75,5 +79,11 @@
 @media (max-width: 768px) {
     .ct-form-row {
         grid-template-columns: 1fr;
+    }
+
+    .contact-page {
+        margin-top: 10px;
+        background: none;
+        border: none;
     }
 }

@@ -32,9 +32,8 @@ export default function HomePage() {
                             </span>
                         </h1>
                         <p className="home-desc">
-                            Organiza tu backlog, descubre nuevos juegos con swipe,
+                            Organiza tu backlog, descubre nuevos juegos,
                             y enfócate en lo que realmente quieres jugar.
-                            Sin ruido. Sin FOMO.
                         </p>
                         <div className="home-stats">
                             <div className="home-stat">
@@ -65,7 +64,7 @@ export default function HomePage() {
                     </h2>
                     <p className="land-section-desc">
                         Cada herramienta está diseñada para ayudarte a gestionar tu backlog
-                        y descubrir juegos de forma inteligente.
+                        y descubrir juegos.
                     </p>
 
                     <div className="home-features-wrapper">
@@ -83,7 +82,7 @@ export default function HomePage() {
                                     </div>
                                     <div className="home-feat-info">
                                         <h3>Swipe & Discover</h3>
-                                        <p>Desliza para descubrir juegos. Like = backlog. Pass = siguiente.</p>
+                                        <p>Desliza para descubrir juegos. Like = agregar a tu backlog. Pass = siguiente.</p>
                                     </div>
                                 </div>
                                 <div className="home-feat-card">
@@ -101,7 +100,7 @@ export default function HomePage() {
                                     </div>
                                     <div className="home-feat-info">
                                         <h3>Backlog</h3>
-                                        <p>Tu lista de juegos pendientes, organizada por estado.</p>
+                                        <p>Tu lista de juegos pendientes.</p>
                                     </div>
                                 </div>
                                 <div className="home-feat-card">
@@ -110,7 +109,7 @@ export default function HomePage() {
                                     </div>
                                     <div className="home-feat-info">
                                         <h3>Top 5</h3>
-                                        <p>Solo 5 slots. Prioriza lo que juegas ahora mismo.</p>
+                                        <p>Solo 5 slots. Prioriza tus juegos.</p>
                                     </div>
                                 </div>
                                 <div className="home-feat-card">
@@ -119,7 +118,7 @@ export default function HomePage() {
                                     </div>
                                     <div className="home-feat-info">
                                         <h3>Chat</h3>
-                                        <p>Habla con amigos y comparte hallazgos.</p>
+                                        <p>Habla con amigos y comparte tus juegos.</p>
                                     </div>
                                 </div>
                             </div>

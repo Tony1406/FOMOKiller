@@ -39,11 +39,7 @@ export default function LoginPage() {
         <div className="login-wrap page-enter">
             <div className="login-container">
                 <div className="login-header">
-                    <div className="login-logo">
-                        <i className="fa-solid fa-gamepad"></i>
-                        <span>FOMOKiller</span>
-                    </div>
-                    <div className="login-title">Iniciar Sesión</div>
+                    <div className="login-title">Iniciar <strong className=''>Sesión</strong></div>
                     <div className="login-subtitle">Bienvenido de nuevo</div>
                 </div>
                 {errorMsg && <div className="login-error-message">{errorMsg}</div>}

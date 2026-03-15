@@ -125,3 +125,25 @@ export const register = async (username: string, email: string, password: string
 
     return response.json();
 };
+
+export const setPriority = async (userId: number, gameId: number, isPriority: boolean) => {
+    const response = await fetch(`${URL}/my-games/priority?userId=${userId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            ...getAuthHeaders()
+        },
+        body: JSON.stringify({
+            gameId: gameId,
+            isPriority: isPriority
+        }),
+    });
+
+    return response;
+};
+
+export const getPriorities = async (userId: number) => {
+    const response = await fetch(`${URL}/my-games/priorities?userId=${userId}`, { headers: getAuthHeaders() });
+    const data = await response.json();
+    return data;
+};

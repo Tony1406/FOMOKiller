@@ -73,6 +73,7 @@
     max-width: 90%;
     height: auto;
     filter: drop-shadow(0 20px 50px rgba(0, 71, 171, 0.4));
+    border-radius: 16px;
 }
 
 @keyframes dlFloat {
