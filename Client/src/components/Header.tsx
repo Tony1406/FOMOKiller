@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { getUserProfile } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import logoSimple from '../assets/Logo_simple.png';
@@ -20,11 +21,16 @@ export default function Header() {
         <header className="app-header">
             <div className="app-logo">
                 <img src={logoSimple} alt="FOMOKiller" className="app-logo-img" />
-                <span className="app-logo-text">FOMOKiller</span>
+                <span className="app-logo-text"><span className="fomokiller-brand">FOMO<span className="fomokiller-accent">Killer</span></span></span>
             </div>
-            <div className="app-user-info">
+            <Link to="/app/profile" className="app-user-info">
                 <span className="app-user-name">{user?.username}</span>
-            </div>
+                <img
+                    src={user?.avatarUrl || "https://api.dicebear.com/9.x/avataaars/svg?seed=Felix"}
+                    alt="avatar"
+                    className="app-user-avatar"
+                />
+            </Link>
         </header>
     );
 }

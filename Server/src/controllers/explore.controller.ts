@@ -12,15 +12,12 @@ export const getCollections = async (req: Request, res: Response) => {
                 {
                     model: Game,
                     attributes: ['id'],
-                    through: { attributes: [] }
                 }
             ]
         });
 
         const formatted = collections.map((col: any) => {
             const data = col.toJSON();
-            data.gameCount = data.Games ? data.Games.length : 0;
-            delete data.Games;
             return data;
         });
 
@@ -33,7 +30,7 @@ export const getCollections = async (req: Request, res: Response) => {
 
 export const getCollectionGames = async (req: Request, res: Response) => {
     try {
-        const { collectionId } = req.params;
+        const collectionId  = req.params.collectionId;
 
         const collection = await Collection.findByPk(Number(collectionId), {
             include: [
@@ -47,7 +44,7 @@ export const getCollectionGames = async (req: Request, res: Response) => {
             ]
         });
 
-        if (!collection) {
+        if (collection === null) {
             res.status(404).json({ message: "Colección no encontrada" });
             return;
         }
@@ -96,10 +93,10 @@ export const createCollection = async (req: Request, res: Response) => {
 
 export const updateCollection = async (req: Request, res: Response) => {
     try {
-        const { collectionId } = req.params;
+        const collectionId  = req.params.collectionId;
         const [updated] = await Collection.update(req.body, { where: { id: Number(collectionId) } });
 
-        if (updated) {
+        if (updated > 0) {
             const updatedCol = await Collection.findByPk(Number(collectionId));
             res.status(200).json(updatedCol);
         } else {
@@ -112,10 +109,10 @@ export const updateCollection = async (req: Request, res: Response) => {
 
 export const deleteCollection = async (req: Request, res: Response) => {
     try {
-        const { collectionId } = req.params;
+        const collectionId  = req.params.collectionId;
         const deleted = await Collection.destroy({ where: { id: Number(collectionId) } });
 
-        if (deleted) {
+        if (deleted > 0) {
             res.status(200).json({ message: "Colección eliminada" });
         } else {
             res.status(404).json({ message: "No existe esa colección" });

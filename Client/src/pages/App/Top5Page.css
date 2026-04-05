@@ -55,6 +55,24 @@
     border-radius: var(--radius-md);
     border: 1px solid var(--border);
     transition: all var(--t-base) var(--ease-smooth);
+    cursor: grab;
+}
+
+.priority-slot:active {
+    cursor: grabbing;
+}
+
+.priority-slot.drag-over {
+    border-color: var(--cobalt);
+    background: rgba(0, 112, 243, 0.1);
+    transform: scale(1.01);
+}
+
+.top5-drag-handle {
+    color: var(--text-muted);
+    font-size: 14px;
+    flex-shrink: 0;
+    opacity: 0.5;
 }
 
 .priority-slot.empty {
@@ -105,6 +123,12 @@
     margin-bottom: 24px;
 }
 
+.top5-status-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .top5-status-text {
     font-size: 13px;
     color: var(--text-secondary);
@@ -151,9 +175,11 @@
 }
 
 .top5-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     padding: 8px 14px;
     border-radius: var(--radius-sm);
-    /* Cambiado de pill a sm */
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
@@ -162,6 +188,7 @@
     background: var(--bg-surface);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
 .top5-btn-drop,
@@ -181,6 +208,92 @@
 
 .top5-btn:active {
     transform: scale(0.95);
+}
+
+/* ── Card grid Top 5 ─────────────────────────── */
+.top5-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.top5-card {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 2/3;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    cursor: grab;
+    transition: border-color var(--t-base), box-shadow var(--t-base), transform var(--t-base);
+}
+
+.top5-card:active {
+    cursor: grabbing;
+}
+
+.top5-card.drag-over {
+    border-color: var(--cobalt);
+    box-shadow: 0 0 0 2px var(--cobalt-light);
+    transform: scale(1.03);
+}
+
+.top5-card-empty {
+    border: 1.5px dashed rgba(255, 255, 255, 0.08);
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.top5-card-empty-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.top5-card-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 10;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    background: var(--cobalt);
+    color: #fff;
+    box-shadow: 0 0 10px var(--cobalt-glow);
+    border: 1px solid var(--cobalt-light);
+}
+
+.top5-card-actions .top5-btn {
+    flex: 1;
+    padding: 7px 4px;
+    height: auto;
+    justify-content: center;
+    font-size: 10px;
+    gap: 4px;
+}
+
+@media (max-width: 768px) {
+    .top5-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .top5-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
 }
 
 /* Pantallas grandes y monitores externos */
@@ -251,5 +364,26 @@
     .top5-btn {
         padding: 10px 18px;
         font-size: 14px;
+    }
+
+    .top5-grid {
+        gap: 24px;
+    }
+
+    .top5-card-badge {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+        top: 16px;
+        left: 16px;
+    }
+
+    .top5-card-actions .top5-btn {
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .top5-status-right {
+        gap: 16px;
     }
 }

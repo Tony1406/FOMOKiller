@@ -26,8 +26,6 @@ export default function LoginPage() {
                 setErrorMsg(respuesta.error);
                 return;
             }
-            localStorage.setItem('fomokiller_token', respuesta.token);
-            localStorage.setItem('fomokiller_user', JSON.stringify(respuesta.user));
             setUser(respuesta.user);
             navigate('/app');
         } catch (error: any) {

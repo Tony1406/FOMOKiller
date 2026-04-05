@@ -111,8 +111,8 @@ export default function MissionPage() {
                 <div className="manifesto-card">
                     <h2><i className="fa-solid fa-quote-left"></i></h2>
                     <p className="manifesto-text">
-                        "No necesitas jugar todos los juegos. Necesitas jugar <strong>los juegos correctos</strong>.
-                        FOMOKiller existe para que dejes de acumular y empieces a disfrutar."
+                        No necesitas jugar todos los juegos. Necesitas jugar <strong>los juegos correctos</strong>.
+                        FOMOKiller existe para que dejes de acumular y empieces a disfrutar.
                     </p>
                     <div className="manifesto-values-list">
                         <div className="manifesto-value">

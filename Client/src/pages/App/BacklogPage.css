@@ -3,21 +3,28 @@
     margin-bottom: 20px;
 }
 
-.backlog-tabs {
+/* ── Toolbar ─────────────────────────────────── */
+.backlog-toolbar {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+}
+
+.backlog-toolbar-left {
+    display: flex;
+    align-items: center;
     gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
 }
 
-.backlog-tabs::-webkit-scrollbar {
-    display: none;
-}
-
-.tab-pill {
-    flex-shrink: 0;
-    padding: 8px 18px;
+/* Dropdown trigger button */
+.backlog-dropdown-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
     border-radius: var(--radius-md);
     font-size: 13px;
     font-weight: 600;
@@ -29,11 +36,198 @@
     white-space: nowrap;
 }
 
-.tab-pill.active {
+.backlog-dropdown-btn:hover {
+    border-color: var(--cobalt);
+    color: #fff;
+}
+
+.backlog-dropdown-btn.active {
     background: var(--cobalt);
     border-color: var(--cobalt-light);
     color: #fff;
     box-shadow: var(--shadow-cobalt);
+}
+
+.backlog-chevron {
+    font-size: 10px;
+    opacity: 0.6;
+}
+
+/* Dropdown wrapper + menu */
+.backlog-dropdown-wrap {
+    position: relative;
+}
+
+.backlog-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 200;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 4px;
+    min-width: 180px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    animation: dropdownIn 0.15s var(--ease-spring);
+}
+
+@keyframes dropdownIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.backlog-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    transition: background var(--t-base) var(--ease-smooth);
+    text-align: left;
+}
+
+.backlog-dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.backlog-dropdown-item.active {
+    color: var(--cobalt-light);
+}
+
+.backlog-item-check {
+    visibility: hidden;
+    font-size: 11px;
+    color: var(--cobalt-light);
+}
+
+.backlog-item-check.visible {
+    visibility: visible;
+}
+
+.backlog-dropdown-item--danger {
+    color: var(--pass);
+}
+
+.backlog-dropdown-item--danger:hover {
+    background: rgba(244, 67, 54, 0.1);
+}
+
+.backlog-dropdown-item--danger.confirming {
+    background: rgba(244, 67, 54, 0.15);
+    font-weight: 700;
+}
+
+/* ── Leyenda central ─────────────────────────── */
+.backlog-legend {
+    display: none;
+}
+
+@media (min-width: 900px) {
+    .backlog-legend {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+    }
+}
+
+.backlog-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.backlog-legend-item i {
+    font-size: 16px;
+    color: var(--text-primary);
+}
+
+/* ── Toolbar right (toggle + search) ────────── */
+.backlog-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.backlog-view-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    transition: all var(--t-base) var(--ease-smooth);
+}
+
+.backlog-view-btn:hover {
+    border-color: var(--cobalt);
+    color: #fff;
+}
+
+/* Search bar */
+.backlog-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 7px 12px;
+    transition: border-color var(--t-base) var(--ease-smooth);
+}
+
+.backlog-search:focus-within {
+    border-color: var(--cobalt);
+}
+
+.backlog-search-icon {
+    color: var(--text-secondary);
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.backlog-search-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 13px;
+    width: 180px;
+}
+
+.backlog-search-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.backlog-search-clear {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 12px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    transition: color var(--t-base);
+}
+
+.backlog-search-clear:hover {
+    color: var(--text-primary);
 }
 
 .game-list {
@@ -41,6 +235,29 @@
     flex-direction: column;
     gap: 16px;
     margin-top: 24px;
+}
+
+.backlog-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 64px 24px;
+    gap: 12px;
+}
+
+.backlog-empty-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.backlog-empty-sub {
+    font-size: 14px;
+    color: var(--text-secondary);
+    max-width: 320px;
+    line-height: 1.6;
 }
 
 .game-list-item {
@@ -85,9 +302,6 @@
     margin-top: 3px;
 }
 
-.backlog-tabs-spacing {
-    margin-top: 14px;
-}
 
 .game-thumb-letter {
     font-weight: bold;
@@ -219,6 +433,120 @@
     }
 }
 
+/* ── Card grid ───────────────────────────────── */
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.game-card {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 2/3;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+.game-card-img-wrap {
+    position: absolute;
+    inset: 0;
+}
+
+.game-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.game-card-no-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--text-secondary);
+    background: var(--bg-elevated);
+}
+
+.game-card-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 30%, rgba(0, 0, 0, 0.98) 100%);
+    pointer-events: none;
+}
+
+.game-card-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.game-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.game-card-subtitle {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.game-card-actions {
+    display: flex;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.game-card-actions .action-btn-secondary,
+.game-card-actions .action-btn-drop,
+.game-card-actions .action-btn-completado,
+.game-card-actions .action-btn-info {
+    width: auto;
+    height: 32px;
+    font-size: 12px;
+    flex: 1;
+}
+
+@media (max-width: 1024px) {
+    .game-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .game-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+
+@media (max-width: 400px) {
+    .game-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 768px) {
 
     .action-btn-secondary,
@@ -248,18 +576,15 @@
         margin-bottom: 24px;
     }
 
-    /* Tabs */
-    .tab-pill {
-        padding: 12px 24px;
-        font-size: 16px;
+    /* Toolbar */
+    .backlog-dropdown-btn {
+        padding: 10px 18px;
+        font-size: 15px;
     }
 
-    .backlog-tabs {
-        gap: 12px;
-    }
-
-    .backlog-tabs-spacing {
-        margin-top: 24px;
+    .backlog-search-input {
+        width: 220px;
+        font-size: 15px;
     }
 
     /* Lista de juegos */
@@ -299,5 +624,32 @@
 
     .game-actions {
         gap: 12px;
+    }
+
+    .game-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 24px;
+    }
+
+    .game-card-title {
+        font-size: 20px;
+    }
+
+    .game-card-subtitle {
+        font-size: 16px;
+    }
+
+    .game-card-actions .action-btn-secondary,
+    .game-card-actions .action-btn-drop,
+    .game-card-actions .action-btn-completado,
+    .game-card-actions .action-btn-info {
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .backlog-view-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
     }
 }

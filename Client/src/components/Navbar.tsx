@@ -3,7 +3,6 @@ import logoSimple from '../assets/Logo_simple.png';
 import exploreIcon from '../assets/explorar.png';
 import backlogIcon from '../assets/backlog.png';
 import swipeIcon from '../assets/swipe.png';
-import chatIcon from '../assets/chat.png';
 import top5Icon from '../assets/top5.png';
 import profileIcon from '../assets/perfil.png';
 
@@ -16,7 +15,7 @@ export default function Navbar() {
             <div className="nav-logo">
                 <div className="nav-item nav-logo-btn">
                     <img src={logoSimple} alt="FOMOKiller" className="nav-logo-simple" />
-                    <span className="app-logo-text">FOMOKiller</span>
+                    <span className="app-logo-text"><span className="fomokiller-brand">FOMO<span className="fomokiller-accent">Killer</span></span></span>
                 </div>
             </div>
 
@@ -50,12 +49,6 @@ export default function Navbar() {
                         <img src={profileIcon} alt="profile" className="nav-icon-img" />
                     </span>
                     <span className="nav-label">Perfil</span>
-                </NavLink>
-                <NavLink to="/app/chat" className="nav-item">
-                    <span className="nav-icon">
-                        <img src={chatIcon} alt="chat" className="nav-icon-img chat-nav-img" />
-                    </span>
-                    <span className="nav-label">Mensajes</span>
                 </NavLink>
             </div>
         </nav>

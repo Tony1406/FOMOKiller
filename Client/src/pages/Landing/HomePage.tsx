@@ -1,21 +1,20 @@
-import heroImg from '../../assets/391.jpg';
-import ps2Poster from '../../assets/ps2poster2.jpg';
 import eyeps from '../../assets/eyeps.jpg';
+import fondoPS2 from '../../assets/fondoPS2.png';
 import './HomePage.css';
 
-export default function HomePage() {
+export default function HomePage() { 
     return (
         <div className="home-page">
             {/* ═══ HERO ═══ */}
             <section className="home-hero-section">
                 {/* Imagen hero – web */}
                 <div className="home-hero-img-wrap home-hero-web">
-                    <img src={heroImg} alt="" className="home-hero-img" />
+                    <img src={fondoPS2} alt="" className="home-hero-img" />
                     <div className="home-hero-img-overlay"></div>
                 </div>
                 {/* Imagen hero – mobile */}
                 <div className="home-hero-img-wrap home-hero-mobile">
-                    <img src={heroImg} alt="" className="home-hero-img" />
+                    <img src={fondoPS2} alt="" className="home-hero-img" />
                     <div className="home-hero-img-overlay home-hero-img-overlay-mobile"></div>
                 </div>
 
