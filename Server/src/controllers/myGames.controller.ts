@@ -6,7 +6,7 @@ import type { Request, Response } from 'express';
 export const getBacklog = async (req: Request, res: Response) => {
     try {
         const userId = req.query.userId;
-        if (!userId) {
+        if (userId === undefined) {
             res.status(400).json({ error: "Falta userId en query params" });
             return;
         }
@@ -32,7 +32,7 @@ export const getBacklog = async (req: Request, res: Response) => {
 export const getPriorities = async (req: Request, res: Response) => {
     try {
         const userId = req.query.userId;
-        if (!userId) {
+        if (userId === undefined) {
             res.status(400).json({ error: "Falta userId en query params" });
             return;
         }
@@ -45,7 +45,12 @@ export const getPriorities = async (req: Request, res: Response) => {
             include: [{ model: Game }],
             limit: 5
         });
-        res.status(200).json(priorities);
+        const sorted = [...priorities].sort((a: any, b: any) => {
+            const aOrder = a.priorityOrder ?? 999;
+            const bOrder = b.priorityOrder ?? 999;
+            return aOrder - bOrder;
+        });
+        res.status(200).json(sorted);
     } catch (error) {
         res.status(500).json({ error: "Error al obtener prioridades" });
     }
@@ -87,6 +92,8 @@ export const setPriority = async (req: Request, res: Response) => {
             return;
         }
 
+        let updateData: any = { isPriority };
+
         if (isPriority) {
             const priorityCount = await UserGame.count({
                 where: { userId: Number(userId), isPriority: true }
@@ -95,9 +102,12 @@ export const setPriority = async (req: Request, res: Response) => {
                 res.status(400).json({ error: "Ya tienes 5 juegos prioritarios. Elimina uno primero." });
                 return;
             }
+            updateData.priorityOrder = priorityCount + 1;
+        } else {
+            updateData.priorityOrder = null;
         }
 
-        const [updated] = await UserGame.update({ isPriority }, {
+        const [updated] = await UserGame.update(updateData, {
             where: { userId: Number(userId), gameId: Number(gameId) }
         });
 
@@ -108,6 +118,28 @@ export const setPriority = async (req: Request, res: Response) => {
         }
     } catch (error) {
         res.status(500).json({ error: "Error al actualizar la prioridad" });
+    }
+};
+
+export const reorderPriorities = async (req: Request, res: Response) => {
+    try {
+        const { order } = req.body;
+        const userId = req.query.userId;
+        if (!userId || !Array.isArray(order)) {
+            res.status(400).json({ error: "Faltan parámetros" });
+            return;
+        }
+        await Promise.all(
+            order.map((item: { gameId: number; priorityOrder: number }) =>
+                UserGame.update(
+                    { priorityOrder: item.priorityOrder },
+                    { where: { userId: Number(userId), gameId: item.gameId } }
+                )
+            )
+        );
+        res.status(200).json({ message: "Orden actualizado" });
+    } catch (error) {
+        res.status(500).json({ error: "Error al reordenar prioridades" });
     }
 };
 
@@ -180,6 +212,30 @@ export const checkIsFinished = async (req: Request, res: Response) => {
         }
     } catch (error) {
         res.status(500).json({ error: "Error al verificar completado" });
+    }
+};
+
+export const clearBacklog = async (req: Request, res: Response) => {
+    try {
+        const userId = req.query.userId;
+        if (!userId) {
+            res.status(400).json({ error: "Falta userId en query params" });
+            return;
+        }
+        await UserGame.destroy({
+            where: {
+                userId: Number(userId),
+                status: {
+                    [Op.and]: [
+                        { [Op.ne]: 'DROPPED' },
+                        { [Op.ne]: 'DISLIKED' }
+                    ]
+                }
+            }
+        });
+        res.status(200).json({ message: "Backlog borrado" });
+    } catch (error) {
+        res.status(500).json({ error: "Error al limpiar el backlog" });
     }
 };
 

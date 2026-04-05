@@ -39,10 +39,21 @@
     display: flex;
     gap: 10px;
     align-items: center;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .app-user-name {
     font-size: 14px;
     color: var(--text-primary);
     font-weight: 600;
+}
+
+.app-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--cobalt);
+    object-fit: cover;
+    flex-shrink: 0;
 }

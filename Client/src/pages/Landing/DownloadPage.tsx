@@ -11,7 +11,7 @@ export default function DownloadPage() {
             <div className="download-content">
                 <div className="section-tag">DESCARGA</div>
                 <h1 className="land-section-title">
-                    Lleva FOMOKiller <span className="text-glow">contigo</span>
+                    Lleva <span className="fomokiller-brand">FOMO<span className="fomokiller-accent">Killer</span></span> <span>contigo</span>
                 </h1>
                 <p className="land-section-desc">
                     Próximamente en iOS y Android. Mientras tanto,

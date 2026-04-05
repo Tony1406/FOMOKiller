@@ -37,6 +37,11 @@ export const UserGame = sequelize.define('UserGame', {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
         field: 'is_finished'
+    },
+    priorityOrder: {
+        type: DataTypes.INTEGER,
+        defaultValue: null,
+        field: 'priority_order'
     }
 }, {
     tableName: 'user_games',

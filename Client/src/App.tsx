@@ -6,7 +6,6 @@ import ExplorePage from './pages/App/ExplorePage';
 import BacklogPage from './pages/App/BacklogPage';
 import Top5Page from './pages/App/Top5Page';
 import ProfilePage from './pages/App/ProfilePage';
-import ChatPage from './pages/App/ChatPage';
 import Aurora from './components/Background/Aurora';
 import HomePage from './pages/Landing/HomePage';
 import MissionPage from './pages/Landing/MissionPage';
@@ -57,7 +56,6 @@ export default function App() {
               <Route path="backlog" element={<BacklogPage />} />
               <Route path="top5" element={<Top5Page />} />
               <Route path="profile" element={<ProfilePage />} />
-              <Route path="chat" element={<ChatPage />} />
             </Route>
           </Route>
         </Routes>

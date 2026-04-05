@@ -8,8 +8,6 @@ import { GamePlatform } from './GamePlatformModel.js';
 import { UserPlatform } from './UserPlatformModel.js';
 import { Collection } from './CollectionModel.js';
 import { CollectionGame } from './CollectionGameModel.js';
-import { Message } from './MessageModel.js';
-import { Friendship } from './FriendshipModel.js';
 
 export const defineAssociations = () => {
 
@@ -35,29 +33,4 @@ export const defineAssociations = () => {
 
     Collection.belongsToMany(Game, { through: CollectionGame, foreignKey: 'collectionId', otherKey: 'gameId' });
     Game.belongsToMany(Collection, { through: CollectionGame, foreignKey: 'gameId', otherKey: 'collectionId' });
-
-
-    User.hasMany(Message, { as: 'SentMessages', foreignKey: 'senderId' });
-    Message.belongsTo(User, { as: 'Sender', foreignKey: 'senderId' });
-
-    User.hasMany(Message, { as: 'ReceivedMessages', foreignKey: 'receiverId' });
-    Message.belongsTo(User, { as: 'Receiver', foreignKey: 'receiverId' });
-
-    Game.hasMany(Message, { foreignKey: 'recommendedGameId' });
-    Message.belongsTo(Game, { as: 'RecommendedGame', foreignKey: 'recommendedGameId' });
-
-
-    User.belongsToMany(User, {
-        as: 'Friends',
-        through: Friendship,
-        foreignKey: 'userId1',
-        otherKey: 'userId2'
-    });
-
-    User.belongsToMany(User, {
-        as: 'FriendOf',
-        through: Friendship,
-        foreignKey: 'userId2',
-        otherKey: 'userId1'
-    });
 };

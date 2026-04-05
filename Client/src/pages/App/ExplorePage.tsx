@@ -14,6 +14,10 @@ export default function ExplorePage() {
     const [juegoSeleccionado, setJuegoSeleccionado] = useState<any>(null);
     const [mostrarToast, setMostrarToast] = useState(false);
     const [enBacklog, setEnBacklog] = useState<Set<number>>(new Set());
+    const [vista, setVista] = useState<'lista' | 'cards'>(
+        () => (localStorage.getItem('fomo_vista_explore') as 'lista' | 'cards') || 'lista'
+    );
+    useEffect(() => { localStorage.setItem('fomo_vista_explore', vista); }, [vista]);
 
     const cargaInicial = async () => {
         const data = await getCollections();
@@ -51,7 +55,6 @@ export default function ExplorePage() {
     const handleAddGame = async (gameId: number) => {
         if (!user) return;
         if (enBacklog.has(gameId)) {
-            // Ya está en el backlog → quitarlo
             await updateStatus(user.id, gameId, 'DROPPED');
             setEnBacklog(prev => {
                 const next = new Set(prev);
@@ -59,7 +62,6 @@ export default function ExplorePage() {
                 return next;
             });
         } else {
-            // No está → añadirlo
             await updateStatus(user.id, gameId, 'LIKED');
             setEnBacklog(prev => new Set(prev).add(gameId));
             setMostrarToast(true);
@@ -67,38 +69,77 @@ export default function ExplorePage() {
         }
     };
 
-    const renderGames = (games: any[]) => (
-        <div className="game-list">
-            {games.map((game: any) => {
-                const estaEnBacklog = enBacklog.has(game.id);
-                return (
-                    <div className="game-list-item" key={game.id}>
-                        <div className="game-thumb-placeholder game-thumb-letter">
-                            {game.title[0].toUpperCase()}
-                        </div>
-                        <div className="game-info">
-                            <div className="game-title">{game.title}</div>
-                            <div className="game-subtitle">
-                                {game.developer} {game.releaseYear}
+    const renderGames = (games: any[], vistaMode: 'lista' | 'cards' = 'lista') => {
+        if (vistaMode === 'cards') {
+            return (
+                <div className="game-grid">
+                    {games.map((game: any) => {
+                        const estaEnBacklog = enBacklog.has(game.id);
+                        return (
+                            <div key={game.id} className="game-card">
+                                <div className="game-card-img-wrap">
+                                    {game.imageUrl
+                                        ? <img src={game.imageUrl} alt={game.title} className="game-card-image" />
+                                        : <div className="game-card-no-image">{game.title[0].toUpperCase()}</div>
+                                    }
+                                </div>
+                                <div className="game-card-gradient" />
+                                <div className="game-card-info">
+                                    <div className="game-card-title">{game.title}</div>
+                                    <div className="game-card-subtitle">{game.developer} · {game.releaseYear}</div>
+                                    <div className="game-card-actions">
+                                        <button className="action-btn-secondary" onClick={() => setJuegoSeleccionado(game)}>
+                                            <i className="fa-solid fa-info-circle"></i>
+                                        </button>
+                                        <button
+                                            className={`action-btn-completado${estaEnBacklog ? ' action-btn-completado--active' : ''}`}
+                                            onClick={() => handleAddGame(game.id)}
+                                            title={estaEnBacklog ? 'Quitar del backlog' : 'Añadir al backlog'}
+                                        >
+                                            <i className="fa-solid fa-heart"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            );
+        }
+
+        return (
+            <div className="game-list">
+                {games.map((game: any) => {
+                    const estaEnBacklog = enBacklog.has(game.id);
+                    return (
+                        <div className="game-list-item" key={game.id}>
+                            <div className="game-thumb-placeholder game-thumb-letter">
+                                {game.title[0].toUpperCase()}
+                            </div>
+                            <div className="game-info">
+                                <div className="game-title">{game.title}</div>
+                                <div className="game-subtitle">
+                                    {game.developer} {game.releaseYear}
+                                </div>
+                            </div>
+                            <div className="game-actions">
+                                <button className="action-btn-secondary" onClick={() => setJuegoSeleccionado(game)}>
+                                    <i className="fa-solid fa-info-circle"></i>
+                                </button>
+                                <button
+                                    className={`action-btn-completado${estaEnBacklog ? ' action-btn-completado--active' : ''}`}
+                                    onClick={() => handleAddGame(game.id)}
+                                    title={estaEnBacklog ? 'Quitar del backlog' : 'Añadir al backlog'}
+                                >
+                                    <i className="fa-solid fa-heart"></i>
+                                </button>
                             </div>
                         </div>
-                        <div className="game-actions">
-                            <button className="action-btn-secondary" onClick={() => setJuegoSeleccionado(game)} >
-                                <i className="fa-solid fa-info-circle"></i>
-                            </button>
-                            <button
-                                className={`action-btn-completado${estaEnBacklog ? ' action-btn-completado--active' : ''}`}
-                                onClick={() => handleAddGame(game.id)}
-                                title={estaEnBacklog ? 'Quitar del backlog' : 'Añadir al backlog'}
-                            >
-                                <i className="fa-solid fa-heart"></i>
-                            </button>
-                        </div>
-                    </div>
-                );
-            })}
-        </div>
-    );
+                    );
+                })}
+            </div>
+        );
+    };
 
 
     let vistaPrincipal;
@@ -106,9 +147,24 @@ export default function ExplorePage() {
     if (buscar.trim().length > 0) {
         vistaPrincipal = (
             <div className="search-results-container">
-                <div className="section-title">Resultados de búsqueda</div>
+                <div className="search-results-header">
+                    <div className="collection-view-toolbar search-results-toolbar">
+                        <div className="section-title">Resultados de búsqueda</div>
+                        <button
+                            className="backlog-view-btn"
+                            onClick={() => setVista(v => v === 'lista' ? 'cards' : 'lista')}
+                            title={vista === 'lista' ? 'Ver como cuadrícula' : 'Ver como lista'}
+                        >
+                            <i className={`fa-solid ${vista === 'lista' ? 'fa-grip' : 'fa-list'}`} />
+                        </button>
+                    </div>
+                    <div className="backlog-legend explore-legend">
+                        <div className="backlog-legend-item"><i className="fa-solid fa-info-circle" /><span>Más información</span></div>
+                        <div className="backlog-legend-item"><i className="fa-solid fa-heart" /><span>Añadir al backlog</span></div>
+                    </div>
+                </div>
                 {buscarResultados.length > 0 ? (
-                    renderGames(buscarResultados)
+                    renderGames(buscarResultados, vista)
                 ) : (
                     <div className="section-sub">No hemos encontrado nada para "{buscar}"</div>
                 )}
@@ -123,9 +179,22 @@ export default function ExplorePage() {
                     </button>
                     <div className="section-title">{coleccionSeleccionada.title}</div>
                     <div className="section-sub">{coleccionSeleccionada.description}</div>
+                    <div className="collection-view-toolbar">
+                        <button
+                            className="backlog-view-btn"
+                            onClick={() => setVista(v => v === 'lista' ? 'cards' : 'lista')}
+                            title={vista === 'lista' ? 'Ver como cuadrícula' : 'Ver como lista'}
+                        >
+                            <i className={`fa-solid ${vista === 'lista' ? 'fa-grip' : 'fa-list'}`} />
+                        </button>
+                    </div>
+                    <div className="backlog-legend explore-legend">
+                        <div className="backlog-legend-item"><i className="fa-solid fa-info-circle" /><span>Más información</span></div>
+                        <div className="backlog-legend-item"><i className="fa-solid fa-heart" /><span>Añadir al backlog</span></div>
+                    </div>
                 </div>
 
-                {renderGames(coleccionSeleccionada.Games)}
+                {renderGames(coleccionSeleccionada.Games, vista)}
             </div>
         );
     } else {

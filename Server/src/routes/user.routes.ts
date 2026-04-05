@@ -1,7 +1,12 @@
 import { Router } from 'express';
-import { register, login, getProfile, updateProfile, getFriends, sendFriendRequest, acceptFriendRequest } from '../controllers/user.controller.js';
-const router = Router();
+import { register, login, getProfile, updateProfile } from '../controllers/user.controller.js';
 
+import { getMe, logout } from '../controllers/user.controller.js';
+
+
+const router = Router();
+router.get('/me', getMe);
+router.post('/logout', logout);
 
 router.post('/register', register);
 
@@ -11,10 +16,5 @@ router.get('/profile/:userId', getProfile);
 
 router.put('/profile/:userId', updateProfile);
 
-router.get('/friends', getFriends);
-
-router.post('/friends/request', sendFriendRequest);
-
-router.put('/friends/accept', acceptFriendRequest);
 
 export default router;

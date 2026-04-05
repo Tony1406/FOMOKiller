@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { sequelize } from './config/db.js';
+import cookieParser from 'cookie-parser';
+
 
 dotenv.config();
 
@@ -12,19 +14,21 @@ import homeRoutes from './routes/home.routes.js';
 import userRoutes from './routes/user.routes.js';
 import myGamesRoutes from './routes/myGames.routes.js';
 import exploreRoutes from './routes/explore.routes.js';
-import chatRoutes from './routes/chat.routes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}));
+app.use(cookieParser());
 app.use(express.json());
 
 app.use('/api/home', homeRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/my-games', myGamesRoutes);
 app.use('/api/explore', exploreRoutes);
-app.use('/api/chat', chatRoutes);
 
 const main = async () => {
     try {

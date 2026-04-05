@@ -7,7 +7,7 @@ import type { Request, Response } from 'express';
 export const getAllGames = async (req: Request, res: Response) => {
     try {
         const games = await Game.findAll({
-            include: [{ model: Genre }]
+            include: [{ model: Genre }, { model: Platform }]
         });
         res.status(200).json(games);
     } catch (error) {
@@ -21,7 +21,7 @@ export const getSwipeDeck = async (req: Request, res: Response) => {
 
 export const getGameDetails = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
+        const id = req.params.id;
 
         const game = await Game.findByPk(Number(id), {
             include: [
@@ -30,7 +30,7 @@ export const getGameDetails = async (req: Request, res: Response) => {
             ]
         });
 
-        if (!game) {
+        if (game === null) {
             res.status(404).json({ message: "Juego no encontrado" });
             return;
         }
@@ -52,7 +52,7 @@ export const createGame = async (req: Request, res: Response) => {
 
 export const updateGame = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
+        const id = req.params.id;
         const [updatedRows] = await Game.update(req.body, { where: { id: Number(id) } });
 
         if (updatedRows > 0) {
@@ -69,10 +69,10 @@ export const updateGame = async (req: Request, res: Response) => {
 
 export const deleteGame = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const deletedRows = await Game.destroy({ where: { id: Number(id) } });
+        const id = req.params.id;
+        const eliminarJuego = await Game.destroy({ where: { id: Number(id) } });
 
-        if (deletedRows > 0) {
+        if (eliminarJuego > 0) {
             res.status(200).json({ message: "Juego eliminado correctamente" });
         } else {
             res.status(404).json({ message: "Juego no encontrado" });

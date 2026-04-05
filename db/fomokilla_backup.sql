@@ -1,3 +1,7 @@
+DROP DATABASE IF EXISTS fomokiller;
+CREATE DATABASE fomokiller;
+USE fomokiller;
+
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -54,8 +58,7 @@ CREATE TABLE user_games (
     status ENUM('LIKED', 'DISLIKED', 'COMPLETED', 'DROPPED') NOT NULL, 
     is_priority BOOLEAN DEFAULT FALSE, 
     added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_finished BOOLEAN DEFAULT FALSE,
-    priority_order INT DEFAULT NULL,
+    is_finished BOOLEAN DEFAULT FALSE, 
     PRIMARY KEY (user_id, game_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
@@ -85,29 +88,49 @@ CREATE TABLE collection_games (
     FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
 );
 
+CREATE TABLE friendships (
+    user_id_1 INT,
+    user_id_2 INT,
+    status ENUM('PENDING', 'ACCEPTED', 'BLOCKED') DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id_1, user_id_2),
+    FOREIGN KEY (user_id_1) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id_2) REFERENCES users(id) ON DELETE CASCADE
+);
 
+CREATE TABLE messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    content TEXT,
+    recommended_game_id INT DEFAULT NULL, 
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (recommended_game_id) REFERENCES games(id) ON DELETE SET NULL
+);
 
 INSERT INTO users (username, email, password_hash, role, avatar_url) VALUES
-('SlayerX', 'slayer@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'admin', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=SlayerX'),
-('CozyFarm', 'cozy@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=CozyFarm'),
-('ShooterPro', 'fps@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=ShooterPro'),
-('RetroDave', 'dave@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=RetroDave'),
-('SonyPony', 'sony@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=SonyPony'),
-('NintyGirl', 'mario@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=NintyGirl'),
-('PCMaster', 'rgb@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=PCMaster'),
-('CasualDad', 'dad@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=CasualDad'),
-('HorrorFan', 'boo@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=HorrorFan'),
-('IndieHipster', 'indie@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=IndieHipster'),
-('FIFA_King', 'fut@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=FIFA_King'),
-('LoreSeeker', 'book@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=LoreSeeker'),
-('SpeedRunner', 'fast@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=SpeedRunner'),
-('MobileGamer', 'phone@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=MobileGamer'),
-('Strategist', 'civ@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Strategist'),
-('JRPG_Fan', 'weeb@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=JRPG_Fan'),
-('Explorer', 'open@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Explorer'),
-('Achievement', 'plat@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Achievement'),
-('OldSchool', 'boomer@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=OldSchool'),
-('TechDemo', 'demo@test.com', '$2b$10$Swh5/mOeL8.uVWxKD33FqeyUBzyi7JLQOSm.GKm0qi3P5.qRNQAuG', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=TechDemo');
+('SlayerX', 'slayer@test.com', '$2b$10$X7...', 'admin', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=SlayerX'),
+('CozyFarm', 'cozy@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=CozyFarm'),
+('ShooterPro', 'fps@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=ShooterPro'),
+('RetroDave', 'dave@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=RetroDave'),
+('SonyPony', 'sony@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=SonyPony'),
+('NintyGirl', 'mario@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=NintyGirl'),
+('PCMaster', 'rgb@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=PCMaster'),
+('CasualDad', 'dad@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=CasualDad'),
+('HorrorFan', 'boo@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=HorrorFan'),
+('IndieHipster', 'indie@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=IndieHipster'),
+('FIFA_King', 'fut@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=FIFA_King'),
+('LoreSeeker', 'book@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=LoreSeeker'),
+('SpeedRunner', 'fast@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=SpeedRunner'),
+('MobileGamer', 'phone@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=MobileGamer'),
+('Strategist', 'civ@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Strategist'),
+('JRPG_Fan', 'weeb@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=JRPG_Fan'),
+('Explorer', 'open@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Explorer'),
+('Achievement', 'plat@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Achievement'),
+('OldSchool', 'boomer@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=OldSchool'),
+('TechDemo', 'demo@test.com', '$2b$10$X7...', 'user', 'https://api.dicebear.com/7.x/pixel-art/svg?seed=TechDemo');
 
 INSERT INTO games (id, title, developer, release_year, description, image_url, trailer_url) VALUES
 (1, 'Apex Legends', 'Respawn Entertainment', 2019, 'Battle royale free-to-play con leyendas de habilidades únicas. 60 jugadores en escuadrones de 3 compiten en mapas con movimiento fluido al estilo Titanfall. El mejor battle royale del mercado.', 'https://cdn.akamai.steamstatic.com/steam/apps/1172470/header.jpg', 'https://www.youtube.com/results?search_query=Apex+Legends'),
@@ -1179,6 +1202,11 @@ INSERT INTO collection_games (collection_id, game_id) VALUES
 (13, 122), -- Cities: Skylines
 (13, 155); -- Darkest Dungeon 2
 
+INSERT INTO messages (sender_id, receiver_id, content, recommended_game_id) VALUES 
+(1, 2, '¡Hey! Tienes que probar esto, es una obra maestra.', NULL),
+(1, 2, 'Mira, es difícil pero vale la pena.', 38),
+(2, 1, 'Uff, se ve demasiado estresante para mí ahora mismo...', NULL),
+(2, 1, 'Yo estoy viciado a esto, es pura paz.', 121);
 
 INSERT INTO user_games (user_id, game_id, status, is_priority, is_finished) VALUES 
 (1, 38, 'LIKED', 1, 0),     -- Elden Ring
@@ -1202,6 +1230,15 @@ INSERT INTO user_games (user_id, game_id, status, is_priority, is_finished) VALU
 (3, 16, 'LIKED', 1, 0),     -- Rogue Company
 (3, 38, 'DROPPED', 0, 0);   -- Elden Ring
 
+INSERT INTO friendships (user_id_1, user_id_2, status) VALUES 
+(1, 2, 'ACCEPTED'), 
+(1, 3, 'ACCEPTED'), 
+(3, 7, 'ACCEPTED'), 
+(2, 6, 'ACCEPTED'), 
+(4, 1, 'PENDING'),  
+(8, 2, 'PENDING'),  
+(5, 1, 'PENDING'),  
+(6, 5, 'BLOCKED');  
 
 INSERT INTO user_platforms (user_id, platform_id) VALUES
 (1, 1), (1, 2),

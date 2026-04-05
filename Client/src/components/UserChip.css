@@ -1,0 +1,58 @@
+.user-chip {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .user-chip {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: fixed;
+        top: 14px;
+        right: 18px;
+        z-index: 40;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 40px;
+        padding: 5px 16px 5px 5px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+}
+
+.user-chip-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--cobalt);
+    object-fit: cover;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-cobalt);
+}
+
+.user-chip-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.88);
+    white-space: nowrap;
+}
+
+@media (min-width: 1600px) and (min-height: 900px) {
+    .user-chip {
+        top: 18px;
+        right: 24px;
+        padding: 6px 20px 6px 6px;
+        gap: 12px;
+    }
+
+    .user-chip-avatar {
+        width: 54px;
+        height: 54px;
+    }
+
+    .user-chip-name {
+        font-size: 16px;
+    }
+}
