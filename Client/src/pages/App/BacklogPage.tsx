@@ -7,8 +7,10 @@ import {
   clearBacklog,
 } from "../../services/api";
 import GameInfoModal from "../../components/modals/GameInfoModal";
+import Paginador from "../../components/Paginador";
 import { AuthContext } from "../../context/AuthContext";
 import "./BacklogPage.css";
+import "../../components/Paginador.css";
 
 export default function BacklogPage() {
   const { user } = useContext(AuthContext);
@@ -25,8 +27,12 @@ export default function BacklogPage() {
     () => (localStorage.getItem("fomo_vista_backlog") as "lista" | "cards") || "lista"
   );
   useEffect(() => { localStorage.setItem("fomo_vista_backlog", vista); }, [vista]);
+  const [pagina, setPagina] = useState(1);
+  useEffect(() => { setPagina(1); }, [busqueda, pestañaActiva]);
   const filtroRef = useRef<HTMLDivElement>(null);
   const accionesRef = useRef<HTMLDivElement>(null);
+  const pageRef = useRef<HTMLDivElement>(null);
+  const scrollTop = () => pageRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
 
   const cargarBacklog = async () => {
     if (!user) return;
@@ -122,7 +128,7 @@ export default function BacklogPage() {
   });
 
   return (
-    <div className="page page-padded page-enter">
+    <div className="page page-padded page-enter" ref={pageRef}>
       <div className="backlog-header">
         <div className="section-title">Mi Backlog</div>
         <div className="section-sub">{`${filteredGames.length} juegos en esta lista`}</div>
@@ -271,93 +277,23 @@ export default function BacklogPage() {
 
       {/* Vista lista */}
       {vista === "lista" && filteredGames.length > 0 && (
-        <div className="game-list">
-          {filteredGames.map((juego: any) => {
-            const game = juego.Game;
-            const letraInicial = game.title[0].toUpperCase();
-            return (
-              <div key={juego.gameId} className="game-list-item">
-                <div className="game-thumb-placeholder game-thumb-letter">
-                  {letraInicial}
-                </div>
-                <div className="game-info">
-                  <div className="game-title">{game?.title}</div>
-                  <div className="game-subtitle">
-                    {game?.developer} · {game?.releaseYear}
+        <>
+          <div className="game-list">
+            {filteredGames.slice((pagina - 1) * 10, pagina * 10).map((juego: any) => {
+              const game = juego.Game;
+              const letraInicial = game.title[0].toUpperCase();
+              return (
+                <div key={juego.gameId} className="game-list-item">
+                  <div className="game-thumb-placeholder game-thumb-letter">
+                    {letraInicial}
                   </div>
-                </div>
-                <div className="game-actions">
-                  <button
-                    className="action-btn-info"
-                    onClick={() => setJuegoSeleccionado(game)}
-                  >
-                    <i className="fa-solid fa-info-circle"></i>
-                  </button>
-                  <button
-                    className={`action-btn-secondary${juego.isPriority ? " action-btn-star--active" : ""}`}
-                    onClick={() => handleSetPriority(juego)}
-                    title={
-                      juego.isPriority ? "Quitar de Top 5" : "Añadir a Top 5"
-                    }
-                  >
-                    <i className="fa-solid fa-ranking-star"></i>
-                  </button>
-                  <button
-                    className="action-btn-drop"
-                    onClick={() => handleUpdateStatus(juego.gameId, "DROPPED")}
-                  >
-                    <i className="fa-solid fa-trash"></i>
-                  </button>
-                  <button
-                    className={
-                      juego.status === "COMPLETED"
-                        ? "action-btn-completado active"
-                        : "action-btn-completado"
-                    }
-                    disabled={juego.isPriority}
-                    onClick={() =>
-                      handleUpdateStatus(
-                        juego.gameId,
-                        juego.status === "COMPLETED" ? "LIKED" : "COMPLETED",
-                      )
-                    }
-                  >
-                    <i className="fa-solid fa-check"></i>
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Vista cards */}
-      {vista === "cards" && filteredGames.length > 0 && (
-        <div className="game-grid">
-          {filteredGames.map((juego: any) => {
-            const game = juego.Game;
-            return (
-              <div key={juego.gameId} className="game-card">
-                <div className="game-card-img-wrap">
-                  {game.imageUrl ? (
-                    <img
-                      src={game.imageUrl}
-                      alt={game.title}
-                      className="game-card-image"
-                    />
-                  ) : (
-                    <div className="game-card-no-image">
-                      {game.title[0].toUpperCase()}
+                  <div className="game-info">
+                    <div className="game-title">{game?.title}</div>
+                    <div className="game-subtitle">
+                      {game?.developer} · {game?.releaseYear}
                     </div>
-                  )}
-                </div>
-                <div className="game-card-gradient" />
-                <div className="game-card-info">
-                  <div className="game-card-title">{game.title}</div>
-                  <div className="game-card-subtitle">
-                    {game.developer} · {game.releaseYear}
                   </div>
-                  <div className="game-card-actions">
+                  <div className="game-actions">
                     <button
                       className="action-btn-info"
                       onClick={() => setJuegoSeleccionado(game)}
@@ -367,42 +303,102 @@ export default function BacklogPage() {
                     <button
                       className={`action-btn-secondary${juego.isPriority ? " action-btn-star--active" : ""}`}
                       onClick={() => handleSetPriority(juego)}
-                      title={
-                        juego.isPriority ? "Quitar de Top 5" : "Añadir a Top 5"
-                      }
+                      title={juego.isPriority ? "Quitar de Top 5" : "Añadir a Top 5"}
                     >
                       <i className="fa-solid fa-ranking-star"></i>
                     </button>
                     <button
                       className="action-btn-drop"
-                      onClick={() =>
-                        handleUpdateStatus(juego.gameId, "DROPPED")
-                      }
+                      onClick={() => handleUpdateStatus(juego.gameId, "DROPPED")}
                     >
                       <i className="fa-solid fa-trash"></i>
                     </button>
                     <button
-                      className={
-                        juego.status === "COMPLETED"
-                          ? "action-btn-completado active"
-                          : "action-btn-completado"
-                      }
+                      className={juego.status === "COMPLETED" ? "action-btn-completado active" : "action-btn-completado"}
                       disabled={juego.isPriority}
                       onClick={() =>
-                        handleUpdateStatus(
-                          juego.gameId,
-                          juego.status === "COMPLETED" ? "LIKED" : "COMPLETED",
-                        )
+                        handleUpdateStatus(juego.gameId, juego.status === "COMPLETED" ? "LIKED" : "COMPLETED")
                       }
                     >
                       <i className="fa-solid fa-check"></i>
                     </button>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+          <Paginador
+            pagina={pagina}
+            total={filteredGames.length}
+            onChange={p => { setPagina(p); scrollTop(); }}
+          />
+        </>
+      )}
+
+      {/* Vista cards */}
+      {vista === "cards" && filteredGames.length > 0 && (
+        <>
+          <div className="game-grid">
+            {filteredGames.slice((pagina - 1) * 10, pagina * 10).map((juego: any) => {
+              const game = juego.Game;
+              return (
+                <div key={juego.gameId} className="game-card">
+                  <div className="game-card-img-wrap">
+                    {game.imageUrl ? (
+                      <img src={game.imageUrl} alt={game.title} className="game-card-image" />
+                    ) : (
+                      <div className="game-card-no-image">
+                        {game.title[0].toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                  <div className="game-card-gradient" />
+                  <div className="game-card-info">
+                    <div className="game-card-title">{game.title}</div>
+                    <div className="game-card-subtitle">
+                      {game.developer} · {game.releaseYear}
+                    </div>
+                    <div className="game-card-actions">
+                      <button
+                        className="action-btn-info"
+                        onClick={() => setJuegoSeleccionado(game)}
+                      >
+                        <i className="fa-solid fa-info-circle"></i>
+                      </button>
+                      <button
+                        className={`action-btn-secondary${juego.isPriority ? " action-btn-star--active" : ""}`}
+                        onClick={() => handleSetPriority(juego)}
+                        title={juego.isPriority ? "Quitar de Top 5" : "Añadir a Top 5"}
+                      >
+                        <i className="fa-solid fa-ranking-star"></i>
+                      </button>
+                      <button
+                        className="action-btn-drop"
+                        onClick={() => handleUpdateStatus(juego.gameId, "DROPPED")}
+                      >
+                        <i className="fa-solid fa-trash"></i>
+                      </button>
+                      <button
+                        className={juego.status === "COMPLETED" ? "action-btn-completado active" : "action-btn-completado"}
+                        disabled={juego.isPriority}
+                        onClick={() =>
+                          handleUpdateStatus(juego.gameId, juego.status === "COMPLETED" ? "LIKED" : "COMPLETED")
+                        }
+                      >
+                        <i className="fa-solid fa-check"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <Paginador
+            pagina={pagina}
+            total={filteredGames.length}
+            onChange={p => { setPagina(p); scrollTop(); }}
+          />
+        </>
       )}
 
       <GameInfoModal
