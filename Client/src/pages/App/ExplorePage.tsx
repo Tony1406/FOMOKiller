@@ -1,16 +1,22 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { getCollections, getCollectionGames, searchGames, updateStatus } from '../../services/api';
 import GameInfoModal from '../../components/modals/GameInfoModal';
+import Paginador from '../../components/Paginador';
 import { AuthContext } from '../../context/AuthContext';
 import './ExplorePage.css';
+import '../../components/Paginador.css';
 
 
 export default function ExplorePage() {
     const { user } = useContext(AuthContext);
+    const pageRef = useRef<HTMLDivElement>(null);
+    const scrollTop = () => pageRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     const [buscar, setBuscar] = useState('');
     const [colecciones, setColecciones] = useState<any[]>([]);
     const [coleccionSeleccionada, setColeccionSeleccionada] = useState<any>(null);
     const [buscarResultados, setBuscarResultados] = useState<any[]>([]);
+    const [paginaSearch, setPaginaSearch] = useState(1);
+    const [paginaColeccion, setPaginaColeccion] = useState(1);
     const [juegoSeleccionado, setJuegoSeleccionado] = useState<any>(null);
     const [mostrarToast, setMostrarToast] = useState(false);
     const [enBacklog, setEnBacklog] = useState<Set<number>>(new Set());
@@ -32,9 +38,11 @@ export default function ExplorePage() {
         if (buscar.trim().length >= 1) {
             const results = await searchGames(buscar);
             setBuscarResultados(results);
+            setPaginaSearch(1);
             setColeccionSeleccionada(null);
         } else {
             setBuscarResultados([]);
+            setPaginaSearch(1);
         }
     };
 
@@ -48,8 +56,9 @@ export default function ExplorePage() {
     const handleOpenCollection = async (collection: any) => {
         const coleccionCompleta = await getCollectionGames(collection.id);
         setColeccionSeleccionada(coleccionCompleta);
+        setPaginaColeccion(1);
         setBuscar('');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollTop();
     };
 
     const handleAddGame = async (gameId: number) => {
@@ -164,7 +173,14 @@ export default function ExplorePage() {
                     </div>
                 </div>
                 {buscarResultados.length > 0 ? (
-                    renderGames(buscarResultados, vista)
+                    <>
+                        {renderGames(buscarResultados.slice((paginaSearch - 1) * 10, paginaSearch * 10), vista)}
+                        <Paginador
+                            pagina={paginaSearch}
+                            total={buscarResultados.length}
+                            onChange={p => { setPaginaSearch(p); scrollTop(); }}
+                        />
+                    </>
                 ) : (
                     <div className="section-sub">No hemos encontrado nada para "{buscar}"</div>
                 )}
@@ -194,7 +210,12 @@ export default function ExplorePage() {
                     </div>
                 </div>
 
-                {renderGames(coleccionSeleccionada.Games, vista)}
+                {renderGames(coleccionSeleccionada.Games.slice((paginaColeccion - 1) * 10, paginaColeccion * 10), vista)}
+                <Paginador
+                    pagina={paginaColeccion}
+                    total={coleccionSeleccionada.Games.length}
+                    onChange={p => { setPaginaColeccion(p); scrollTop(); }}
+                />
             </div>
         );
     } else {
@@ -232,7 +253,7 @@ export default function ExplorePage() {
 
     return (
 
-        <div className="page page-padded page-enter explore-scrollable">
+        <div className="page page-padded page-enter explore-scrollable" ref={pageRef}>
             <div className="search-bar search-bar-spacing">
                 <i className="fa-solid fa-search search-icon"></i>
                 <input
