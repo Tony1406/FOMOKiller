@@ -165,8 +165,6 @@ export default function SwipePage() {
     return icons.length ? icons : ["fa-solid fa-gamepad"];
   };
 
-  const tags = [juegoActual.developer, juegoActual.releaseYear].filter(Boolean);
-
   // Animation values
   const progress = Math.min(Math.abs(dragX) / DRAG_THRESHOLD, 1);
   const rotation = flyOut ? (flyOut === "right" ? 20 : -20) : dragX * 0.07;
@@ -300,21 +298,21 @@ export default function SwipePage() {
           </div>
 
           <div className="swipe-card-info">
-            {tags.length > 0 && (
-              <div className="swipe-card-tags">
-                {tags.map((tag, i) => (
-                  <span key={i} className="swipe-tag">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-            <div className="swipe-card-title">{juegoActual.title}</div>
-            <div className="swipe-card-meta">
-              <span>
-                {juegoActual.releaseYear} · {juegoActual.developer}
-              </span>
+            <div className="swipe-card-topmeta">
+              {juegoActual.releaseYear && (
+                <span className="swipe-tag">{juegoActual.releaseYear}</span>
+              )}
+              {juegoActual.playtime > 0 && (
+                <span className="swipe-tag">~{juegoActual.playtime}h</span>
+              )}
             </div>
+            <div className="swipe-card-title">{juegoActual.title}</div>
+            {(() => {
+              const sub = juegoActual.developer
+                ?? juegoActual.Genres?.slice(0, 2).map((g: any) => g.name).join(' · ')
+                ?? null;
+              return sub ? <div className="swipe-card-developer">{sub}</div> : null;
+            })()}
           </div>
         </div>
       </div>

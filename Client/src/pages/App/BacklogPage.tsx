@@ -284,9 +284,10 @@ export default function BacklogPage() {
               const letraInicial = game.title[0].toUpperCase();
               return (
                 <div key={juego.gameId} className="game-list-item">
-                  <div className="game-thumb-placeholder game-thumb-letter">
-                    {letraInicial}
-                  </div>
+                  {game.imageUrl
+                    ? <img src={game.imageUrl} alt={game.title} className="game-thumb-img" />
+                    : <div className="game-thumb-placeholder game-thumb-letter">{letraInicial}</div>
+                  }
                   <div className="game-info">
                     <div className="game-title">{game?.title}</div>
                     <div className="game-subtitle">

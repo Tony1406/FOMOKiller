@@ -139,6 +139,12 @@ export const getPriorities = async (userId: number) => {
     return data;
 };
 
+export const getGameDetails = async (slug: string) => {
+    const response = await fetch(`${URL}/rawg/${slug}`, { credentials: 'include' });
+    const data = await response.json();
+    return data;
+};
+
 export const reorderPriorities = async (userId: number, order: { gameId: number; priorityOrder: number }[]) => {
     const response = await fetch(`${URL}/my-games/priorities/reorder?userId=${userId}`, {
         method: 'PUT',

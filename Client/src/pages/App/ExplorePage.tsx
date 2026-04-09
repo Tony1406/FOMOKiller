@@ -122,9 +122,10 @@ export default function ExplorePage() {
                     const estaEnBacklog = enBacklog.has(game.id);
                     return (
                         <div className="game-list-item" key={game.id}>
-                            <div className="game-thumb-placeholder game-thumb-letter">
-                                {game.title[0].toUpperCase()}
-                            </div>
+                            {game.imageUrl
+                                ? <img src={game.imageUrl} alt={game.title} className="game-thumb-img" />
+                                : <div className="game-thumb-placeholder game-thumb-letter">{game.title[0].toUpperCase()}</div>
+                            }
                             <div className="game-info">
                                 <div className="game-title">{game.title}</div>
                                 <div className="game-subtitle">

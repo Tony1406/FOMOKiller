@@ -231,8 +231,9 @@
 }
 
 .game-thumb-placeholder {
-    width: 50px;
-    height: 50px;
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
     background: var(--bg-elevated);
     border: 1px solid var(--border);
     display: flex;
@@ -242,6 +243,23 @@
     font-weight: 800;
     color: var(--cobalt-light);
     border-radius: var(--radius-sm);
+}
+
+.game-thumb-img {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+}
+
+@media (min-width: 768px) {
+    .game-thumb-img,
+    .game-thumb-placeholder {
+        width: 110px;
+        height: 110px;
+    }
 }
 
 .game-info {

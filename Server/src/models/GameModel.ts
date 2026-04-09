@@ -28,6 +28,21 @@ export const Game = sequelize.define('Game', {
     trailerUrl: {
         type: DataTypes.STRING(255),
         field: 'trailer_url'
+    },
+    rawgId: {
+        type: DataTypes.INTEGER,
+        unique: true,
+        field: 'rawg_id'
+    },
+    rawgSlug: {
+        type: DataTypes.STRING(200),
+        field: 'rawg_slug'
+    },
+    tags: {
+        type: DataTypes.TEXT
+    },
+    playtime: {
+        type: DataTypes.INTEGER
     }
 }, {
     tableName: 'games',
