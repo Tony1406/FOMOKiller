@@ -5,7 +5,6 @@ import { Genre } from './GenreModel.js';
 import { GameGenre } from './GameGenreModel.js';
 import { Platform } from './PlatformModel.js';
 import { GamePlatform } from './GamePlatformModel.js';
-import { UserPlatform } from './UserPlatformModel.js';
 import { Collection } from './CollectionModel.js';
 import { CollectionGame } from './CollectionGameModel.js';
 
@@ -20,16 +19,11 @@ export const defineAssociations = () => {
     Game.hasMany(UserGame, { foreignKey: 'gameId' });
     UserGame.belongsTo(Game, { foreignKey: 'gameId' });
 
-
     Game.belongsToMany(Genre, { through: GameGenre, foreignKey: 'gameId', otherKey: 'genreId' });
     Genre.belongsToMany(Game, { through: GameGenre, foreignKey: 'genreId', otherKey: 'gameId' });
 
     Game.belongsToMany(Platform, { through: GamePlatform, foreignKey: 'gameId', otherKey: 'platformId' });
     Platform.belongsToMany(Game, { through: GamePlatform, foreignKey: 'platformId', otherKey: 'gameId' });
-
-    User.belongsToMany(Platform, { through: UserPlatform, foreignKey: 'userId', otherKey: 'platformId' });
-    Platform.belongsToMany(User, { through: UserPlatform, foreignKey: 'platformId', otherKey: 'userId' });
-
 
     Collection.belongsToMany(Game, { through: CollectionGame, foreignKey: 'collectionId', otherKey: 'gameId' });
     Game.belongsToMany(Collection, { through: CollectionGame, foreignKey: 'gameId', otherKey: 'collectionId' });

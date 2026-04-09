@@ -158,7 +158,10 @@ export default function Top5Page() {
                 <div className={`priority-num ${numClass(index + 1)}`}>
                   {index + 1}
                 </div>
-                <div className="game-thumb-placeholder">{letraInicial}</div>
+                {game.imageUrl
+                  ? <img src={game.imageUrl} alt={game.title} className="game-thumb-img" />
+                  : <div className="game-thumb-placeholder">{letraInicial}</div>
+                }
                 <div className="game-info">
                   <div className="game-title">{game.title}</div>
                   <div className="game-subtitle">

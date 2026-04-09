@@ -13,7 +13,7 @@ const AppLayout: React.FC = () => {
             <Navbar />
             <div className="app-main">
                 <Header /> {/* solo para moviles */}
-                {!isProfile && <UserChip />}
+                {isProfile ? null : <UserChip />}
                 <main className="app-content">
                     <Outlet />
                 </main>

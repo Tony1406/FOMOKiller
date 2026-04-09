@@ -73,7 +73,7 @@ export const searchGames = async (req: Request, res: Response) => {
                 { model: Genre },
                 { model: Platform }
             ],
-            limit: 10
+            limit: 300
         });
 
         res.status(200).json(games);

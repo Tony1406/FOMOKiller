@@ -14,6 +14,7 @@ import homeRoutes from './routes/home.routes.js';
 import userRoutes from './routes/user.routes.js';
 import myGamesRoutes from './routes/myGames.routes.js';
 import exploreRoutes from './routes/explore.routes.js';
+import rawgRoutes from './routes/rawg.routes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,6 +30,7 @@ app.use('/api/home', homeRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/my-games', myGamesRoutes);
 app.use('/api/explore', exploreRoutes);
+app.use('/api/rawg', rawgRoutes);
 
 const main = async () => {
     try {
