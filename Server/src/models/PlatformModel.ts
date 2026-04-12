@@ -9,8 +9,7 @@ export const Platform = sequelize.define('Platform', {
     },
     name: {
         type: DataTypes.STRING(50),
-        allowNull: false,
-        unique: true
+        allowNull: false
     }
 }, {
     tableName: 'platforms',

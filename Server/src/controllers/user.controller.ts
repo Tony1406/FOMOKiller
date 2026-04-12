@@ -103,6 +103,7 @@ export const login = async (req: Request, res: Response) => {
         id: user.id,
         username: user.username,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -157,7 +158,7 @@ export const getMe = async (req: Request, res: Response) => {
         }
         const decoded = jsonwebtoken.verify(token, JWT_SECRET) as { id: number };
         const user = await User.findByPk(decoded.id, {
-            attributes: ['id', 'username', 'email']
+            attributes: ['id', 'username', 'email', 'role']
         });
         if (!user) {
             res.status(401).json({ error: 'Usuario no encontrado' });

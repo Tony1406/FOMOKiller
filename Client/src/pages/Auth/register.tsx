@@ -7,6 +7,7 @@ export default function Register() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
 
     const navigate = useNavigate();
@@ -48,7 +49,12 @@ export default function Register() {
                     </div>
                     <div className="login-form-group">
                         <label htmlFor="password">Contraseña</label>
-                        <input type="password" id="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+                        <div className="password-wrap">
+                            <input type={showPassword ? 'text' : 'password'} id="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+                            <button type="button" className="password-toggle" onClick={() => setShowPassword(v => !v)}>
+                                <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} />
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" className="login-btn">Crear Cuenta</button>
                 </form>

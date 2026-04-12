@@ -9,8 +9,7 @@ export const Genre = sequelize.define('Genre', {
     },
     name: {
         type: DataTypes.STRING(50),
-        allowNull: false,
-        unique: true
+        allowNull: false
     }
 }, {
     tableName: 'genres',

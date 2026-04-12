@@ -154,3 +154,163 @@ export const reorderPriorities = async (userId: number, order: { gameId: number;
     });
     return response;
 };
+
+// ─── ADMIN ────────────────────────────────────────────────────────────────────
+
+export const adminGetUsers = async () => {
+    const res = await fetch(`${URL}/admin/users`, { credentials: 'include' });
+    return res.json();
+};
+
+export const adminCreateUser = async (payload: object) => {
+    const res = await fetch(`${URL}/admin/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error al crear usuario');
+    return data;
+};
+
+export const adminUpdateUser = async (userId: number, payload: object) => {
+    const res = await fetch(`${URL}/admin/users/${userId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error al actualizar usuario');
+    return data;
+};
+
+export const adminUpdateRole = async (userId: number, role: string) => {
+    const res = await fetch(`${URL}/admin/users/${userId}/role`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ role }),
+    });
+    return res.json();
+};
+
+export const adminDeleteUser = async (userId: number) => {
+    const res = await fetch(`${URL}/admin/users/${userId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+    });
+    return res.json();
+};
+
+export const adminGetGames = async () => {
+    const res = await fetch(`${URL}/admin/games`, { credentials: 'include' });
+    return res.json();
+};
+
+export const adminGetPlatforms = async () => {
+    const res = await fetch(`${URL}/admin/platforms`, { credentials: 'include' });
+    return res.json();
+};
+
+export const adminCreateGame = async (payload: object) => {
+    const res = await fetch(`${URL}/admin/games`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+    });
+    return res.json();
+};
+
+export const adminUpdateGame = async (gameId: number, payload: object) => {
+    const res = await fetch(`${URL}/admin/games/${gameId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+    });
+    return res.json();
+};
+
+export const adminDeleteGame = async (gameId: number) => {
+    const res = await fetch(`${URL}/admin/games/${gameId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+    });
+    return res.json();
+};
+
+export const adminSearchRawg = async (q: string, page = 1) => {
+    const res = await fetch(`${URL}/admin/rawg/search?q=${encodeURIComponent(q)}&page=${page}`, { credentials: 'include' });
+    return res.json();
+};
+
+export const adminImportFromRawg = async (rawgSlug: string) => {
+    const res = await fetch(`${URL}/admin/rawg/import`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ rawgSlug }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error al importar');
+    return data;
+};
+
+export const adminGetCollections = async () => {
+    const res = await fetch(`${URL}/admin/collections`, { credentials: 'include' });
+    return res.json();
+};
+
+export const adminCreateCollection = async (payload: object) => {
+    const res = await fetch(`${URL}/admin/collections`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+    });
+    return res.json();
+};
+
+export const adminUpdateCollection = async (id: number, payload: object) => {
+    const res = await fetch(`${URL}/admin/collections/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+    });
+    return res.json();
+};
+
+export const adminDeleteCollection = async (id: number) => {
+    const res = await fetch(`${URL}/admin/collections/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+    });
+    return res.json();
+};
+
+export const adminGetCollectionGames = async (collectionId: number) => {
+    const res = await fetch(`${URL}/admin/collections/${collectionId}/games`, { credentials: 'include' });
+    return res.json();
+};
+
+export const adminAddGameToCollection = async (collectionId: number, gameId: number) => {
+    const res = await fetch(`${URL}/admin/collections/${collectionId}/games`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ gameId }),
+    });
+    return res.json();
+};
+
+export const adminRemoveGameFromCollection = async (collectionId: number, gameId: number) => {
+    const res = await fetch(`${URL}/admin/collections/${collectionId}/games/${gameId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+    });
+    return res.json();
+};
