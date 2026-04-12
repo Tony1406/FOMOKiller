@@ -74,7 +74,7 @@
     border-radius: var(--radius-sm);
     overflow: hidden;
     position: relative;
-    height: 180px;
+    height: 216px;
     /* Uniform height */
     cursor: pointer;
     border: 1px solid var(--border);
@@ -120,7 +120,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 24px;
+    padding: 14px 20px;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, transparent 60%);
     z-index: 1;
 }
@@ -137,7 +137,7 @@
 
 .collection-count {
     font-size: 13px;
-    color: var(--cobalt-light);
+    color: var(--text-secondary);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -211,6 +211,17 @@
     box-shadow: var(--shadow-cobalt);
 }
 
+@keyframes fadeInView {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.game-list,
+.game-grid,
+.collections-grid {
+    animation: fadeInView 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 /* Brutal Game List Styles */
 .game-list {
     display: flex;
@@ -224,7 +235,7 @@
     align-items: center;
     gap: 16px;
     padding: 16px;
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     transition: all var(--t-fast);
@@ -281,40 +292,6 @@
 .game-actions {
     display: flex;
     gap: 8px;
-}
-
-.action-btn-secondary,
-.action-btn-completado {
-    width: 38px;
-    height: 38px;
-    border-radius: var(--radius-sm);
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all var(--t-fast);
-}
-
-.action-btn-secondary:hover {
-    background: rgba(0, 112, 243, 0.1);
-    color: var(--cobalt-light);
-    border-color: var(--cobalt);
-    transform: scale(1.1);
-}
-
-.action-btn-completado:hover {
-    background: rgba(0, 200, 83, 0.1);
-    color: var(--like);
-    border-color: var(--like);
-    transform: scale(1.1);
-}
-
-.action-btn-secondary:active,
-.action-btn-completado:active {
-    transform: scale(0.95);
 }
 
 /* Juego ya en el backlog → corazón rojo */
@@ -404,7 +381,7 @@
     }
 
     .collection-card {
-        height: 220px;
+        height: 264px;
     }
 
     .collection-name {

@@ -278,7 +278,7 @@ export default function BacklogPage() {
       {/* Vista lista */}
       {vista === "lista" && filteredGames.length > 0 && (
         <>
-          <div className="game-list">
+          <div className="game-list" key="lista">
             {filteredGames.slice((pagina - 1) * 10, pagina * 10).map((juego: any) => {
               const game = juego.Game;
               const letraInicial = game.title[0].toUpperCase();
@@ -291,7 +291,7 @@ export default function BacklogPage() {
                   <div className="game-info">
                     <div className="game-title">{game?.title}</div>
                     <div className="game-subtitle">
-                      {game?.developer} · {game?.releaseYear}
+                      {[game?.developer, game?.releaseYear].filter(Boolean).join(' · ')}
                     </div>
                   </div>
                   <div className="game-actions">
@@ -316,7 +316,6 @@ export default function BacklogPage() {
                     </button>
                     <button
                       className={juego.status === "COMPLETED" ? "action-btn-completado active" : "action-btn-completado"}
-                      disabled={juego.isPriority}
                       onClick={() =>
                         handleUpdateStatus(juego.gameId, juego.status === "COMPLETED" ? "LIKED" : "COMPLETED")
                       }
@@ -339,7 +338,7 @@ export default function BacklogPage() {
       {/* Vista cards */}
       {vista === "cards" && filteredGames.length > 0 && (
         <>
-          <div className="game-grid">
+          <div className="game-grid" key="cards">
             {filteredGames.slice((pagina - 1) * 10, pagina * 10).map((juego: any) => {
               const game = juego.Game;
               return (
@@ -357,7 +356,7 @@ export default function BacklogPage() {
                   <div className="game-card-info">
                     <div className="game-card-title">{game.title}</div>
                     <div className="game-card-subtitle">
-                      {game.developer} · {game.releaseYear}
+                      {[game.developer, game.releaseYear].filter(Boolean).join(' · ')}
                     </div>
                     <div className="game-card-actions">
                       <button
@@ -381,7 +380,6 @@ export default function BacklogPage() {
                       </button>
                       <button
                         className={juego.status === "COMPLETED" ? "action-btn-completado active" : "action-btn-completado"}
-                        disabled={juego.isPriority}
                         onClick={() =>
                           handleUpdateStatus(juego.gameId, juego.status === "COMPLETED" ? "LIKED" : "COMPLETED")
                         }

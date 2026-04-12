@@ -81,7 +81,7 @@ export default function ExplorePage() {
     const renderGames = (games: any[], vistaMode: 'lista' | 'cards' = 'lista') => {
         if (vistaMode === 'cards') {
             return (
-                <div className="game-grid">
+                <div className="game-grid" key="cards">
                     {games.map((game: any) => {
                         const estaEnBacklog = enBacklog.has(game.id);
                         return (
@@ -117,7 +117,7 @@ export default function ExplorePage() {
         }
 
         return (
-            <div className="game-list">
+            <div className="game-list" key="lista">
                 {games.map((game: any) => {
                     const estaEnBacklog = enBacklog.has(game.id);
                     return (
@@ -129,7 +129,7 @@ export default function ExplorePage() {
                             <div className="game-info">
                                 <div className="game-title">{game.title}</div>
                                 <div className="game-subtitle">
-                                    {game.developer} {game.releaseYear}
+                                    {[game.developer, game.releaseYear].filter(Boolean).join(' · ')}
                                 </div>
                             </div>
                             <div className="game-actions">
@@ -231,7 +231,6 @@ export default function ExplorePage() {
                             <img src={coleccion.imageUrl} className="collection-card-bg" />
                             <div className="collection-card-overlay">
                                 <div className="collection-name">{coleccion.title}</div>
-                                <div className="collection-count">{coleccion.gameCount} juegos</div>
                             </div>
                         </div>
                     ))}

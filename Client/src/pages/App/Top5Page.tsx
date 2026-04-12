@@ -98,9 +98,6 @@ export default function Top5Page() {
     <div className="page page-padded page-enter">
       <div className="top5-header">
         <div className="top5-title"> Top 5 Prioridades</div>
-        <div className="top5-subtitle">
-          Tus juegos más importantes ahora mismo
-        </div>
       </div>
 
       <div className="top5-rule-box">
@@ -115,6 +112,16 @@ export default function Top5Page() {
         <span className="top5-status-text">
           {slotCount} de 5 slots ocupados
         </span>
+        <div className="top5-legend">
+          <span className="top5-legend-item">
+            <i className="fa-solid fa-times top5-legend-icon top5-legend-drop" />
+            Dropear del Top 5
+          </span>
+          <span className="top5-legend-item">
+            <i className="fa-solid fa-check top5-legend-icon top5-legend-done" />
+            Marcar como Completado
+          </span>
+        </div>
         <div className="top5-status-right">
           <div className="top5-dots-container">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -140,7 +147,7 @@ export default function Top5Page() {
 
       {/* Vista lista */}
       {vista === "lista" && (
-        <div className="priority-slots">
+        <div className="priority-slots" key="lista">
           {priorities.map((juego: any, index: number) => {
             const game = juego.Game;
             const letraInicial = game.title[0].toUpperCase();
@@ -165,25 +172,23 @@ export default function Top5Page() {
                 <div className="game-info">
                   <div className="game-title">{game.title}</div>
                   <div className="game-subtitle">
-                    {game.developer} · {game.releaseYear}
+                    {[game.developer, game.releaseYear].filter(Boolean).join(' · ')}
                   </div>
                 </div>
-                <div className="top5-actions">
+                <div className="game-actions">
                   <button
-                    className="top5-btn top5-btn-drop"
+                    className="action-btn-drop"
                     onClick={() => handleRemovePriority(juego.gameId)}
                     title="Quitar de Top 5"
                   >
                     <i className="fa-solid fa-times" />
-                    <span>Dropear</span>
                   </button>
                   <button
-                    className="top5-btn top5-btn-complete"
+                    className="action-btn-completado"
                     onClick={() => handleComplete(juego.gameId)}
                     title="Marcar como completado"
                   >
                     <i className="fa-solid fa-check" />
-                    <span>Terminado</span>
                   </button>
                 </div>
               </div>
@@ -207,7 +212,7 @@ export default function Top5Page() {
 
       {/* Vista cards */}
       {vista === "cards" && (
-        <div className="top5-grid">
+        <div className="top5-grid" key="cards">
           {priorities.map((juego: any, index: number) => {
             const game = juego.Game;
             return (
@@ -240,24 +245,22 @@ export default function Top5Page() {
                 <div className="game-card-info">
                   <div className="game-card-title">{game.title}</div>
                   <div className="game-card-subtitle">
-                    {game.developer} · {game.releaseYear}
+                    {[game.developer, game.releaseYear].filter(Boolean).join(' · ')}
                   </div>
-                  <div className="game-card-actions top5-card-actions">
+                  <div className="top5-card-actions">
                     <button
-                      className="top5-btn top5-btn-drop"
+                      className="action-btn-drop"
                       onClick={() => handleRemovePriority(juego.gameId)}
                       title="Quitar de Top 5"
                     >
                       <i className="fa-solid fa-times" />
-                      <span>Dropear</span>
                     </button>
                     <button
-                      className="top5-btn top5-btn-complete"
+                      className="action-btn-completado"
                       onClick={() => handleComplete(juego.gameId)}
                       title="Marcar como completado"
                     >
                       <i className="fa-solid fa-check" />
-                      <span>Terminado</span>
                     </button>
                   </div>
                 </div>

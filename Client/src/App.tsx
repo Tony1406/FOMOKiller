@@ -15,6 +15,11 @@ import LoginPage from './pages/Auth/login';
 import RegisterPage from './pages/Auth/register';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
+import AdminLayout from './layouts/AdminLayout';
+import AdminUsuarios from './pages/Admin/AdminUsuarios';
+import AdminJuegos from './pages/Admin/AdminJuegos';
+import AdminColecciones from './pages/Admin/AdminColecciones';
 
 import './index.css';
 import './App.css';
@@ -33,6 +38,16 @@ export default function App() {
             <Route path="/contacto" element={<ContactPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+          </Route>
+
+          {/* Admin - Protegida por rol admin */}
+          <Route element={<AdminRoute />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Navigate to="/admin/usuarios" replace />} />
+              <Route path="usuarios" element={<AdminUsuarios />} />
+              <Route path="juegos" element={<AdminJuegos />} />
+              <Route path="colecciones" element={<AdminColecciones />} />
+            </Route>
           </Route>
 
           {/* App funcional - Protegida por Auth */}

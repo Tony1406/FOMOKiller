@@ -14,7 +14,6 @@ export const User = sequelize.define('User', {
     email: {
         type: DataTypes.STRING(100),
         allowNull: false,
-        unique: true
     },
     passwordHash: {
         type: DataTypes.STRING(255),
