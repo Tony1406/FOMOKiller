@@ -24,11 +24,23 @@ export default function Paginador({ pagina, total, porPagina = 10, onChange }: P
 
     return (
         <div className="paginador">
-            {pagina > 1 && (
-                <button className="paginador-btn" onClick={() => onChange(pagina - 1)}>
-                    Anterior
-                </button>
-            )}
+            <button
+                className="paginador-arrow"
+                onClick={() => onChange(1)}
+                disabled={pagina === 1}
+                style={{ opacity: pagina === 1 ? 0.3 : 1, cursor: pagina === 1 ? 'default' : 'pointer' }}
+                title="Primera página"
+            >
+                «
+            </button>
+            <button
+                className="paginador-arrow"
+                onClick={() => onChange(pagina - 1)}
+                disabled={pagina === 1}
+                style={{ opacity: pagina === 1 ? 0.3 : 1, cursor: pagina === 1 ? 'default' : 'pointer' }}
+            >
+                ‹
+            </button>
             {getPages().map((p, i) =>
                 p === '...'
                     ? <span key={`ellipsis-${i}`} className="paginador-ellipsis">…</span>
@@ -40,11 +52,23 @@ export default function Paginador({ pagina, total, porPagina = 10, onChange }: P
                         {p}
                       </button>
             )}
-            {pagina < totalPaginas && (
-                <button className="paginador-btn" onClick={() => onChange(pagina + 1)}>
-                    Siguiente
-                </button>
-            )}
+            <button
+                className="paginador-arrow"
+                onClick={() => onChange(pagina + 1)}
+                disabled={pagina === totalPaginas}
+                style={{ opacity: pagina === totalPaginas ? 0.3 : 1, cursor: pagina === totalPaginas ? 'default' : 'pointer' }}
+            >
+                ›
+            </button>
+            <button
+                className="paginador-arrow"
+                onClick={() => onChange(totalPaginas)}
+                disabled={pagina === totalPaginas}
+                style={{ opacity: pagina === totalPaginas ? 0.3 : 1, cursor: pagina === totalPaginas ? 'default' : 'pointer' }}
+                title="Última página"
+            >
+                »
+            </button>
         </div>
     );
 }

@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import ConfirmModal from '../components/modals/ConfirmModal';
 import './AdminLayout.css';
 
 const NAV_ITEMS = [
@@ -12,8 +13,10 @@ const NAV_ITEMS = [
 export default function AdminLayout() {
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [confirmingLogout, setConfirmingLogout] = useState(false);
 
-    const handleLogout = async () => {
+    const handleLogoutConfirmed = async () => {
+        setConfirmingLogout(false);
         await logout();
         navigate('/login');
     };
@@ -47,7 +50,7 @@ export default function AdminLayout() {
                         />
                         <span>{user?.username}</span>
                     </div>
-                    <button className="admin-logout-btn" onClick={handleLogout}>
+                    <button className="admin-logout-btn" onClick={() => setConfirmingLogout(true)}>
                         <i className="fa-solid fa-right-from-bracket" />
                     </button>
                 </div>
@@ -56,6 +59,16 @@ export default function AdminLayout() {
             <main className="admin-main">
                 <Outlet />
             </main>
+
+            <ConfirmModal
+                isOpen={confirmingLogout}
+                onClose={() => setConfirmingLogout(false)}
+                onConfirm={handleLogoutConfirmed}
+                title="¿Cerrar sesión?"
+                description="Volverás a la pantalla de inicio de sesión."
+                confirmLabel="Cerrar sesión"
+                variant="danger"
+            />
         </div>
     );
 }

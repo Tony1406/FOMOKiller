@@ -71,6 +71,7 @@ export const login = async (req: Request, res: Response) => {
       email: string;
       passwordHash: string;
       role: string;
+      hasCompletedOnboarding: boolean;
     };
 
     const isMatch = await bcrypt.compare(password, user.passwordHash);
@@ -104,6 +105,7 @@ export const login = async (req: Request, res: Response) => {
         username: user.username,
         email: user.email,
         role: user.role,
+        hasCompletedOnboarding: user.hasCompletedOnboarding,
       },
     });
   } catch (error) {

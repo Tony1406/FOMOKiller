@@ -14,41 +14,29 @@ interface EditProfileModalProps {
     onSave: (updatedData: Partial<User>) => void;
 }
 
+const AVATAR_SEEDS = ['Felix', 'Milo', 'Luna', 'Nova', 'Sage', 'Zara', 'Ash', 'Rex', 'Orion', 'Ivy'];
+
 export default function EditProfileModal({ user, isOpen, onClose, onSave }: EditProfileModalProps) {
-    const [formData, setFormData] = useState({
-        username: '',
-        bio: '',
-        avatarUrl: ''
-    });
+    const [formData, setFormData] = useState({ username: '', bio: '', avatarUrl: '' });
+    const [imgError, setImgError] = useState(false);
 
     useEffect(() => {
-        if (user) {
-            if (isOpen) {
-                setFormData({
-                    username: user.username || '',
-                    bio: user.bio || '',
-                    avatarUrl: user.avatarUrl || ''
-                });
-            }
+        if (user && isOpen) {
+            setFormData({
+                username: user.username || '',
+                bio: user.bio || '',
+                avatarUrl: user.avatarUrl || '',
+            });
+            setImgError(false);
         }
     }, [user, isOpen]);
 
-    if (isOpen === false) {
-        return null;
-    }
-    if (user === null) {
-        return null;
-    }
+    if (!isOpen || !user) return null;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const nombreDelCampo = e.target.name;
-        const valorNuevo = e.target.value;
-        setFormData((prevData) => {
-            return {
-                ...prevData,
-                [nombreDelCampo]: valorNuevo
-            };
-        });
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+        if (name === 'avatarUrl') setImgError(false);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -56,18 +44,58 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
         onSave(formData);
     };
 
+    const avatarSrc = !imgError && formData.avatarUrl
+        ? formData.avatarUrl
+        : `https://api.dicebear.com/9.x/avataaars/svg?seed=${user.username || 'Felix'}`;
+
+    const handleRandomAvatar = () => {
+        const seed = AVATAR_SEEDS[Math.floor(Math.random() * AVATAR_SEEDS.length)];
+        setFormData(prev => ({ ...prev, avatarUrl: `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}` }));
+        setImgError(false);
+    };
+
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content profile-edit-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="ep-overlay" onClick={onClose}>
+            <div className="edit-profile-modal" onClick={e => e.stopPropagation()}>
                 <button className="modal-close-btn" onClick={onClose}>✕</button>
 
-                <div className="modal-header">
-                    <h2>Editar Perfil</h2>
-                    <p className="modal-subtitle">Actualiza tu información pública.</p>
+                <div className="ep-header">
+                    <h2 className="ep-title">Editar Perfil</h2>
+                    <p className="ep-subtitle">Actualiza tu información pública</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="modal-body edit-profile-form">
-                    <div className="form-group">
+                <form onSubmit={handleSubmit} className="ep-form">
+
+                    {/* Avatar */}
+                    <div className="ep-avatar-section">
+                        <div className="ep-avatar-wrap">
+                            <img
+                                src={avatarSrc}
+                                alt="Avatar"
+                                className="ep-avatar-img"
+                                onError={() => setImgError(true)}
+                            />
+                        </div>
+                        <div className="ep-avatar-fields">
+                            <div className="ep-field">
+                                <label htmlFor="avatarUrl">URL de la foto</label>
+                                <input
+                                    type="text"
+                                    id="avatarUrl"
+                                    name="avatarUrl"
+                                    value={formData.avatarUrl}
+                                    onChange={handleChange}
+                                    placeholder="https://..."
+                                />
+                            </div>
+                            <button type="button" className="ep-random-btn" onClick={handleRandomAvatar}>
+                                <i className="fa-solid fa-shuffle" /> Avatar aleatorio
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Username */}
+                    <div className="ep-field">
                         <label htmlFor="username">Nombre de usuario</label>
                         <input
                             type="text"
@@ -79,19 +107,9 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="avatarUrl">URL del Avatar</label>
-                        <input
-                            type="text"
-                            id="avatarUrl"
-                            name="avatarUrl"
-                            value={formData.avatarUrl}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="bio">Biografía (Sobre ti)</label>
+                    {/* Bio */}
+                    <div className="ep-field">
+                        <label htmlFor="bio">Sobre ti</label>
                         <textarea
                             id="bio"
                             name="bio"
@@ -99,13 +117,14 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
                             onChange={handleChange}
                             rows={3}
                             maxLength={150}
-                        ></textarea>
-                        <span className="char-count">{formData.bio.length}/150</span>
+                            placeholder="Cuéntanos algo sobre ti..."
+                        />
+                        <span className="ep-char-count">{formData.bio.length}/150</span>
                     </div>
 
-                    <div className="modal-actions-fixed">
-                        <button type="button" className="action-btn-secondary" onClick={onClose}>Cancelar</button>
-                        <button type="submit" className="action-btn-completado">Guardar cambios</button>
+                    <div className="ep-actions">
+                        <button type="button" className="ep-btn-cancel" onClick={onClose}>Cancelar</button>
+                        <button type="submit" className="ep-btn-save">Guardar cambios</button>
                     </div>
                 </form>
             </div>

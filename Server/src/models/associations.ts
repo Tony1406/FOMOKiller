@@ -7,8 +7,12 @@ import { Platform } from './PlatformModel.js';
 import { GamePlatform } from './GamePlatformModel.js';
 import { Collection } from './CollectionModel.js';
 import { CollectionGame } from './CollectionGameModel.js';
+import { UserPreference } from './UserPreferenceModel.js';
 
 export const defineAssociations = () => {
+
+    User.hasOne(UserPreference, { foreignKey: 'userId' });
+    UserPreference.belongsTo(User, { foreignKey: 'userId' });
 
     User.belongsToMany(Game, { through: UserGame, foreignKey: 'userId', otherKey: 'gameId' });
     Game.belongsToMany(User, { through: UserGame, foreignKey: 'gameId', otherKey: 'userId' });

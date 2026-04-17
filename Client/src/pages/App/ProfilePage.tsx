@@ -3,8 +3,13 @@ import {
   getUserProfile,
   getBacklog,
   updateUserProfile,
+  getPreferences,
+  getPriorities,
+  toggleExploration,
+  resetRecommendationHistory,
 } from "../../services/api";
 import EditProfileModal from "../../components/modals/EditProfileModal";
+import ConfirmModal from "../../components/modals/ConfirmModal";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
@@ -17,6 +22,19 @@ export default function ProfilePage() {
   const [completedCount, setCompletedCount] = useState(0);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [prefs, setPrefs] = useState<any>(null);
+  const [topGame, setTopGame] = useState<string | null>(null);
+  const [togglingExploration, setTogglingExploration] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [confirmOnboarding, setConfirmOnboarding] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
+  const [confirmLogout, setConfirmLogout] = useState(false);
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 2500);
+  };
 
   const fetchProfileData = async () => {
     if (!user) return;
@@ -30,9 +48,42 @@ export default function ProfilePage() {
         return false;
       });
       setCompletedCount(listaCompletados.length);
+      const prefsData = await getPreferences(user.id);
+      if (!prefsData.error) setPrefs(prefsData);
+      const prioritiesData = await getPriorities(user.id);
+      if (Array.isArray(prioritiesData) && prioritiesData.length > 0) {
+        setTopGame(prioritiesData[0].Game?.title ?? null);
+      } else {
+        setTopGame(null);
+      }
     } catch (error) {
       console.error("Error al cargar datos del perfil:", error);
     }
+  };
+
+  const handleToggleExploration = async () => {
+    if (!user || togglingExploration) return;
+    setTogglingExploration(true);
+    const res = await toggleExploration(user.id);
+    setPrefs((p: any) => ({ ...p, ignoreHistory: res.ignoreHistory }));
+    sessionStorage.removeItem("swipe_deck_v2");
+    sessionStorage.removeItem("swipe_index_v2");
+    setTogglingExploration(false);
+    showToast(
+      res.ignoreHistory
+        ? "Modo exploración activado — se ignora tu historial de likes"
+        : "Modo exploración desactivado — tus likes influyen en las recomendaciones",
+    );
+  };
+
+  const handleResetHistory = async () => {
+    if (!user || resetting) return;
+    setResetting(true);
+    await resetRecommendationHistory(user.id);
+    setPrefs((p: any) => ({ ...p, ignoreHistory: true }));
+    sessionStorage.removeItem("swipe_deck_v2");
+    sessionStorage.removeItem("swipe_index_v2");
+    setResetting(false);
   };
 
   useEffect(() => {
@@ -47,6 +98,7 @@ export default function ProfilePage() {
       setUsuario(savedUser);
       setIsEditModalOpen(false);
       setGuardando(false);
+      showToast("Datos actualizados");
     } catch (error) {
       console.error("Error al guardar perfil:", error);
       setGuardando(false);
@@ -61,6 +113,26 @@ export default function ProfilePage() {
   const joinYear = usuario?.createdAt
     ? new Date(usuario.createdAt).getFullYear()
     : "2025";
+
+  const WORLD_META: Record<string, { label: string; icon: string }> = {
+    fantasy:   { label: "Fantasía",        icon: "fa-solid fa-hat-wizard" },
+    scifi:     { label: "Ciencia Ficción", icon: "fa-solid fa-rocket" },
+    horror:    { label: "Terror",          icon: "fa-solid fa-skull" },
+    openworld: { label: "Mundo Abierto",   icon: "fa-solid fa-compass" },
+    realism:   { label: "Realismo",        icon: "fa-solid fa-trophy" },
+  };
+  const worldMeta = prefs?.worldType ? (WORLD_META[prefs.worldType] ?? null) : null;
+
+  const PLATFORM_ICONS: Record<string, { icon: string; title: string }> = {
+    "PC":              { icon: "fa-brands fa-steam",      title: "PC / Steam" },
+    "PlayStation 5":   { icon: "fa-brands fa-playstation", title: "PlayStation 5" },
+    "PlayStation 4":   { icon: "fa-brands fa-playstation", title: "PlayStation 4" },
+    "Xbox Series S/X": { icon: "fa-brands fa-xbox",        title: "Xbox" },
+    "Nintendo Switch": { icon: "fa-solid fa-gamepad",      title: "Nintendo Switch" },
+    "iOS":             { icon: "fa-brands fa-apple",       title: "iOS" },
+    "Android":         { icon: "fa-brands fa-android",     title: "Android" },
+  };
+  const userPlatforms: string[] = prefs?.platforms ?? [];
 
   return (
     <div className="profile-page page-enter">
@@ -98,14 +170,39 @@ export default function ProfilePage() {
                 "Hola, soy un gamer apasionado usando FOMOKiller."}
             </p>
 
+            <div className="profile-identity-tags">
+              {worldMeta && (
+                <div className="profile-identity-tag">
+                  <span className="profile-identity-label">
+                    Género favorito
+                  </span>
+                  <span className="profile-identity-value">
+                    {worldMeta.label}
+                  </span>
+                </div>
+              )}
+              {prefs?.minYear && prefs?.maxYear && (
+                <div className="profile-identity-tag">
+                  <span className="profile-identity-label">Época preferida</span>
+                  <span className="profile-identity-value">
+                    {prefs.minYear} — {prefs.maxYear}
+                  </span>
+                </div>
+              )}
+              <div className="profile-identity-tag">
+                <span className="profile-identity-label">Jugando ahora</span>
+                <span className="profile-identity-value">
+                  {topGame ?? "..."}
+                </span>
+              </div>
+            </div>
+
             <button
               className="profile-edit-btn"
               onClick={() => setIsEditModalOpen(true)}
             >
-              <i className="fa-solid fa-pencil" /> {guardando ? "Guardando..." : "Editar perfil"}
-            </button>
-            <button className="profile-avatar-btn">
-              <i className="fa-solid fa-camera" /> Cambiar foto
+              <i className="fa-solid fa-pencil" />{" "}
+              {guardando ? "Guardando..." : "Editar perfil"}
             </button>
           </div>
 
@@ -118,10 +215,6 @@ export default function ProfilePage() {
                 <span className="stat-label">Completados</span>
               </div>
               <div className="glass-card profile-stat-card">
-                <span className="stat-number">0h</span>
-                <span className="stat-label">Tiempo total jugado</span>
-              </div>
-              <div className="glass-card profile-stat-card">
                 <span className="stat-number">{joinYear}</span>
                 <span className="stat-label">Miembro desde</span>
               </div>
@@ -131,20 +224,90 @@ export default function ProfilePage() {
             <div className="glass-card profile-platforms-card">
               <span className="platforms-label">Plataformas</span>
               <div className="platforms-icons">
-                <i className="fa-brands fa-steam platforms-icon" title="Steam" />
-                <i className="fa-brands fa-playstation platforms-icon" title="PlayStation" />
-                <i className="fa-brands fa-xbox platforms-icon" title="Xbox" />
-                <i className="fa-solid fa-gamepad platforms-icon" title="Nintendo Switch" />
+                {userPlatforms.length > 0 ? (
+                  userPlatforms.map((p) => {
+                    const meta = PLATFORM_ICONS[p];
+                    if (!meta) return null;
+                    return (
+                      <i
+                        key={p}
+                        className={`${meta.icon} platforms-icon`}
+                        title={meta.title}
+                      />
+                    );
+                  })
+                ) : (
+                  <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
+                    Completa el cuestionario
+                  </span>
+                )}
               </div>
             </div>
 
-            {/* Tarjeta de acciones */}
+            {/* Tarjeta de recomendaciones */}
+            {prefs && (
+              <div className="glass-card profile-card-actions">
+                <div className="profile-rec-header">
+                  <i className="fa-solid fa-wand-magic-sparkles" />
+                  <span>Recomendaciones</span>
+                </div>
+                <div className="profile-rec-row">
+                  <div className="profile-rec-info">
+                    <span className="profile-rec-label">Modo exploración</span>
+                    <span className="profile-rec-sub">
+                      Pausa el efecto de tus likes en el algoritmo. Útil para
+                      descubrir juegos fuera de tu zona de confort.
+                    </span>
+                  </div>
+                  <button
+                    className={`profile-toggle ${prefs.ignoreHistory ? "active" : ""}`}
+                    onClick={handleToggleExploration}
+                    disabled={togglingExploration}
+                  >
+                    <span className="profile-toggle-knob" />
+                  </button>
+                </div>
+                <div className="profile-rec-actions">
+                  <button
+                    className="profile-action-btn"
+                    onClick={() => setConfirmOnboarding(true)}
+                  >
+                    <i className="fa-solid fa-sliders" />
+                    <div className="profile-action-btn-text">
+                      <span className="profile-action-btn-label">
+                        Rehacer cuestionario
+                      </span>
+                      <span className="profile-action-btn-sub">
+                        Cambia tus preferencias.
+                      </span>
+                    </div>
+                  </button>
+                  <button
+                    className="profile-action-btn profile-action-btn--danger"
+                    onClick={() => setConfirmReset(true)}
+                    disabled={resetting}
+                  >
+                    <i className="fa-solid fa-rotate-left" />
+                    <div className="profile-action-btn-text">
+                      <span className="profile-action-btn-label">
+                        Resetear historial
+                      </span>
+                      <span className="profile-action-btn-sub">
+                        Olvida todos los likes pasados. Solo contarán los nuevos
+                        para alimentar las recomendaciones.
+                      </span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Cerrar sesión */}
             <div className="glass-card profile-card-actions">
-              <button className="profile-action-btn">
-                <i className="fa-solid fa-sliders" /> Volver a hacer
-                cuestionario
-              </button>
-              <button className="btn-logout" onClick={handleLogout}>
+              <button
+                className="btn-logout"
+                onClick={() => setConfirmLogout(true)}
+              >
                 <i className="fa-solid fa-right-from-bracket" /> Cerrar sesión
               </button>
             </div>
@@ -159,6 +322,46 @@ export default function ProfilePage() {
         user={usuario}
         onSave={handleSaveProfile}
       />
+
+      <ConfirmModal
+        isOpen={confirmOnboarding}
+        onClose={() => setConfirmOnboarding(false)}
+        onConfirm={() => {
+          setConfirmOnboarding(false);
+          navigate("/onboarding");
+        }}
+        title="¿Rehacer el cuestionario?"
+        description="Tus respuestas actuales se reemplazarán con las nuevas. Los likes anteriores dejarán de influir — solo contarán los que des a partir de ahora. Tus juegos del backlog no se tocan."
+        confirmLabel="Sí, rehacer"
+      />
+
+      <ConfirmModal
+        isOpen={confirmReset}
+        onClose={() => setConfirmReset(false)}
+        onConfirm={async () => {
+          setConfirmReset(false);
+          await handleResetHistory();
+        }}
+        title="¿Resetear historial de likes?"
+        description="Todos los likes anteriores dejarán de influir en las recomendaciones. Solo contarán los que des a partir de ahora. Esta acción no se puede deshacer."
+        confirmLabel="Resetear"
+        variant="danger"
+      />
+
+      <ConfirmModal
+        isOpen={confirmLogout}
+        onClose={() => setConfirmLogout(false)}
+        onConfirm={handleLogout}
+        title="¿Cerrar sesión?"
+        confirmLabel="Cerrar sesión"
+        variant="danger"
+      />
+
+      {toastMsg && (
+        <div className="toast-container">
+          <div className="toast">{toastMsg}</div>
+        </div>
+      )}
     </div>
   );
 }

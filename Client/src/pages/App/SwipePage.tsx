@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import GameInfoModal from "../../components/modals/GameInfoModal";
-import { getAllGames, updateStatus } from "../../services/api";
+import { getRecommendations, updateStatus } from "../../services/api";
 import { AuthContext } from "../../context/AuthContext";
 import "./SwipePage.css";
 
@@ -26,22 +26,37 @@ export default function SwipePage() {
     const deckGuardado = sessionStorage.getItem(STORAGE_JUEGOS);
     const indiceGuardado = sessionStorage.getItem(STORAGE_INDICE);
     if (deckGuardado) {
-      setJuegos(JSON.parse(deckGuardado));
-      setIdJuego(indiceGuardado ? Number(indiceGuardado) : 0);
-      setCargando(false);
-      return;
+      const parsed = JSON.parse(deckGuardado);
+      if (Array.isArray(parsed)) {
+        setJuegos(parsed);
+        setIdJuego(indiceGuardado ? Number(indiceGuardado) : 0);
+        setCargando(false);
+        return;
+      }
+      // Cache inválido (guardó un error) — limpiar y volver a pedir
+      sessionStorage.removeItem(STORAGE_JUEGOS);
+      sessionStorage.removeItem(STORAGE_INDICE);
     }
-    const data = await getAllGames();
-    const juegosMezclados = data.sort(() => Math.random() - 0.5);
-    sessionStorage.setItem(STORAGE_JUEGOS, JSON.stringify(juegosMezclados));
-    sessionStorage.setItem(STORAGE_INDICE, "0");
-    setJuegos(juegosMezclados);
-    setCargando(false);
+    try {
+      const data = await getRecommendations(user.id);
+      if (!Array.isArray(data)) {
+        console.error('Recomendaciones: respuesta inválida del servidor', data);
+        setCargando(false);
+        return;
+      }
+      sessionStorage.setItem(STORAGE_JUEGOS, JSON.stringify(data));
+      sessionStorage.setItem(STORAGE_INDICE, "0");
+      setJuegos(data);
+    } catch (err) {
+      console.error('Error cargando recomendaciones:', err);
+    } finally {
+      setCargando(false);
+    }
   };
 
   useEffect(() => {
-    cargarJuegos();
-  }, []);
+    if (user) cargarJuegos();
+  }, [user?.id]);
 
   const triggerSwipe = async (direction: "left" | "right") => {
     if (swipingRef.current || !user) return;
@@ -137,6 +152,22 @@ export default function SwipePage() {
     );
   }
 
+  if (juegos.length === 0) {
+    return (
+      <div className="swipe-page page-enter">
+        <div className="swipe-loading-container">
+          <div className="swipe-loading-text">No se pudieron cargar las recomendaciones</div>
+          <button
+            style={{ marginTop: 16, padding: '8px 20px', background: 'var(--cobalt)', border: 'none', borderRadius: 8, color: '#fff', cursor: 'pointer' }}
+            onClick={() => { sessionStorage.removeItem(STORAGE_JUEGOS); sessionStorage.removeItem(STORAGE_INDICE); cargarJuegos(); }}
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (idJuego >= juegos.length) {
     return (
       <div className="swipe-page page-enter">
@@ -216,6 +247,11 @@ export default function SwipePage() {
             <kbd>↓</kbd>
             <span>Volver</span>
           </div>
+        </div>
+
+        {/* Glow dinámico del color del juego */}
+        <div className="swipe-image-glow" key={juegoActual.id}>
+          <img src={juegoActual.imageUrl} alt="" aria-hidden />
         </div>
 
         {/* Next card — always behind */}

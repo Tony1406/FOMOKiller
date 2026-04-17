@@ -7,6 +7,8 @@ import {
   reorderPriorities,
 } from "../../services/api";
 import { AuthContext } from "../../context/AuthContext";
+import ConfirmModal from "../../components/modals/ConfirmModal";
+import GameInfoModal from "../../components/modals/GameInfoModal";
 import "./Top5Page.css";
 
 export default function Top5Page() {
@@ -21,6 +23,17 @@ export default function Top5Page() {
   }, [vista]);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const dragIndexRef = useRef<number | null>(null);
+  const [confirmDrop, setConfirmDrop] = useState<any>(null);
+  const [completingId, setCompletingId] = useState<number | null>(null);
+  const [juegoSeleccionado, setJuegoSeleccionado] = useState<any>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+
+  const showToast = (msg: string, type: "success" | "error" = "success") => {
+    setToastMsg(msg);
+    setToastType(type);
+    setTimeout(() => setToastMsg(null), 2000);
+  };
 
   const cargarPrioridades = async () => {
     if (!user) return;
@@ -32,13 +45,17 @@ export default function Top5Page() {
     if (user) cargarPrioridades();
   }, [user]);
 
-  const handleRemovePriority = async (gameId: number) => {
-    if (!user) return;
+  const handleDropConfirmed = async () => {
+    if (!user || !confirmDrop) return;
+    const gameId = confirmDrop.gameId;
+    setConfirmDrop(null);
     try {
       await setPriority(user.id, gameId, false);
       cargarPrioridades();
+      showToast("Juego eliminado del Top 5");
     } catch (error) {
       console.error("Error quitando prioridad:", error);
+      showToast("Error al eliminar del Top 5", "error");
     }
   };
 
@@ -49,9 +66,18 @@ export default function Top5Page() {
       await markFinished(user.id, gameId, true);
       await setPriority(user.id, gameId, false);
       cargarPrioridades();
+      showToast("¡Juego completado!");
     } catch (error) {
       console.error("Error completando juego:", error);
     }
+  };
+
+  const handleCompleteWithAnim = (gameId: number) => {
+    setCompletingId(gameId);
+    setTimeout(() => {
+      setCompletingId(null);
+      handleComplete(gameId);
+    }, 500);
   };
 
   const onDragStart = (index: number) => {
@@ -160,6 +186,7 @@ export default function Top5Page() {
                 onDragOver={(e) => onDragOver(e, index)}
                 onDrop={() => onDrop(index)}
                 onDragEnd={onDragEnd}
+                onClick={() => setJuegoSeleccionado(game)}
               >
                 <i className="fa-solid fa-grip-lines top5-drag-handle" />
                 <div className={`priority-num ${numClass(index + 1)}`}>
@@ -178,14 +205,14 @@ export default function Top5Page() {
                 <div className="game-actions">
                   <button
                     className="action-btn-drop"
-                    onClick={() => handleRemovePriority(juego.gameId)}
+                    onClick={(e) => { e.stopPropagation(); setConfirmDrop(juego); }}
                     title="Quitar de Top 5"
                   >
                     <i className="fa-solid fa-times" />
                   </button>
                   <button
                     className="action-btn-completado"
-                    onClick={() => handleComplete(juego.gameId)}
+                    onClick={(e) => { e.stopPropagation(); handleComplete(juego.gameId); }}
                     title="Marcar como completado"
                   >
                     <i className="fa-solid fa-check" />
@@ -218,12 +245,13 @@ export default function Top5Page() {
             return (
               <div
                 key={juego.gameId}
-                className={`top5-card${dragOverIndex === index ? " drag-over" : ""}`}
+                className={`top5-card${dragOverIndex === index ? " drag-over" : ""}${completingId === juego.gameId ? " top5-card--completing" : ""}`}
                 draggable
                 onDragStart={() => onDragStart(index)}
                 onDragOver={(e) => onDragOver(e, index)}
                 onDrop={() => onDrop(index)}
                 onDragEnd={onDragEnd}
+                onClick={() => setJuegoSeleccionado(game)}
               >
                 <div className="game-card-img-wrap">
                   {game.imageUrl ? (
@@ -238,6 +266,12 @@ export default function Top5Page() {
                     </div>
                   )}
                 </div>
+                {completingId === juego.gameId && (
+                  <>
+                    <div className="game-card-completed-overlay" />
+                    <div className="game-card-stamp">COMPLETADO</div>
+                  </>
+                )}
                 <div className="game-card-gradient" />
                 <div className={`top5-card-badge ${numClass(index + 1)}`}>
                   {index + 1}
@@ -250,14 +284,14 @@ export default function Top5Page() {
                   <div className="top5-card-actions">
                     <button
                       className="action-btn-drop"
-                      onClick={() => handleRemovePriority(juego.gameId)}
+                      onClick={(e) => { e.stopPropagation(); setConfirmDrop(juego); }}
                       title="Quitar de Top 5"
                     >
                       <i className="fa-solid fa-times" />
                     </button>
                     <button
-                      className="action-btn-completado"
-                      onClick={() => handleComplete(juego.gameId)}
+                      className={`action-btn-completado${completingId === juego.gameId ? " top5-completing" : ""}`}
+                      onClick={(e) => { e.stopPropagation(); handleCompleteWithAnim(juego.gameId); }}
                       title="Marcar como completado"
                     >
                       <i className="fa-solid fa-check" />
@@ -279,6 +313,30 @@ export default function Top5Page() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      <GameInfoModal
+        isOpen={juegoSeleccionado != null}
+        game={juegoSeleccionado}
+        onClose={() => setJuegoSeleccionado(null)}
+      />
+
+      <ConfirmModal
+        isOpen={confirmDrop != null}
+        onClose={() => setConfirmDrop(null)}
+        onConfirm={handleDropConfirmed}
+        title="¿Eliminar del Top 5?"
+        description={`"${confirmDrop?.Game?.title}" volverá a tu backlog normal. Podrás volver a añadirlo cuando quieras.`}
+        confirmLabel="Eliminar"
+        variant="danger"
+      />
+
+      {toastMsg && (
+        <div className="toast-container">
+          <div className={`toast ${toastType === "error" ? "toast-error" : ""}`}>
+            {toastMsg}
+          </div>
         </div>
       )}
     </div>

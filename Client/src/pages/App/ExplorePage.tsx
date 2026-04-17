@@ -85,24 +85,27 @@ export default function ExplorePage() {
                     {games.map((game: any) => {
                         const estaEnBacklog = enBacklog.has(game.id);
                         return (
-                            <div key={game.id} className="game-card">
+                            <div key={game.id} className={`game-card${estaEnBacklog ? " game-card--guardado" : ""}`} onClick={() => setJuegoSeleccionado(game)}>
                                 <div className="game-card-img-wrap">
                                     {game.imageUrl
                                         ? <img src={game.imageUrl} alt={game.title} className="game-card-image" />
                                         : <div className="game-card-no-image">{game.title[0].toUpperCase()}</div>
                                     }
                                 </div>
+                                {estaEnBacklog && (
+                                    <>
+                                        <div className="game-card-backlog-overlay" />
+                                        <div className="game-card-backlog-stamp">GUARDADO</div>
+                                    </>
+                                )}
                                 <div className="game-card-gradient" />
                                 <div className="game-card-info">
                                     <div className="game-card-title">{game.title}</div>
                                     <div className="game-card-subtitle">{game.developer} · {game.releaseYear}</div>
                                     <div className="game-card-actions">
-                                        <button className="action-btn-secondary" onClick={() => setJuegoSeleccionado(game)}>
-                                            <i className="fa-solid fa-info-circle"></i>
-                                        </button>
                                         <button
                                             className={`action-btn-completado${estaEnBacklog ? ' action-btn-completado--active' : ''}`}
-                                            onClick={() => handleAddGame(game.id)}
+                                            onClick={(e) => { e.stopPropagation(); handleAddGame(game.id); }}
                                             title={estaEnBacklog ? 'Quitar del backlog' : 'Añadir al backlog'}
                                         >
                                             <i className="fa-solid fa-heart"></i>
@@ -121,7 +124,7 @@ export default function ExplorePage() {
                 {games.map((game: any) => {
                     const estaEnBacklog = enBacklog.has(game.id);
                     return (
-                        <div className="game-list-item" key={game.id}>
+                        <div className="game-list-item" key={game.id} onClick={() => setJuegoSeleccionado(game)}>
                             {game.imageUrl
                                 ? <img src={game.imageUrl} alt={game.title} className="game-thumb-img" />
                                 : <div className="game-thumb-placeholder game-thumb-letter">{game.title[0].toUpperCase()}</div>
@@ -133,12 +136,9 @@ export default function ExplorePage() {
                                 </div>
                             </div>
                             <div className="game-actions">
-                                <button className="action-btn-secondary" onClick={() => setJuegoSeleccionado(game)}>
-                                    <i className="fa-solid fa-info-circle"></i>
-                                </button>
                                 <button
                                     className={`action-btn-completado${estaEnBacklog ? ' action-btn-completado--active' : ''}`}
-                                    onClick={() => handleAddGame(game.id)}
+                                    onClick={(e) => { e.stopPropagation(); handleAddGame(game.id); }}
                                     title={estaEnBacklog ? 'Quitar del backlog' : 'Añadir al backlog'}
                                 >
                                     <i className="fa-solid fa-heart"></i>
@@ -169,16 +169,16 @@ export default function ExplorePage() {
                         </button>
                     </div>
                     <div className="backlog-legend explore-legend">
-                        <div className="backlog-legend-item"><i className="fa-solid fa-info-circle" /><span>Más información</span></div>
                         <div className="backlog-legend-item"><i className="fa-solid fa-heart" /><span>Añadir al backlog</span></div>
                     </div>
                 </div>
                 {buscarResultados.length > 0 ? (
                     <>
-                        {renderGames(buscarResultados.slice((paginaSearch - 1) * 10, paginaSearch * 10), vista)}
+                        {renderGames(buscarResultados.slice((paginaSearch - 1) * 18, paginaSearch * 18), vista)}
                         <Paginador
                             pagina={paginaSearch}
                             total={buscarResultados.length}
+                            porPagina={18}
                             onChange={p => { setPaginaSearch(p); scrollTop(); }}
                         />
                     </>
@@ -206,15 +206,15 @@ export default function ExplorePage() {
                         </button>
                     </div>
                     <div className="backlog-legend explore-legend">
-                        <div className="backlog-legend-item"><i className="fa-solid fa-info-circle" /><span>Más información</span></div>
                         <div className="backlog-legend-item"><i className="fa-solid fa-heart" /><span>Añadir al backlog</span></div>
                     </div>
                 </div>
 
-                {renderGames(coleccionSeleccionada.Games.slice((paginaColeccion - 1) * 10, paginaColeccion * 10), vista)}
+                {renderGames(coleccionSeleccionada.Games.slice((paginaColeccion - 1) * 18, paginaColeccion * 18), vista)}
                 <Paginador
                     pagina={paginaColeccion}
                     total={coleccionSeleccionada.Games.length}
+                    porPagina={18}
                     onChange={p => { setPaginaColeccion(p); scrollTop(); }}
                 />
             </div>

@@ -1,61 +1,218 @@
-.profile-edit-modal {
-    max-width: 500px;
-    width: 90%;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
+/* ── Overlay propio (más transparente para que se vea la aurora) ── */
+.ep-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn var(--t-fast) var(--ease-smooth);
 }
 
-.edit-profile-form {
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ── Modal container (autónomo, no hereda de GameInfoModal) ── */
+.edit-profile-modal {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    width: 92%;
+    max-width: 460px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideUp var(--t-base) var(--ease-spring);
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Header ──────────────────────────────────── */
+.ep-header {
+    padding: 28px 28px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.ep-title {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-primary);
+    padding-right: 32px; /* espacio para el close btn */
+}
+
+.ep-subtitle {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* ── Form ────────────────────────────────────── */
+.ep-form {
+    padding: 24px 28px 28px;
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.form-group {
+/* ── Avatar section ──────────────────────────── */
+.ep-avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.ep-avatar-wrap {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--cobalt);
+    box-shadow: 0 0 14px rgba(0, 112, 243, 0.3);
+}
+
+.ep-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ep-avatar-fields {
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.form-group label {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.form-group input,
-.form-group textarea {
-    background: rgba(255, 255, 255, 0.03);
+.ep-random-btn {
+    align-self: flex-start;
+    background: transparent;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 12px 14px;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--t-fast);
+}
+
+.ep-random-btn:hover {
+    border-color: var(--cobalt);
+    color: var(--text-primary);
+}
+
+/* ── Fields ──────────────────────────────────── */
+.ep-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ep-field label {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: inherit;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.ep-field input,
+.ep-field textarea {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
     color: var(--text-primary);
     font-family: inherit;
     font-size: 14px;
     transition: all var(--t-base);
+    resize: none;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
+.ep-field input::placeholder,
+.ep-field textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.ep-field input:focus,
+.ep-field textarea:focus {
     outline: none;
     border-color: var(--cobalt);
     background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.1);
 }
 
-.char-count {
+.ep-char-count {
     font-size: 11px;
+    font-family: inherit;
     color: var(--text-muted);
     align-self: flex-end;
 }
 
-.modal-actions-fixed {
-    margin-top: 10px;
+/* ── Actions ─────────────────────────────────── */
+.ep-actions {
     display: flex;
-    gap: 12px;
+    gap: 10px;
+    margin-top: 4px;
 }
 
-.modal-actions-fixed button {
+.ep-btn-cancel {
     flex: 1;
+    padding: 11px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--t-base);
+}
+
+.ep-btn-cancel:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+}
+
+.ep-btn-save {
+    flex: 1;
+    padding: 11px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--cobalt);
+    background: var(--cobalt);
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--t-base);
+}
+
+.ep-btn-save:hover {
+    background: var(--cobalt-light);
+    border-color: var(--cobalt-light);
+    box-shadow: var(--shadow-cobalt);
 }

@@ -7,10 +7,24 @@ import {
   clearBacklog,
 } from "../../services/api";
 import GameInfoModal from "../../components/modals/GameInfoModal";
+import ConfirmModal from "../../components/modals/ConfirmModal";
 import Paginador from "../../components/Paginador";
 import { AuthContext } from "../../context/AuthContext";
 import "./BacklogPage.css";
 import "../../components/Paginador.css";
+
+type OrdenValue = "recientes" | "antiguos" | "az" | "za" | "año-asc" | "año-desc";
+
+const ORDEN_OPCIONES: { value: OrdenValue; label: string }[] = [
+  { value: "recientes", label: "Recientes primero" },
+  { value: "antiguos", label: "Antiguos primero" },
+  { value: "az", label: "A–Z" },
+  { value: "za", label: "Z–A" },
+  { value: "año-asc", label: "Año ↑" },
+  { value: "año-desc", label: "Año ↓" },
+];
+
+const FILTRO_OPCIONES = ["Todos", "Pendientes", "Completados", "Top 5"];
 
 export default function BacklogPage() {
   const { user } = useContext(AuthContext);
@@ -21,16 +35,18 @@ export default function BacklogPage() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState<"success" | "error">("success");
   const [filtroOpen, setFiltroOpen] = useState(false);
-  const [accionesOpen, setAccionesOpen] = useState(false);
-  const [confirmClear, setConfirmClear] = useState(false);
+  const [ordenActivo, setOrdenActivo] = useState<OrdenValue>("recientes");
+  const [ordenOpen, setOrdenOpen] = useState(false);
+  const [confirmDeleteGame, setConfirmDeleteGame] = useState<any>(null);
+  const [confirmClearBacklog, setConfirmClearBacklog] = useState(false);
   const [vista, setVista] = useState<"lista" | "cards">(
     () => (localStorage.getItem("fomo_vista_backlog") as "lista" | "cards") || "lista"
   );
   useEffect(() => { localStorage.setItem("fomo_vista_backlog", vista); }, [vista]);
   const [pagina, setPagina] = useState(1);
-  useEffect(() => { setPagina(1); }, [busqueda, pestañaActiva]);
+  useEffect(() => { setPagina(1); }, [busqueda, pestañaActiva, ordenActivo]);
   const filtroRef = useRef<HTMLDivElement>(null);
-  const accionesRef = useRef<HTMLDivElement>(null);
+  const ordenRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef<HTMLDivElement>(null);
   const scrollTop = () => pageRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -48,11 +64,8 @@ export default function BacklogPage() {
     const handleClickOutside = (e: MouseEvent) => {
       if (filtroRef.current && !filtroRef.current.contains(e.target as Node))
         setFiltroOpen(false);
-      if (
-        accionesRef.current &&
-        !accionesRef.current.contains(e.target as Node)
-      )
-        setAccionesOpen(false);
+      if (ordenRef.current && !ordenRef.current.contains(e.target as Node))
+        setOrdenOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -69,9 +82,35 @@ export default function BacklogPage() {
     try {
       await updateStatus(user.id, gameId, status);
       await markFinished(user.id, gameId, status === "COMPLETED");
+      if (status === "COMPLETED") showToast("Juego marcado como completado");
       cargarBacklog();
     } catch (error) {
       console.error("Error actualizando estado:", error);
+    }
+  };
+
+  const handleClearBacklogConfirmed = async () => {
+    if (!user) return;
+    setConfirmClearBacklog(false);
+    try {
+      await clearBacklog(user.id);
+      cargarBacklog();
+      showToast("Backlog vaciado");
+    } catch {
+      showToast("Error al vaciar el backlog", "error");
+    }
+  };
+
+  const handleDeleteConfirmed = async () => {
+    if (!user || !confirmDeleteGame) return;
+    const gameId = confirmDeleteGame.gameId;
+    setConfirmDeleteGame(null);
+    try {
+      await updateStatus(user.id, gameId, "DROPPED");
+      cargarBacklog();
+      showToast("Juego eliminado del backlog");
+    } catch {
+      showToast("Error al eliminar el juego", "error");
     }
   };
 
@@ -101,31 +140,35 @@ export default function BacklogPage() {
     }
   };
 
-  const handleClearBacklog = async () => {
-    if (!confirmClear) {
-      setConfirmClear(true);
-      setTimeout(() => setConfirmClear(false), 3000);
-      return;
-    }
-    setConfirmClear(false);
-    setAccionesOpen(false);
-    if (!user) return;
-    try {
-      await clearBacklog(user.id);
-      cargarBacklog();
-      showToast("Backlog borrado", "success");
-    } catch {
-      showToast("Error al borrar el backlog", "error");
-    }
-  };
+  const filteredGames = (() => {
+    let games = backlog.filter((juego) => {
+      const filtroOk =
+        pestañaActiva === "Todos" ||
+        (pestañaActiva === "Completados" && juego.status === "COMPLETED") ||
+        (pestañaActiva === "Pendientes" && juego.status !== "COMPLETED") ||
+        (pestañaActiva === "Top 5" && juego.isPriority === true);
+      const busquedaOk =
+        !busqueda ||
+        juego.Game?.title?.toLowerCase().includes(busqueda.toLowerCase());
+      return filtroOk && busquedaOk;
+    });
 
-  const filteredGames = backlog.filter((juego) => {
-    const filtroOk = pestañaActiva === "Todos" || juego.status === "COMPLETED";
-    const busquedaOk =
-      !busqueda ||
-      juego.Game?.title?.toLowerCase().includes(busqueda.toLowerCase());
-    return filtroOk && busquedaOk;
-  });
+    if (ordenActivo === "antiguos") {
+      games = [...games].reverse();
+    } else if (ordenActivo === "az") {
+      games = [...games].sort((a, b) => a.Game.title.localeCompare(b.Game.title));
+    } else if (ordenActivo === "za") {
+      games = [...games].sort((a, b) => b.Game.title.localeCompare(a.Game.title));
+    } else if (ordenActivo === "año-asc") {
+      games = [...games].sort((a, b) => (a.Game.releaseYear || 0) - (b.Game.releaseYear || 0));
+    } else if (ordenActivo === "año-desc") {
+      games = [...games].sort((a, b) => (b.Game.releaseYear || 0) - (a.Game.releaseYear || 0));
+    }
+
+    return games;
+  })();
+
+  const ordenLabel = ORDEN_OPCIONES.find(o => o.value === ordenActivo)?.label ?? "Ordenar";
 
   return (
     <div className="page page-padded page-enter" ref={pageRef}>
@@ -141,7 +184,7 @@ export default function BacklogPage() {
                 className={`backlog-dropdown-btn${pestañaActiva !== "Todos" ? " active" : ""}`}
                 onClick={() => {
                   setFiltroOpen((o) => !o);
-                  setAccionesOpen(false);
+                  setOrdenOpen(false);
                 }}
               >
                 <i className="fa-solid fa-filter" />
@@ -150,7 +193,7 @@ export default function BacklogPage() {
               </button>
               {filtroOpen && (
                 <div className="backlog-dropdown-menu">
-                  {["Todos", "Completados"].map((opt) => (
+                  {FILTRO_OPCIONES.map((opt) => (
                     <button
                       key={opt}
                       className={`backlog-dropdown-item${pestañaActiva === opt ? " active" : ""}`}
@@ -169,40 +212,42 @@ export default function BacklogPage() {
               )}
             </div>
 
-            {/* Más acciones */}
-            <div className="backlog-dropdown-wrap" ref={accionesRef}>
+            {/* Ordenar */}
+            <div className="backlog-dropdown-wrap" ref={ordenRef}>
               <button
-                className="backlog-dropdown-btn"
+                className={`backlog-dropdown-btn${ordenActivo !== "recientes" ? " active" : ""}`}
                 onClick={() => {
-                  setAccionesOpen((o) => !o);
+                  setOrdenOpen((o) => !o);
                   setFiltroOpen(false);
                 }}
               >
-                <i className="fa-solid fa-ellipsis-vertical" />
-                Más acciones
+                <i className="fa-solid fa-arrow-up-wide-short" />
+                {ordenActivo === "recientes" ? "Ordenar" : ordenLabel}
                 <i className="fa-solid fa-chevron-down backlog-chevron" />
               </button>
-              {accionesOpen && (
+              {ordenOpen && (
                 <div className="backlog-dropdown-menu">
-                  <button
-                    className={`backlog-dropdown-item backlog-dropdown-item--danger${confirmClear ? " confirming" : ""}`}
-                    onClick={handleClearBacklog}
-                  >
-                    <i className="fa-solid fa-trash" />
-                    {confirmClear
-                      ? "¿Seguro? Pulsa de nuevo"
-                      : "Borrar todos los juegos"}
-                  </button>
+                  {ORDEN_OPCIONES.map((op) => (
+                    <button
+                      key={op.value}
+                      className={`backlog-dropdown-item${ordenActivo === op.value ? " active" : ""}`}
+                      onClick={() => {
+                        setOrdenActivo(op.value);
+                        setOrdenOpen(false);
+                      }}
+                    >
+                      <i
+                        className={`fa-solid fa-check backlog-item-check${ordenActivo === op.value ? " visible" : ""}`}
+                      />
+                      {op.label}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
           </div>
 
           <div className="backlog-legend">
-            <div className="backlog-legend-item">
-              <i className="fa-solid fa-info-circle" />
-              <span>Mas informacion</span>
-            </div>
             <div className="backlog-legend-item">
               <i className="fa-solid fa-ranking-star" />
               <span>Enviar a Top 5</span>
@@ -218,6 +263,18 @@ export default function BacklogPage() {
           </div>
 
           <div className="backlog-toolbar-right">
+            {/* Vaciar backlog */}
+            {backlog.length > 0 && (
+              <button
+                className="backlog-clear-btn"
+                onClick={() => setConfirmClearBacklog(true)}
+                title="Vaciar backlog"
+              >
+                <i className="fa-solid fa-trash-can" />
+                <span>Vaciar</span>
+              </button>
+            )}
+
             {/* Toggle vista */}
             <button
               className="backlog-view-btn"
@@ -279,11 +336,11 @@ export default function BacklogPage() {
       {vista === "lista" && filteredGames.length > 0 && (
         <>
           <div className="game-list" key="lista">
-            {filteredGames.slice((pagina - 1) * 10, pagina * 10).map((juego: any) => {
+            {filteredGames.slice((pagina - 1) * 18, pagina * 18).map((juego: any) => {
               const game = juego.Game;
               const letraInicial = game.title[0].toUpperCase();
               return (
-                <div key={juego.gameId} className="game-list-item">
+                <div key={juego.gameId} className="game-list-item" onClick={() => setJuegoSeleccionado(game)}>
                   {game.imageUrl
                     ? <img src={game.imageUrl} alt={game.title} className="game-thumb-img" />
                     : <div className="game-thumb-placeholder game-thumb-letter">{letraInicial}</div>
@@ -296,31 +353,25 @@ export default function BacklogPage() {
                   </div>
                   <div className="game-actions">
                     <button
-                      className="action-btn-info"
-                      onClick={() => setJuegoSeleccionado(game)}
+                      className={juego.status === "COMPLETED" ? "action-btn-completado active" : "action-btn-completado"}
+                      onClick={(e) => { e.stopPropagation(); handleUpdateStatus(juego.gameId, juego.status === "COMPLETED" ? "LIKED" : "COMPLETED"); }}
+                      title={juego.status === "COMPLETED" ? "Desmarcar completado" : "Marcar como completado"}
                     >
-                      <i className="fa-solid fa-info-circle"></i>
+                      <i className="fa-solid fa-check"></i>
                     </button>
                     <button
                       className={`action-btn-secondary${juego.isPriority ? " action-btn-star--active" : ""}`}
-                      onClick={() => handleSetPriority(juego)}
+                      onClick={(e) => { e.stopPropagation(); handleSetPriority(juego); }}
                       title={juego.isPriority ? "Quitar de Top 5" : "Añadir a Top 5"}
                     >
                       <i className="fa-solid fa-ranking-star"></i>
                     </button>
                     <button
                       className="action-btn-drop"
-                      onClick={() => handleUpdateStatus(juego.gameId, "DROPPED")}
+                      onClick={(e) => { e.stopPropagation(); setConfirmDeleteGame(juego); }}
+                      title="Eliminar del backlog"
                     >
                       <i className="fa-solid fa-trash"></i>
-                    </button>
-                    <button
-                      className={juego.status === "COMPLETED" ? "action-btn-completado active" : "action-btn-completado"}
-                      onClick={() =>
-                        handleUpdateStatus(juego.gameId, juego.status === "COMPLETED" ? "LIKED" : "COMPLETED")
-                      }
-                    >
-                      <i className="fa-solid fa-check"></i>
                     </button>
                   </div>
                 </div>
@@ -330,6 +381,7 @@ export default function BacklogPage() {
           <Paginador
             pagina={pagina}
             total={filteredGames.length}
+            porPagina={18}
             onChange={p => { setPagina(p); scrollTop(); }}
           />
         </>
@@ -339,10 +391,10 @@ export default function BacklogPage() {
       {vista === "cards" && filteredGames.length > 0 && (
         <>
           <div className="game-grid" key="cards">
-            {filteredGames.slice((pagina - 1) * 10, pagina * 10).map((juego: any) => {
+            {filteredGames.slice((pagina - 1) * 18, pagina * 18).map((juego: any) => {
               const game = juego.Game;
               return (
-                <div key={juego.gameId} className="game-card">
+                <div key={juego.gameId} className={`game-card${juego.status === "COMPLETED" ? " game-card--completed" : juego.isPriority ? " game-card--top5" : ""}`} onClick={() => setJuegoSeleccionado(game)}>
                   <div className="game-card-img-wrap">
                     {game.imageUrl ? (
                       <img src={game.imageUrl} alt={game.title} className="game-card-image" />
@@ -352,6 +404,18 @@ export default function BacklogPage() {
                       </div>
                     )}
                   </div>
+                  {juego.isPriority && juego.status !== "COMPLETED" && (
+                    <>
+                      <div className="game-card-top5-overlay" />
+                      <div className="game-card-top5-stamp">TOP 5</div>
+                    </>
+                  )}
+                  {juego.status === "COMPLETED" && (
+                    <>
+                      <div className="game-card-completed-overlay" />
+                      <div className="game-card-stamp">COMPLETADO</div>
+                    </>
+                  )}
                   <div className="game-card-gradient" />
                   <div className="game-card-info">
                     <div className="game-card-title">{game.title}</div>
@@ -360,31 +424,25 @@ export default function BacklogPage() {
                     </div>
                     <div className="game-card-actions">
                       <button
-                        className="action-btn-info"
-                        onClick={() => setJuegoSeleccionado(game)}
+                        className={juego.status === "COMPLETED" ? "action-btn-completado active" : "action-btn-completado"}
+                        onClick={(e) => { e.stopPropagation(); handleUpdateStatus(juego.gameId, juego.status === "COMPLETED" ? "LIKED" : "COMPLETED"); }}
+                        title={juego.status === "COMPLETED" ? "Desmarcar completado" : "Marcar como completado"}
                       >
-                        <i className="fa-solid fa-info-circle"></i>
+                        <i className="fa-solid fa-check"></i>
                       </button>
                       <button
                         className={`action-btn-secondary${juego.isPriority ? " action-btn-star--active" : ""}`}
-                        onClick={() => handleSetPriority(juego)}
+                        onClick={(e) => { e.stopPropagation(); handleSetPriority(juego); }}
                         title={juego.isPriority ? "Quitar de Top 5" : "Añadir a Top 5"}
                       >
                         <i className="fa-solid fa-ranking-star"></i>
                       </button>
                       <button
                         className="action-btn-drop"
-                        onClick={() => handleUpdateStatus(juego.gameId, "DROPPED")}
+                        onClick={(e) => { e.stopPropagation(); setConfirmDeleteGame(juego); }}
+                        title="Eliminar del backlog"
                       >
                         <i className="fa-solid fa-trash"></i>
-                      </button>
-                      <button
-                        className={juego.status === "COMPLETED" ? "action-btn-completado active" : "action-btn-completado"}
-                        onClick={() =>
-                          handleUpdateStatus(juego.gameId, juego.status === "COMPLETED" ? "LIKED" : "COMPLETED")
-                        }
-                      >
-                        <i className="fa-solid fa-check"></i>
                       </button>
                     </div>
                   </div>
@@ -395,6 +453,7 @@ export default function BacklogPage() {
           <Paginador
             pagina={pagina}
             total={filteredGames.length}
+            porPagina={18}
             onChange={p => { setPagina(p); scrollTop(); }}
           />
         </>
@@ -404,6 +463,26 @@ export default function BacklogPage() {
         isOpen={juegoSeleccionado != null}
         onClose={() => setJuegoSeleccionado(null)}
         game={juegoSeleccionado}
+      />
+
+      <ConfirmModal
+        isOpen={confirmDeleteGame != null}
+        onClose={() => setConfirmDeleteGame(null)}
+        onConfirm={handleDeleteConfirmed}
+        title="¿Eliminar del backlog?"
+        description={`"${confirmDeleteGame?.Game?.title}" se quitará de tu backlog. Podrás volver a añadirlo desde Explorar.`}
+        confirmLabel="Eliminar"
+        variant="danger"
+      />
+
+      <ConfirmModal
+        isOpen={confirmClearBacklog}
+        onClose={() => setConfirmClearBacklog(false)}
+        onConfirm={handleClearBacklogConfirmed}
+        title="¿Vaciar el backlog?"
+        description="Se eliminarán todos los juegos de tu backlog. Esta acción no se puede deshacer."
+        confirmLabel="Vaciar todo"
+        variant="danger"
       />
 
       {toastMsg && (

@@ -87,16 +87,28 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
         ? description.slice(0, DESC_LIMIT) + '...'
         : description;
 
-    const platformNames = game.Platforms?.map(p => p.name).join(', ') ?? null;
+    const PLATFORM_ICONS: Record<string, string> = {
+        'PC':               'fa-brands fa-steam',
+        'macOS':            'fa-brands fa-apple',
+        'Linux':            'fa-brands fa-linux',
+        'PlayStation 5':    'fa-brands fa-playstation',
+        'PlayStation 4':    'fa-brands fa-playstation',
+        'PlayStation 3':    'fa-brands fa-playstation',
+        'Xbox Series S/X':  'fa-brands fa-xbox',
+        'Xbox One':         'fa-brands fa-xbox',
+        'Xbox 360':         'fa-brands fa-xbox',
+        'Nintendo Switch':  'fa-solid fa-gamepad',
+        'iOS':              'fa-brands fa-apple',
+        'Android':          'fa-brands fa-android',
+    };
 
     const infoRows = [
         developer && { icon: 'fa-solid fa-code', label: 'Desarrollador', value: developer },
-        details?.publisher && { icon: 'fa-solid fa-building', label: 'Publisher', value: details.publisher },
+        details?.publisher && details.publisher && { icon: 'fa-solid fa-building', label: 'Publisher', value: details.publisher },
         game.releaseYear && { icon: 'fa-solid fa-calendar', label: 'Lanzamiento', value: String(game.releaseYear) },
         (game.playtime ?? 0) > 0 && { icon: 'fa-solid fa-clock', label: 'Duración media', value: `~${game.playtime}h` },
-        platformNames && { icon: 'fa-solid fa-gamepad', label: 'Plataformas', value: platformNames },
-        details?.esrb && { icon: 'fa-solid fa-shield-halved', label: 'Clasificación', value: details.esrb },
-    ].filter(Boolean) as { icon: string; label: string; value: string }[];
+        details?.esrb && details.esrb.trim() && { icon: 'fa-solid fa-shield-halved', label: 'Clasificación', value: details.esrb },
+    ].filter(row => row && (row as any).value) as { icon: string; label: string; value: string }[];
 
     return (
         <div className="modal-overlay" onClick={onClose}>
@@ -148,7 +160,7 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
                     </div>
 
                     {/* Info rows estilo Tinder */}
-                    {(infoRows.length > 0 || loadingDetails) && (
+                    {(infoRows.length > 0 || loadingDetails || (game.Platforms?.length ?? 0) > 0) && (
                         <div className="modal-info-rows">
                             {loadingDetails && infoRows.length === 0 && (
                                 <div className="modal-loading">Cargando detalles...</div>
@@ -162,6 +174,22 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
                                     </div>
                                 </div>
                             ))}
+                            {(game.Platforms?.length ?? 0) > 0 && (
+                                <div className="modal-info-row">
+                                    <i className="fa-solid fa-display modal-info-icon" />
+                                    <div className="modal-info-text">
+                                        <span className="modal-info-label">Plataformas</span>
+                                        <div className="modal-platform-icons">
+                                            {game.Platforms!.map(p => {
+                                                const icon = PLATFORM_ICONS[p.name] ?? 'fa-solid fa-gamepad';
+                                                return (
+                                                    <i key={p.id} className={`${icon} modal-platform-icon`} title={p.name} />
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
 

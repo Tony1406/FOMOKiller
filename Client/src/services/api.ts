@@ -155,6 +155,44 @@ export const reorderPriorities = async (userId: number, order: { gameId: number;
     return response;
 };
 
+// ─── RECOMENDACIONES ──────────────────────────────────────────────────────────
+
+export const savePreferences = async (userId: number, payload: object) => {
+    const res = await fetch(`${URL}/recommendations/preferences`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ userId, ...payload }),
+    });
+    return res.json();
+};
+
+export const getPreferences = async (userId: number) => {
+    const res = await fetch(`${URL}/recommendations/preferences/${userId}`, { credentials: 'include' });
+    return res.json();
+};
+
+export const getRecommendations = async (userId: number) => {
+    const res = await fetch(`${URL}/recommendations/${userId}`, { credentials: 'include' });
+    return res.json();
+};
+
+export const toggleExploration = async (userId: number) => {
+    const res = await fetch(`${URL}/recommendations/preferences/${userId}/toggle-exploration`, {
+        method: 'PATCH',
+        credentials: 'include',
+    });
+    return res.json();
+};
+
+export const resetRecommendationHistory = async (userId: number) => {
+    const res = await fetch(`${URL}/recommendations/preferences/${userId}/reset-history`, {
+        method: 'PATCH',
+        credentials: 'include',
+    });
+    return res.json();
+};
+
 // ─── ADMIN ────────────────────────────────────────────────────────────────────
 
 export const adminGetUsers = async () => {

@@ -34,6 +34,11 @@ export const User = sequelize.define('User', {
     },
     bio: {
         type: DataTypes.TEXT
+    },
+    hasCompletedOnboarding: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        field: 'has_completed_onboarding'
     }
 }, {
     tableName: 'users',

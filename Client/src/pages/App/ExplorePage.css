@@ -21,24 +21,24 @@
 }
 
 .search-bar {
-    margin-top: 40px;
+    margin-top: 16px;
     display: flex;
     align-items: center;
     gap: 16px;
     padding: 0 24px;
     height: 64px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-sm);
-    /* Brutal: less round */
     transition: all var(--t-base);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
 }
 
 .search-bar:focus-within {
     border-color: var(--cobalt);
     box-shadow: 0 0 20px rgba(0, 112, 243, 0.2);
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(0, 0, 0, 0.45);
 }
 
 .search-bar input {
@@ -77,7 +77,7 @@
     height: 216px;
     /* Uniform height */
     cursor: pointer;
-    border: 1px solid var(--border);
+    border: none;
     background: var(--bg-card);
     transition: all var(--t-base) var(--ease-spring);
 }
@@ -87,11 +87,15 @@
     .collections-grid {
         grid-template-columns: repeat(3, 1fr);
     }
+
+    .search-bar {
+        margin-top: 40px;
+    }
 }
 
 .collection-card:hover {
     transform: translateY(-8px) scale(1.01);
-    border-color: var(--cobalt);
+    border: 1px solid var(--cobalt);
     box-shadow: 0 10px 30px rgba(0, 112, 243, 0.3);
     z-index: 10;
 }
@@ -103,15 +107,15 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.4;
-    filter: saturate(1.2) contrast(1.1);
-    transition: transform var(--t-base) var(--ease-smooth), opacity var(--t-base);
+    opacity: 0.75;
+    filter: saturate(1.1);
+    transition: transform var(--t-base) var(--ease-smooth), opacity var(--t-base), filter var(--t-base);
     z-index: 0;
 }
 
 .collection-card:hover .collection-card-bg {
-    transform: scale(1.1);
-    opacity: 0.6;
+    transform: scale(1.05);
+    opacity: 0.9;
 }
 
 .collection-card-overlay {
@@ -121,7 +125,7 @@
     flex-direction: column;
     justify-content: flex-end;
     padding: 14px 20px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, transparent 60%);
+    background: linear-gradient(to bottom, transparent 30%, rgba(0, 0, 0, 0.98) 100%);
     z-index: 1;
 }
 
@@ -190,8 +194,10 @@
 }
 
 .back-btn-icon {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     color: var(--text-primary);
     width: 48px;
     height: 48px;
@@ -235,8 +241,10 @@
     align-items: center;
     gap: 16px;
     padding: 16px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: var(--radius-sm);
     transition: all var(--t-fast);
 }
@@ -295,16 +303,83 @@
 }
 
 /* Juego ya en el backlog → corazón rojo */
-.action-btn-completado--active {
-    background: rgba(244, 67, 54, 0.15) !important;
-    color: var(--pass) !important;
+.explore-scrollable .action-btn-completado--active {
+    background: rgba(244, 67, 54, 0.45) !important;
+    color: #fff !important;
     border-color: var(--pass) !important;
-    box-shadow: 0 0 10px var(--pass-glow);
+    box-shadow: 0 0 12px rgba(244, 67, 54, 0.35) !important;
 }
 
-.action-btn-completado--active:hover {
-    background: rgba(244, 67, 54, 0.25) !important;
-    transform: scale(1.1);
+.explore-scrollable .action-btn-completado--active:hover {
+    background: rgba(244, 67, 54, 0.6) !important;
+    transform: scale(1.05);
+}
+
+/* Corazón en Explore cards → rojo */
+.explore-scrollable .game-card-actions .action-btn-completado:hover {
+    background: rgba(244, 67, 54, 0.15) !important;
+    border-color: var(--pass) !important;
+    color: var(--pass) !important;
+}
+
+/* Corazón en Explore lista → rojo, desplazado del borde */
+.explore-scrollable .game-list-item .game-actions {
+    margin-right: 24px;
+}
+
+.explore-scrollable .game-list-item .action-btn-completado:hover {
+    background: rgba(244, 67, 54, 0.15) !important;
+    border-color: var(--pass) !important;
+    color: var(--pass) !important;
+}
+
+/* ── Glass card buttons (Explore) ────────────── */
+.game-card-actions .action-btn-secondary,
+.game-card-actions .action-btn-completado {
+    width: auto;
+    height: 36px;
+    flex: 1;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.game-card-actions {
+    display: flex;
+    gap: 5px;
+    margin-top: 8px;
+    height: 36px;
+}
+
+/* ── Stamp EN BACKLOG ────────────────────────── */
+.game-card-backlog-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    background: rgba(244, 67, 54, 0.12);
+    pointer-events: none;
+}
+
+.game-card-backlog-stamp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-20deg);
+    z-index: 6;
+    padding: 6px 14px;
+    border: 4px solid var(--pass);
+    border-radius: 6px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: var(--pass);
+    text-shadow: 0 0 18px rgba(244, 67, 54, 0.7);
+    box-shadow: 0 0 16px rgba(244, 67, 54, 0.25), inset 0 0 16px rgba(244, 67, 54, 0.05);
+    pointer-events: none;
+    white-space: nowrap;
 }
 
 
@@ -312,49 +387,6 @@
     margin-bottom: 32px;
 }
 
-/* Toast Styles */
-.toast-container {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    pointer-events: none;
-}
-
-.toast {
-    background: var(--cobalt);
-    color: #fff;
-    padding: 12px 24px;
-    border-radius: var(--radius-md);
-    font-size: 14px;
-    font-weight: 600;
-    box-shadow: 0 8px 24px rgba(0, 71, 171, 0.4);
-    border: 1px solid var(--cobalt-light);
-    animation: toastAppear 0.3s var(--ease-spring), toastFade 0.3s var(--ease-smooth) 2s forwards;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-@keyframes toastAppear {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes toastFade {
-    to {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-}
 
 /* Animations */
 .page-enter {
