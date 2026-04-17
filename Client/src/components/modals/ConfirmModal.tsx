@@ -1,0 +1,44 @@
+import './ConfirmModal.css';
+
+interface ConfirmModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    title: string;
+    description?: string;
+    confirmLabel?: string;
+    variant?: 'danger' | 'primary';
+}
+
+export default function ConfirmModal({
+    isOpen,
+    onClose,
+    onConfirm,
+    title,
+    description,
+    confirmLabel = 'Confirmar',
+    variant = 'primary',
+}: ConfirmModalProps) {
+    if (!isOpen) return null;
+
+    return (
+        <div className="confirm-overlay" onClick={onClose}>
+            <div className="modal-content confirm-modal" onClick={(e) => e.stopPropagation()}>
+                <button className="modal-close-btn" onClick={onClose}>✕</button>
+                <div className="confirm-modal-body">
+                    <h2 className="confirm-modal-title">{title}</h2>
+                    {description && <p className="confirm-modal-desc">{description}</p>}
+                    <div className="confirm-modal-actions">
+                        <button className="confirm-btn-cancel" onClick={onClose}>Cancelar</button>
+                        <button
+                            className={variant === 'danger' ? 'confirm-btn-danger' : 'confirm-btn-primary'}
+                            onClick={onConfirm}
+                        >
+                            {confirmLabel}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

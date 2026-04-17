@@ -20,6 +20,7 @@ import AdminLayout from './layouts/AdminLayout';
 import AdminUsuarios from './pages/Admin/AdminUsuarios';
 import AdminJuegos from './pages/Admin/AdminJuegos';
 import AdminColecciones from './pages/Admin/AdminColecciones';
+import OnboardingPage from './pages/Onboarding/OnboardingPage';
 
 import './index.css';
 import './App.css';
@@ -48,6 +49,11 @@ export default function App() {
               <Route path="juegos" element={<AdminJuegos />} />
               <Route path="colecciones" element={<AdminColecciones />} />
             </Route>
+          </Route>
+
+          {/* Onboarding - Protegida por Auth, fuera del AppLayout */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/onboarding" element={<OnboardingPage />} />
           </Route>
 
           {/* App funcional - Protegida por Auth */}

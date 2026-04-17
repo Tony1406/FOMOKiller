@@ -275,6 +275,78 @@
     }
 }
 
+/* ── Logout (solo desktop) ───────────────────── */
+.nav-bottom {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .nav-bottom {
+        display: flex;
+        width: 100%;
+        margin-top: auto;
+        padding-bottom: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        padding-top: 8px;
+    }
+}
+
+.nav-logout-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    gap: 0;
+    padding: 12px 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--cobalt-bright);
+    transition: all var(--t-base) var(--ease-smooth);
+    font-family: inherit;
+}
+
+.nav-logout-btn:hover {
+    background: rgba(0, 112, 243, 0.1);
+    color: #fff;
+}
+
+.nav-logout-btn .nav-icon {
+    width: 88px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    font-size: 20px;
+}
+
+.nav-logout-btn .nav-label {
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--text-primary);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.2s ease-out;
+}
+
+.app-nav:hover .nav-logout-btn .nav-label {
+    opacity: 1;
+    transform: translateX(0);
+    transition-delay: 50ms;
+}
+
+@media (min-width: 1600px) and (min-height: 900px) {
+    .nav-logout-btn .nav-icon {
+        width: 104px;
+        font-size: 26px;
+    }
+
+    .nav-logout-btn .nav-label {
+        font-size: 20px;
+    }
+}
+
 /* Pantallas grandes y monitores externos */
 @media (min-width: 1600px) and (min-height: 900px) {
     .app-nav {

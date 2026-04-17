@@ -5,9 +5,9 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -209,6 +209,24 @@
     font-size: 14px;
     color: var(--text-primary);
     font-weight: 500;
+}
+
+.modal-platform-icons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 2px;
+}
+
+.modal-platform-icon {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.55);
+    transition: color var(--t-base);
+}
+
+.modal-platform-icon:hover {
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .modal-loading {

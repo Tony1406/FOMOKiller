@@ -46,7 +46,7 @@ export const createUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const { username, email, role, password } = req.body;
+        const { username, email, role, password, bio, avatarUrl } = req.body;
         if (role && !['admin', 'user'].includes(role)) {
             res.status(400).json({ error: 'Rol inválido' });
             return;
@@ -55,6 +55,8 @@ export const updateUser = async (req: Request, res: Response) => {
         if (username) updates.username = username;
         if (email) updates.email = email;
         if (role) updates.role = role;
+        if (bio !== undefined) updates.bio = bio;
+        if (avatarUrl !== undefined) updates.avatarUrl = avatarUrl;
         if (password) {
             const bcrypt = await import('bcrypt');
             updates.passwordHash = await bcrypt.default.hash(password, 10);
@@ -206,6 +208,11 @@ export const importFromRawg = async (req: Request, res: Response) => {
         if (!detailRes.ok) { res.status(404).json({ error: 'Juego no encontrado en RAWG' }); return; }
         const detail = await detailRes.json() as any;
 
+        const tags = (detail.tags ?? [])
+            .map((t: any) => t.slug as string)
+            .filter(Boolean)
+            .join(',');
+
         const game = await Game.create({
             title: detail.name,
             description: detail.description_raw ?? null,
@@ -215,6 +222,7 @@ export const importFromRawg = async (req: Request, res: Response) => {
             rawgId: detail.id,
             rawgSlug: detail.slug,
             playtime: detail.playtime ?? null,
+            tags: tags || null,
         });
 
         // Géneros

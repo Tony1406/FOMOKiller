@@ -156,18 +156,54 @@
     color: rgba(255, 255, 255, 0.72);
     line-height: 1.5;
     white-space: pre-wrap;
-    margin: 0 0 16px 0;
+    margin: 0 0 12px 0;
+}
+
+.profile-identity-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.profile-identity-tag {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.profile-identity-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+}
+
+.profile-identity-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .profile-edit-btn {
     width: 100%;
-    padding: 9px 16px;
+    padding: 14px 16px;
     background: var(--cobalt);
     border: 1px solid var(--cobalt-light);
     border-radius: var(--radius-md);
     color: #fff;
     font-size: 13px;
     font-weight: 600;
+    font-family: inherit;
     cursor: pointer;
     transition: all var(--t-base) var(--ease-smooth);
     box-shadow: var(--shadow-cobalt);
@@ -215,7 +251,7 @@
 /* ── Stats ───────────────────────────────────── */
 .profile-stats-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 }
 
@@ -308,6 +344,99 @@
     }
 }
 
+/* ── Recomendaciones ─────────────────────────── */
+.profile-rec-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.profile-rec-header i {
+    color: #08cbee;
+}
+
+.profile-rec-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+}
+
+.profile-rec-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+}
+
+.profile-rec-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: inherit;
+}
+
+.profile-rec-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: inherit;
+}
+
+.profile-toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: background 0.2s ease;
+    flex-shrink: 0;
+}
+
+.profile-toggle.active {
+    background: #08cbee;
+}
+
+.profile-toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s ease;
+    display: block;
+}
+
+.profile-toggle.active .profile-toggle-knob {
+    transform: translateX(20px);
+}
+
+.profile-rec-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.profile-action-btn--danger {
+    color: rgba(255, 100, 100, 0.8);
+    border-color: rgba(255, 100, 100, 0.2);
+}
+
+.profile-action-btn--danger:hover {
+    background: rgba(255, 100, 100, 0.08);
+    border-color: rgba(255, 100, 100, 0.4);
+}
+
 .profile-action-btn {
     display: flex;
     align-items: center;
@@ -317,10 +446,36 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     color: var(--text-primary);
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
+    font-family: inherit;
     cursor: pointer;
     transition: all var(--t-base) var(--ease-smooth);
+    text-align: left;
+}
+
+.profile-action-btn > i {
+    flex-shrink: 0;
+}
+
+.profile-action-btn-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.profile-action-btn-label {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.profile-action-btn-sub {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    opacity: 0.75;
+    line-height: 1.3;
 }
 
 .profile-action-btn:hover {
@@ -337,8 +492,9 @@
     border: 1px solid rgba(255, 23, 68, 0.25);
     border-radius: var(--radius-md);
     color: var(--pass);
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
+    font-family: inherit;
     cursor: pointer;
     transition: all var(--t-fast);
     margin-top: auto;

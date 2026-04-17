@@ -28,7 +28,13 @@ export default function LoginPage() {
                 return;
             }
             setUser(respuesta.user);
-            navigate(respuesta.user?.role === 'admin' ? '/admin' : '/app');
+            if (respuesta.user?.role === 'admin') {
+                navigate('/admin');
+            } else if (!respuesta.user?.hasCompletedOnboarding) {
+                navigate('/onboarding');
+            } else {
+                navigate('/app');
+            }
         } catch (error: any) {
             console.error("Error al iniciar sesión:", error);
             setErrorMsg(error.response?.data?.message || 'Contraseña incorrecta o error de conexión');

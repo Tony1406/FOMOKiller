@@ -134,7 +134,22 @@ export default function AdminUsuarios() {
                             {filtered.map(user => (
                                 <tr key={user.id}>
                                     <td style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12 }}>{user.id}</td>
-                                    <td style={{ fontWeight: 600 }}>{user.username}</td>
+                                    <td>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                            {user.avatarUrl ? (
+                                                <img
+                                                    src={user.avatarUrl}
+                                                    alt=""
+                                                    style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}
+                                                />
+                                            ) : (
+                                                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.07)', border: '1px dashed rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 13, color: 'rgba(255,255,255,0.3)' }}>
+                                                    <i className="fa-solid fa-user" />
+                                                </div>
+                                            )}
+                                            <span style={{ fontWeight: 600 }}>{user.username}</span>
+                                        </div>
+                                    </td>
                                     <td style={{ color: 'rgba(255,255,255,0.5)' }}>{user.email}</td>
                                     <td>
                                         <span className={`admin-badge admin-badge-${user.role}`}>{user.role}</span>
@@ -203,7 +218,39 @@ export default function AdminUsuarios() {
 
                         <div className="admin-form-group">
                             <label>URL de avatar</label>
-                            <input value={form.avatarUrl} onChange={e => setForm(f => ({ ...f, avatarUrl: e.target.value }))} placeholder="https://..." />
+                            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                                <input
+                                    style={{ flex: 1 }}
+                                    value={form.avatarUrl}
+                                    onChange={e => setForm(f => ({ ...f, avatarUrl: e.target.value }))}
+                                    placeholder="https://..."
+                                />
+                                {form.avatarUrl ? (
+                                    <img
+                                        src={form.avatarUrl}
+                                        alt="Preview"
+                                        onError={e => { (e.target as HTMLImageElement).style.opacity = '0'; }}
+                                        onLoad={e => { (e.target as HTMLImageElement).style.opacity = '1'; }}
+                                        style={{
+                                            width: 48, height: 48, borderRadius: '50%',
+                                            objectFit: 'cover', flexShrink: 0,
+                                            border: '2px solid var(--cobalt)',
+                                            background: 'rgba(255,255,255,0.05)',
+                                            transition: 'opacity 0.2s',
+                                        }}
+                                    />
+                                ) : (
+                                    <div style={{
+                                        width: 48, height: 48, borderRadius: '50%', flexShrink: 0,
+                                        border: '2px dashed rgba(255,255,255,0.15)',
+                                        background: 'rgba(255,255,255,0.03)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        color: 'rgba(255,255,255,0.2)', fontSize: 18,
+                                    }}>
+                                        <i className="fa-solid fa-user" />
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {formError && (
