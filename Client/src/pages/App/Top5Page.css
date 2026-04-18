@@ -333,9 +333,6 @@
     filter: brightness(0.95);
 }
 
-.top5-card:hover {
-    transform: scale(1.03);
-}
 
 .top5-card--completing {
     border: 1.5px solid #22c55e;

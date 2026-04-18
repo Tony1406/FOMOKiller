@@ -315,7 +315,6 @@
 
 .btn-primary:hover {
     background: var(--cobalt-light);
-    transform: translateY(-1px);
 }
 
 /* ─── DESKTOP ─── */
