@@ -8,12 +8,14 @@ import {
 } from "../../services/api";
 import GameInfoModal from "../../components/modals/GameInfoModal";
 import ConfirmModal from "../../components/modals/ConfirmModal";
+import SwipeView from "../../components/SwipeView";
 import Paginador from "../../components/Paginador";
 import { AuthContext } from "../../context/AuthContext";
 import "./BacklogPage.css";
 import "../../components/Paginador.css";
 
 type OrdenValue = "recientes" | "antiguos" | "az" | "za" | "año-asc" | "año-desc";
+type VistaValue = "lista" | "cards" | "swipe";
 
 const ORDEN_OPCIONES: { value: OrdenValue; label: string }[] = [
   { value: "recientes", label: "Recientes primero" },
@@ -39,12 +41,30 @@ export default function BacklogPage() {
   const [ordenOpen, setOrdenOpen] = useState(false);
   const [confirmDeleteGame, setConfirmDeleteGame] = useState<any>(null);
   const [confirmClearBacklog, setConfirmClearBacklog] = useState(false);
-  const [vista, setVista] = useState<"lista" | "cards">(
-    () => (localStorage.getItem("fomo_vista_backlog") as "lista" | "cards") || "lista"
+  const [vista, setVista] = useState<VistaValue>(
+    () => {
+      const v = localStorage.getItem("fomo_vista_backlog") as VistaValue;
+      return (v === "lista" || v === "cards" || v === "swipe") ? v : "lista";
+    }
   );
+  const [swipeIndex, setSwipeIndex] = useState(0);
+  const wasInSwipeRef = useRef(false);
+  const prevVistaRef = useRef<"lista" | "cards">("lista");
+
   useEffect(() => { localStorage.setItem("fomo_vista_backlog", vista); }, [vista]);
+  // When entering swipe, reset index; when leaving swipe, reload backlog
+  useEffect(() => {
+    if (vista === "swipe") {
+      setSwipeIndex(0);
+      wasInSwipeRef.current = true;
+    } else if (wasInSwipeRef.current) {
+      wasInSwipeRef.current = false;
+      if (user) cargarBacklog();
+    }
+  }, [vista]);
+
   const [pagina, setPagina] = useState(1);
-  useEffect(() => { setPagina(1); }, [busqueda, pestañaActiva, ordenActivo]);
+  useEffect(() => { setPagina(1); setSwipeIndex(0); }, [busqueda, pestañaActiva, ordenActivo]);
   const filtroRef = useRef<HTMLDivElement>(null);
   const ordenRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef<HTMLDivElement>(null);
@@ -120,17 +140,12 @@ export default function BacklogPage() {
     try {
       const response = await setPriority(user.id, juego.gameId, newPriority);
       if (response.ok) {
-        showToast(
-          newPriority ? "Enviado a Top 5" : "Eliminado de Top 5",
-          "success",
-        );
+        showToast(newPriority ? "Enviado a Top 5" : "Eliminado de Top 5", "success");
         cargarBacklog();
       } else {
         const data = await response.json();
         showToast(
-          response.status === 400
-            ? "Ya tienes 5 juegos en Top 5"
-            : data.error || "Error al cambiar prioridad",
+          response.status === 400 ? "Ya tienes 5 juegos en Top 5" : data.error || "Error al cambiar prioridad",
           "error",
         );
       }
@@ -170,6 +185,123 @@ export default function BacklogPage() {
 
   const ordenLabel = ORDEN_OPCIONES.find(o => o.value === ordenActivo)?.label ?? "Ordenar";
 
+  const handleSetVista = (v: VistaValue) => {
+    if (v === "swipe" && vista !== "swipe") prevVistaRef.current = vista as "lista" | "cards";
+    setVista(v);
+  };
+
+  const viewToggle = (
+    <div className="view-toggle-group">
+      <button
+        className={`view-toggle-btn${vista === "lista" ? " active" : ""}`}
+        onClick={() => handleSetVista("lista")}
+        title="Vista lista"
+      >
+        <i className="fa-solid fa-list" />
+      </button>
+      <button
+        className={`view-toggle-btn${vista === "cards" ? " active" : ""}`}
+        onClick={() => handleSetVista("cards")}
+        title="Vista cuadrícula"
+      >
+        <i className="fa-solid fa-grip" />
+      </button>
+      <button
+        className={`view-toggle-btn${vista === "swipe" ? " active" : ""}`}
+        onClick={() => handleSetVista("swipe")}
+        title="Vista swipe"
+      >
+        <i className="fa-solid fa-layer-group" />
+      </button>
+    </div>
+  );
+
+  // ── Swipe mode: full-height layout ──────────────
+  if (vista === "swipe") {
+    return (
+      <div className="page page-enter page-swipe-mode">
+        <div className="swipe-mode-bar">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button className="back-btn-icon" onClick={() => setVista(prevVistaRef.current)} style={{ flexShrink: 0 }}>
+              <i className="fa-solid fa-arrow-left" />
+            </button>
+            <div>
+              <div className="section-title">Mi Backlog</div>
+              <div className="section-sub">{filteredGames.length} juegos</div>
+            </div>
+          </div>
+          {viewToggle}
+        </div>
+
+        {filteredGames.length > 0 ? (
+          <SwipeView
+            items={filteredGames}
+            index={swipeIndex}
+            onIndexChange={setSwipeIndex}
+            getGame={(item) => ({
+              id: item.Game.id,
+              title: item.Game.title,
+              imageUrl: item.Game.imageUrl,
+              releaseYear: item.Game.releaseYear,
+              developer: item.Game.developer,
+              playtime: item.Game.playtime,
+              rawgSlug: item.Game.rawgSlug,
+              Platforms: item.Game.Platforms,
+              Genres: item.Game.Genres,
+            })}
+            onLeft={async (item) => {
+              if (!user) return;
+              try {
+                await updateStatus(user.id, item.gameId, "DROPPED");
+                showToast("Juego eliminado del backlog");
+              } catch {
+                showToast("Error al eliminar", "error");
+              }
+            }}
+            onRight={async () => { /* keep — no action needed */ }}
+            onExtra={async (item) => {
+              if (!user) return;
+              const newPriority = !item.isPriority;
+              try {
+                const response = await setPriority(user.id, item.gameId, newPriority);
+                if (response.ok) {
+                  showToast(newPriority ? "Enviado a Top 5" : "Eliminado de Top 5");
+                } else {
+                  const data = await response.json();
+                  showToast(
+                    response.status === 400 ? "Ya tienes 5 juegos en Top 5" : data.error || "Error",
+                    "error",
+                  );
+                }
+              } catch {
+                showToast("Error de conexión", "error");
+              }
+            }}
+            leftLabel="Drop"
+            rightLabel="Queda"
+            extraLabel="Top 5"
+            extraIcon="fa-solid fa-ranking-star"
+            extraColor="#f5c518"
+            doneMessage="Ya revisaste todo tu backlog"
+          />
+        ) : (
+          <div className="swipe-view-done">
+            <div className="swipe-view-done-text">
+              {backlog.length === 0 ? "Tu backlog está vacío" : "Sin resultados con este filtro"}
+            </div>
+          </div>
+        )}
+
+        {toastMsg && (
+          <div className="toast-container">
+            <div className={`toast ${toastType === "error" ? "toast-error" : ""}`}>{toastMsg}</div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── Normal mode (lista / cards) ─────────────────
   return (
     <div className="page page-padded page-enter" ref={pageRef}>
       <div className="backlog-header">
@@ -182,10 +314,7 @@ export default function BacklogPage() {
             <div className="backlog-dropdown-wrap" ref={filtroRef}>
               <button
                 className={`backlog-dropdown-btn${pestañaActiva !== "Todos" ? " active" : ""}`}
-                onClick={() => {
-                  setFiltroOpen((o) => !o);
-                  setOrdenOpen(false);
-                }}
+                onClick={() => { setFiltroOpen((o) => !o); setOrdenOpen(false); }}
               >
                 <i className="fa-solid fa-filter" />
                 {pestañaActiva === "Todos" ? "Filtrar" : pestañaActiva}
@@ -197,14 +326,9 @@ export default function BacklogPage() {
                     <button
                       key={opt}
                       className={`backlog-dropdown-item${pestañaActiva === opt ? " active" : ""}`}
-                      onClick={() => {
-                        setPestañaActiva(opt);
-                        setFiltroOpen(false);
-                      }}
+                      onClick={() => { setPestañaActiva(opt); setFiltroOpen(false); }}
                     >
-                      <i
-                        className={`fa-solid fa-check backlog-item-check${pestañaActiva === opt ? " visible" : ""}`}
-                      />
+                      <i className={`fa-solid fa-check backlog-item-check${pestañaActiva === opt ? " visible" : ""}`} />
                       {opt}
                     </button>
                   ))}
@@ -216,10 +340,7 @@ export default function BacklogPage() {
             <div className="backlog-dropdown-wrap" ref={ordenRef}>
               <button
                 className={`backlog-dropdown-btn${ordenActivo !== "recientes" ? " active" : ""}`}
-                onClick={() => {
-                  setOrdenOpen((o) => !o);
-                  setFiltroOpen(false);
-                }}
+                onClick={() => { setOrdenOpen((o) => !o); setFiltroOpen(false); }}
               >
                 <i className="fa-solid fa-arrow-up-wide-short" />
                 {ordenActivo === "recientes" ? "Ordenar" : ordenLabel}
@@ -231,14 +352,9 @@ export default function BacklogPage() {
                     <button
                       key={op.value}
                       className={`backlog-dropdown-item${ordenActivo === op.value ? " active" : ""}`}
-                      onClick={() => {
-                        setOrdenActivo(op.value);
-                        setOrdenOpen(false);
-                      }}
+                      onClick={() => { setOrdenActivo(op.value); setOrdenOpen(false); }}
                     >
-                      <i
-                        className={`fa-solid fa-check backlog-item-check${ordenActivo === op.value ? " visible" : ""}`}
-                      />
+                      <i className={`fa-solid fa-check backlog-item-check${ordenActivo === op.value ? " visible" : ""}`} />
                       {op.label}
                     </button>
                   ))}
@@ -248,49 +364,19 @@ export default function BacklogPage() {
           </div>
 
           <div className="backlog-legend">
-            <div className="backlog-legend-item">
-              <i className="fa-solid fa-ranking-star" />
-              <span>Enviar a Top 5</span>
-            </div>
-            <div className="backlog-legend-item">
-              <i className="fa-solid fa-trash" />
-              <span>Eliminar de backlog</span>
-            </div>
-            <div className="backlog-legend-item">
-              <i className="fa-solid fa-check" />
-              <span>Marcar como Completado</span>
-            </div>
+            <div className="backlog-legend-item"><i className="fa-solid fa-ranking-star" /><span>Enviar a Top 5</span></div>
+            <div className="backlog-legend-item"><i className="fa-solid fa-trash" /><span>Eliminar de backlog</span></div>
+            <div className="backlog-legend-item"><i className="fa-solid fa-check" /><span>Marcar como Completado</span></div>
           </div>
 
           <div className="backlog-toolbar-right">
-            {/* Vaciar backlog */}
             {backlog.length > 0 && (
-              <button
-                className="backlog-clear-btn"
-                onClick={() => setConfirmClearBacklog(true)}
-                title="Vaciar backlog"
-              >
+              <button className="backlog-clear-btn" onClick={() => setConfirmClearBacklog(true)} title="Vaciar backlog">
                 <i className="fa-solid fa-trash-can" />
                 <span>Vaciar</span>
               </button>
             )}
-
-            {/* Toggle vista */}
-            <button
-              className="backlog-view-btn"
-              onClick={() =>
-                setVista((v) => (v === "lista" ? "cards" : "lista"))
-              }
-              title={
-                vista === "lista" ? "Ver como cuadrícula" : "Ver como lista"
-              }
-            >
-              <i
-                className={`fa-solid ${vista === "lista" ? "fa-grip" : "fa-list"}`}
-              />
-            </button>
-
-            {/* Buscador */}
+            {viewToggle}
             <div className="backlog-search">
               <i className="fa-solid fa-magnifying-glass backlog-search-icon" />
               <input
@@ -301,10 +387,7 @@ export default function BacklogPage() {
                 className="backlog-search-input"
               />
               {busqueda && (
-                <button
-                  className="backlog-search-clear"
-                  onClick={() => setBusqueda("")}
-                >
+                <button className="backlog-search-clear" onClick={() => setBusqueda("")}>
                   <i className="fa-solid fa-xmark" />
                 </button>
               )}
@@ -318,17 +401,14 @@ export default function BacklogPage() {
         <div className="backlog-empty">
           <div className="backlog-empty-title">Tu backlog está vacío</div>
           <div className="backlog-empty-sub">
-            Todavía no has guardado ningún juego. Ve a descubrir y empieza a
-            construir tu lista.
+            Todavía no has guardado ningún juego. Ve a descubrir y empieza a construir tu lista.
           </div>
         </div>
       )}
       {filteredGames.length === 0 && backlog.length > 0 && (
         <div className="backlog-empty">
           <div className="backlog-empty-title">Sin resultados</div>
-          <div className="backlog-empty-sub">
-            Ningún juego coincide con tu búsqueda o filtro.
-          </div>
+          <div className="backlog-empty-sub">Ningún juego coincide con tu búsqueda o filtro.</div>
         </div>
       )}
 
@@ -347,9 +427,7 @@ export default function BacklogPage() {
                   }
                   <div className="game-info">
                     <div className="game-title">{game?.title}</div>
-                    <div className="game-subtitle">
-                      {[game?.developer, game?.releaseYear].filter(Boolean).join(' · ')}
-                    </div>
+                    <div className="game-subtitle">{[game?.developer, game?.releaseYear].filter(Boolean).join(' · ')}</div>
                   </div>
                   <div className="game-actions">
                     <button
@@ -399,29 +477,19 @@ export default function BacklogPage() {
                     {game.imageUrl ? (
                       <img src={game.imageUrl} alt={game.title} className="game-card-image" />
                     ) : (
-                      <div className="game-card-no-image">
-                        {game.title[0].toUpperCase()}
-                      </div>
+                      <div className="game-card-no-image">{game.title[0].toUpperCase()}</div>
                     )}
                   </div>
                   {juego.isPriority && juego.status !== "COMPLETED" && (
-                    <>
-                      <div className="game-card-top5-overlay" />
-                      <div className="game-card-top5-stamp">TOP 5</div>
-                    </>
+                    <><div className="game-card-top5-overlay" /><div className="game-card-top5-stamp">TOP 5</div></>
                   )}
                   {juego.status === "COMPLETED" && (
-                    <>
-                      <div className="game-card-completed-overlay" />
-                      <div className="game-card-stamp">COMPLETADO</div>
-                    </>
+                    <><div className="game-card-completed-overlay" /><div className="game-card-stamp">COMPLETADO</div></>
                   )}
                   <div className="game-card-gradient" />
                   <div className="game-card-info">
                     <div className="game-card-title">{game.title}</div>
-                    <div className="game-card-subtitle">
-                      {[game.developer, game.releaseYear].filter(Boolean).join(' · ')}
-                    </div>
+                    <div className="game-card-subtitle">{[game.developer, game.releaseYear].filter(Boolean).join(' · ')}</div>
                     <div className="game-card-actions">
                       <button
                         className={juego.status === "COMPLETED" ? "action-btn-completado active" : "action-btn-completado"}
@@ -487,11 +555,7 @@ export default function BacklogPage() {
 
       {toastMsg && (
         <div className="toast-container">
-          <div
-            className={`toast ${toastType === "error" ? "toast-error" : ""}`}
-          >
-            {toastMsg}
-          </div>
+          <div className={`toast ${toastType === "error" ? "toast-error" : ""}`}>{toastMsg}</div>
         </div>
       )}
     </div>

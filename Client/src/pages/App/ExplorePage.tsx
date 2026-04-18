@@ -1,11 +1,13 @@
 import { useState, useEffect, useContext, useRef } from 'react';
 import { getCollections, getCollectionGames, searchGames, updateStatus } from '../../services/api';
 import GameInfoModal from '../../components/modals/GameInfoModal';
+import SwipeView from '../../components/SwipeView';
 import Paginador from '../../components/Paginador';
 import { AuthContext } from '../../context/AuthContext';
 import './ExplorePage.css';
 import '../../components/Paginador.css';
 
+type VistaValue = 'lista' | 'cards' | 'swipe';
 
 export default function ExplorePage() {
     const { user } = useContext(AuthContext);
@@ -20,10 +22,21 @@ export default function ExplorePage() {
     const [juegoSeleccionado, setJuegoSeleccionado] = useState<any>(null);
     const [mostrarToast, setMostrarToast] = useState(false);
     const [enBacklog, setEnBacklog] = useState<Set<number>>(new Set());
-    const [vista, setVista] = useState<'lista' | 'cards'>(
-        () => (localStorage.getItem('fomo_vista_explore') as 'lista' | 'cards') || 'lista'
+    const [vista, setVista] = useState<VistaValue>(
+        () => (localStorage.getItem('fomo_vista_explore') as VistaValue) || 'lista'
     );
+    const [swipeIndexCollection, setSwipeIndexCollection] = useState(0);
+    const [swipeIndexSearch, setSwipeIndexSearch] = useState(0);
+    const prevVistaRef = useRef<'lista' | 'cards'>('lista');
+
+    const handleSetVista = (v: VistaValue) => {
+        if (v === 'swipe' && vista !== 'swipe') prevVistaRef.current = vista as 'lista' | 'cards';
+        setVista(v);
+    };
+
     useEffect(() => { localStorage.setItem('fomo_vista_explore', vista); }, [vista]);
+    useEffect(() => { setSwipeIndexCollection(0); }, [coleccionSeleccionada]);
+    useEffect(() => { setSwipeIndexSearch(0); setPaginaSearch(1); }, [buscar]);
 
     const cargaInicial = async () => {
         const data = await getCollections();
@@ -38,11 +51,9 @@ export default function ExplorePage() {
         if (buscar.trim().length >= 1) {
             const results = await searchGames(buscar);
             setBuscarResultados(results);
-            setPaginaSearch(1);
             setColeccionSeleccionada(null);
         } else {
             setBuscarResultados([]);
-            setPaginaSearch(1);
         }
     };
 
@@ -78,7 +89,40 @@ export default function ExplorePage() {
         }
     };
 
-    const renderGames = (games: any[], vistaMode: 'lista' | 'cards' = 'lista') => {
+    // Silent version for swipe mode (stamps provide feedback)
+    const handleAddGameSwipe = async (game: any) => {
+        if (!user || enBacklog.has(game.id)) return;
+        await updateStatus(user.id, game.id, 'LIKED');
+        setEnBacklog(prev => new Set(prev).add(game.id));
+    };
+
+    const viewToggle = (
+        <div className="view-toggle-group">
+            <button
+                className={`view-toggle-btn${vista === 'lista' ? ' active' : ''}`}
+                onClick={() => handleSetVista('lista')}
+                title="Vista lista"
+            >
+                <i className="fa-solid fa-list" />
+            </button>
+            <button
+                className={`view-toggle-btn${vista === 'cards' ? ' active' : ''}`}
+                onClick={() => handleSetVista('cards')}
+                title="Vista cuadrícula"
+            >
+                <i className="fa-solid fa-grip" />
+            </button>
+            <button
+                className={`view-toggle-btn${vista === 'swipe' ? ' active' : ''}`}
+                onClick={() => handleSetVista('swipe')}
+                title="Vista swipe"
+            >
+                <i className="fa-solid fa-layer-group" />
+            </button>
+        </div>
+    );
+
+    const renderGames = (games: any[], vistaMode: VistaValue = 'lista') => {
         if (vistaMode === 'cards') {
             return (
                 <div className="game-grid" key="cards">
@@ -151,7 +195,94 @@ export default function ExplorePage() {
         );
     };
 
+    // ── Swipe mode for collection ────────────────
+    if (vista === 'swipe' && coleccionSeleccionada !== null) {
+        return (
+            <div className="page page-enter page-swipe-mode">
+                <div className="swipe-mode-bar">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <button className="back-btn-icon" onClick={() => setVista(prevVistaRef.current)} style={{ flexShrink: 0 }}>
+                            <i className="fa-solid fa-arrow-left" />
+                        </button>
+                        <div>
+                            <div className="section-title">{coleccionSeleccionada.title}</div>
+                            <div className="section-sub">{coleccionSeleccionada.Games.length} juegos</div>
+                        </div>
+                    </div>
+                    {viewToggle}
+                </div>
 
+                <SwipeView
+                    items={coleccionSeleccionada.Games}
+                    index={swipeIndexCollection}
+                    onIndexChange={setSwipeIndexCollection}
+                    getGame={(game) => game}
+                    onLeft={async () => { /* ignore */ }}
+                    onRight={handleAddGameSwipe}
+                    leftLabel="Ignorar"
+                    rightLabel="Backlog"
+                    doneMessage="Ya viste todos los juegos de esta colección"
+                />
+
+                <GameInfoModal
+                    isOpen={juegoSeleccionado !== null}
+                    onClose={() => setJuegoSeleccionado(null)}
+                    game={juegoSeleccionado}
+                />
+            </div>
+        );
+    }
+
+    // ── Swipe mode for search results ────────────
+    if (vista === 'swipe' && buscar.trim().length > 0) {
+        return (
+            <div className="page page-enter page-swipe-mode">
+                <div className="swipe-mode-bar" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 8 }}>
+                    <div className="search-bar" style={{ marginTop: 0 }}>
+                        <i className="fa-solid fa-search search-icon" />
+                        <input
+                            type="text"
+                            placeholder="Busca tu próximo juego..."
+                            value={buscar}
+                            onChange={(e) => setBuscar(e.target.value)}
+                        />
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div className="section-sub" style={{ margin: 0 }}>
+                            {buscarResultados.length} resultados para "{buscar}"
+                        </div>
+                        {viewToggle}
+                    </div>
+                </div>
+
+                {buscarResultados.length > 0 ? (
+                    <SwipeView
+                        items={buscarResultados}
+                        index={swipeIndexSearch}
+                        onIndexChange={setSwipeIndexSearch}
+                        getGame={(game) => game}
+                        onLeft={async () => { /* ignore */ }}
+                        onRight={handleAddGameSwipe}
+                        leftLabel="Ignorar"
+                        rightLabel="Backlog"
+                        doneMessage="Ya viste todos los resultados"
+                    />
+                ) : (
+                    <div className="swipe-view-done">
+                        <div className="swipe-view-done-text">No hay resultados para "{buscar}"</div>
+                    </div>
+                )}
+
+                <GameInfoModal
+                    isOpen={juegoSeleccionado !== null}
+                    onClose={() => setJuegoSeleccionado(null)}
+                    game={juegoSeleccionado}
+                />
+            </div>
+        );
+    }
+
+    // ── Normal mode ──────────────────────────────
     let vistaPrincipal;
 
     if (buscar.trim().length > 0) {
@@ -160,13 +291,7 @@ export default function ExplorePage() {
                 <div className="search-results-header">
                     <div className="collection-view-toolbar search-results-toolbar">
                         <div className="section-title">Resultados de búsqueda</div>
-                        <button
-                            className="backlog-view-btn"
-                            onClick={() => setVista(v => v === 'lista' ? 'cards' : 'lista')}
-                            title={vista === 'lista' ? 'Ver como cuadrícula' : 'Ver como lista'}
-                        >
-                            <i className={`fa-solid ${vista === 'lista' ? 'fa-grip' : 'fa-list'}`} />
-                        </button>
+                        {viewToggle}
                     </div>
                     <div className="backlog-legend explore-legend">
                         <div className="backlog-legend-item"><i className="fa-solid fa-heart" /><span>Añadir al backlog</span></div>
@@ -197,13 +322,7 @@ export default function ExplorePage() {
                     <div className="section-title">{coleccionSeleccionada.title}</div>
                     <div className="section-sub">{coleccionSeleccionada.description}</div>
                     <div className="collection-view-toolbar">
-                        <button
-                            className="backlog-view-btn"
-                            onClick={() => setVista(v => v === 'lista' ? 'cards' : 'lista')}
-                            title={vista === 'lista' ? 'Ver como cuadrícula' : 'Ver como lista'}
-                        >
-                            <i className={`fa-solid ${vista === 'lista' ? 'fa-grip' : 'fa-list'}`} />
-                        </button>
+                        {viewToggle}
                     </div>
                     <div className="backlog-legend explore-legend">
                         <div className="backlog-legend-item"><i className="fa-solid fa-heart" /><span>Añadir al backlog</span></div>
@@ -239,20 +358,7 @@ export default function ExplorePage() {
         );
     }
 
-    let avisoToast = null;
-    if (mostrarToast === true) {
-        avisoToast = (
-            <div className="toast-container">
-                <div className="toast">
-                    <i className="fa-solid fa-heart"></i>
-                    Añadido a tu backlog
-                </div>
-            </div>
-        );
-    }
-
     return (
-
         <div className="page page-padded page-enter explore-scrollable" ref={pageRef}>
             <div className="search-bar search-bar-spacing">
                 <i className="fa-solid fa-search search-icon"></i>
@@ -271,7 +377,14 @@ export default function ExplorePage() {
                 game={juegoSeleccionado}
             />
 
-            {avisoToast}
+            {mostrarToast && (
+                <div className="toast-container">
+                    <div className="toast">
+                        <i className="fa-solid fa-heart"></i>
+                        Añadido a tu backlog
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

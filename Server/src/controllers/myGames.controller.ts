@@ -1,5 +1,7 @@
 import { UserGame } from '../models/UserGameModel.js';
 import { Game } from '../models/GameModel.js';
+import { Genre } from '../models/GenreModel.js';
+import { Platform } from '../models/PlatformModel.js';
 import { Op } from 'sequelize';
 import type { Request, Response } from 'express';
 
@@ -21,7 +23,7 @@ export const getBacklog = async (req: Request, res: Response) => {
                     ]
                 }
             },
-            include: [{ model: Game }]
+            include: [{ model: Game, include: [{ model: Genre }, { model: Platform }] }]
         });
         res.status(200).json(backlog);
     } catch (error) {

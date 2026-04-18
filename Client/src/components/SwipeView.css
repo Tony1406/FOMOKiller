@@ -1,11 +1,102 @@
-.swipe-page {
-    height: 100%;
+/* ── SwipeView: embedded swipe component ───────── */
+
+.swipe-view {
+    flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
-    padding: 12px 16px 16px;
     gap: 12px;
 }
 
+/* ── Done state ─────────────────────────────────── */
+.swipe-view-done {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 32px 16px;
+    text-align: center;
+}
+
+.swipe-view-done-icon {
+    font-size: 52px;
+    color: var(--cobalt-light);
+    opacity: 0.7;
+}
+
+.swipe-view-done-text {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* ── Page wrapper in swipe mode ─────────────────── */
+.page-swipe-mode {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 16px 16px 0;
+}
+
+/* ── Swipe bar (compact header) ─────────────────── */
+.swipe-mode-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0 10px;
+    flex-shrink: 0;
+}
+
+.swipe-mode-bar .section-title {
+    font-size: 20px;
+    margin-bottom: 2px;
+}
+
+.swipe-mode-bar .section-sub {
+    margin-bottom: 0;
+}
+
+/* ── View toggle group (3 buttons) ─────────────── */
+.view-toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: var(--radius-md);
+    padding: 3px;
+}
+
+.view-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    transition: all var(--t-base) var(--ease-smooth);
+}
+
+.view-toggle-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.view-toggle-btn.active {
+    background: var(--cobalt);
+    color: #fff;
+    box-shadow: var(--shadow-cobalt);
+}
+
+/* ── Swipe card stack (same as SwipePage) ────────── */
 .swipe-stack {
     flex: 1;
     position: relative;
@@ -14,6 +105,7 @@
     justify-content: center;
     perspective: 1200px;
     overflow: visible;
+    min-height: 0;
 }
 
 .swipe-card {
@@ -57,7 +149,6 @@
             rgba(0, 0, 0, 0.98) 100%);
 }
 
-/* ── Plataforma badges (top-right) ───────────── */
 .swipe-card-platforms {
     position: absolute;
     top: 16px;
@@ -82,7 +173,6 @@
     color: rgba(255, 255, 255, 0.75);
 }
 
-/* ── Glow estilo Spotify ─────────────────────── */
 .swipe-image-glow {
     position: absolute;
     width: 160%;
@@ -99,7 +189,6 @@
     height: 100%;
     object-fit: cover;
     filter: blur(90px) saturate(2.8) brightness(0.7);
-    transform: scale(1.0);
     opacity: 0.85;
     border-radius: 40%;
     display: block;
@@ -130,7 +219,6 @@
     gap: 8px;
 }
 
-/* ── Tags / píldoras ─────────────────────────── */
 .swipe-card-tags {
     display: flex;
     flex-wrap: wrap;
@@ -172,21 +260,70 @@
     font-weight: 400;
 }
 
-.swipe-card-meta {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 13px;
+.swipe-card-drag-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    border-radius: inherit;
 }
 
-/* ── Botones ─────────────────────────────────── */
+.swipe-drag-like {
+    background: var(--cobalt);
+}
+
+.swipe-drag-nope {
+    background: var(--pass);
+}
+
+/* ── Stamps ──────────────────────────────────────── */
+.swipe-stamp {
+    position: absolute;
+    z-index: 10;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 38px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    pointer-events: none;
+    border: 4px solid;
+    line-height: 1;
+}
+
+.swipe-stamp--like {
+    top: 28px;
+    left: 22px;
+    color: var(--cobalt-light);
+    border-color: var(--cobalt-light);
+    transform: rotate(-20deg);
+    text-shadow: 0 0 20px rgba(0, 112, 243, 0.5);
+}
+
+.swipe-stamp--nope {
+    top: 28px;
+    right: 22px;
+    color: var(--pass);
+    border-color: var(--pass);
+    transform: rotate(20deg);
+    text-shadow: 0 0 20px rgba(244, 67, 54, 0.5);
+}
+
+.swipe-stamp--extra {
+    top: 28px;
+    left: 22px;
+    transform: rotate(-15deg);
+    text-shadow: 0 0 20px rgba(245, 197, 24, 0.5);
+}
+
+/* ── Action buttons ──────────────────────────────── */
 .swipe-actions {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 16px;
-    padding-bottom: 4px;
+    padding-bottom: 12px;
+    flex-shrink: 0;
 }
 
 .swipe-btn {
@@ -249,113 +386,18 @@
     transform: none;
 }
 
-/* ── Drag color overlay ──────────────────────── */
-.swipe-card-drag-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-    pointer-events: none;
-    border-radius: inherit;
+/* ── Extra button (Top5 etc.) ────────────────────── */
+.swipe-btn-extra {
+    width: 60px;
+    height: 60px;
+    background: #f5c518;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    box-shadow: 0 0 16px rgba(245, 197, 24, 0.45);
 }
 
-.swipe-drag-like {
-    background: var(--cobalt);
-}
-
-.swipe-drag-nope {
-    background: var(--pass);
-}
-
-/* ── Stamps ──────────────────────────────────── */
-.swipe-stamp {
-    position: absolute;
-    z-index: 10;
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-size: 38px;
-    font-weight: 900;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    pointer-events: none;
-    border: 4px solid;
-    line-height: 1;
-}
-
-.swipe-stamp--like {
-    top: 28px;
-    left: 22px;
-    color: var(--cobalt-light);
-    border-color: var(--cobalt-light);
-    transform: rotate(-20deg);
-    text-shadow: 0 0 20px rgba(0, 112, 243, 0.5);
-}
-
-.swipe-stamp--nope {
-    top: 28px;
-    right: 22px;
-    color: var(--pass);
-    border-color: var(--pass);
-    transform: rotate(20deg);
-    text-shadow: 0 0 20px rgba(244, 67, 54, 0.5);
-}
-
-/* ── Keyboard hints (desktop only) ──────────── */
-.swipe-keyboard-hints {
-    display: none;
-}
-
-@media (min-width: 768px) {
-    .swipe-keyboard-hints {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        position: absolute;
-        right: 140px;
-        top: 50%;
-        transform: translateY(-50%);
-        pointer-events: none;
-    }
-}
-
-.swipe-hint {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: rgba(255, 255, 255, 0.75);
-    font-size: 18px;
-    font-weight: 500;
-}
-
-.swipe-hint kbd {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 43px;
-    height: 43px;
-    padding: 0 10px;
-    border-radius: 8px;
-    background: rgba(18, 18, 18, 0.85);
-    border: 1.5px solid rgba(255, 255, 255, 0.08);
-    font-size: 19px;
-    font-family: inherit;
-    color: var(--text-secondary);
-    line-height: 1;
-}
-
-/* ── Loading ─────────────────────────────────── */
-.swipe-loading-container {
-    display: flex;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-}
-
-.swipe-loading-text {
-    font-weight: bold;
-    font-size: 20px;
-}
-
-/* ── Desktop ─────────────────────────────────── */
+/* ── Desktop ─────────────────────────────────────── */
 @media (min-width: 768px) {
     .swipe-card {
         max-width: 420px;
@@ -372,7 +414,6 @@
     }
 }
 
-/* ── Pantallas grandes ───────────────────────── */
 @media (min-width: 1600px) and (min-height: 900px) {
     .swipe-card {
         max-width: 1300px;
@@ -393,40 +434,10 @@
         margin-bottom: 4px;
     }
 
-    .swipe-card-meta {
-        font-size: 15px;
-    }
-
-    .swipe-tag {
-        font-size: 12px;
-        padding: 6px 14px;
-    }
-
-    .swipe-card-platforms {
-        top: 20px;
-        right: 20px;
-    }
-
-    .swipe-card-platform {
-        width: 44px;
-        height: 44px;
-        font-size: 20px;
-    }
-
     .swipe-stamp {
         font-size: 52px;
         border-width: 5px;
         padding: 8px 18px;
-    }
-
-    .swipe-stamp--like {
-        top: 36px;
-        left: 30px;
-    }
-
-    .swipe-stamp--nope {
-        top: 36px;
-        right: 30px;
     }
 
     .swipe-actions {
@@ -438,6 +449,7 @@
         width: 72px;
         height: 72px;
         font-size: 26px;
+        border: none;
     }
 
     .swipe-btn-info {
@@ -458,23 +470,9 @@
         font-size: 32px;
     }
 
-    .swipe-keyboard-hints {
-        gap: 18px;
+    .swipe-btn-extra {
+        width: 72px;
+        height: 72px;
+        font-size: 28px;
     }
-
-    .swipe-hint {
-        font-size: 18px;
-        gap: 10px;
-        color: rgba(255, 255, 255, 0.75);
-    }
-
-    .swipe-hint kbd {
-        min-width: 41px;
-        height: 41px;
-        font-size: 20px;
-        background: rgba(18, 18, 18, 0.85);
-        border: 1.5px solid rgba(255, 255, 255, 0.08);
-        color: var(--text-secondary);
-    }
-
 }

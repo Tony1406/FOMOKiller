@@ -25,7 +25,7 @@ export const getAllUsers = async (_req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
     try {
-        const { username, email, password, role } = req.body;
+        const { username, email, password, role, bio, avatarUrl } = req.body;
         if (!username || !email || !password) {
             res.status(400).json({ error: 'Faltan campos obligatorios' });
             return;
@@ -34,7 +34,7 @@ export const createUser = async (req: Request, res: Response) => {
         if (existing) { res.status(409).json({ error: 'Ya existe un usuario con ese email' }); return; }
         const bcrypt = await import('bcrypt');
         const passwordHash = await bcrypt.default.hash(password, 10);
-        const user = await User.create({ username, email, passwordHash, role: role || 'user' });
+        const user = await User.create({ username, email, passwordHash, role: role || 'user', bio: bio || null, avatarUrl: avatarUrl || null });
         const json = user.toJSON() as any;
         delete json.passwordHash;
         res.status(201).json(json);

@@ -94,7 +94,6 @@
 }
 
 .collection-card:hover {
-    transform: translateY(-8px) scale(1.01);
     border: 1px solid var(--cobalt);
     box-shadow: 0 10px 30px rgba(0, 112, 243, 0.3);
     z-index: 10;
@@ -114,7 +113,6 @@
 }
 
 .collection-card:hover .collection-card-bg {
-    transform: scale(1.05);
     opacity: 0.9;
 }
 
@@ -213,7 +211,6 @@
 .back-btn-icon:hover {
     background: var(--cobalt);
     border-color: var(--cobalt-light);
-    transform: translateX(-6px);
     box-shadow: var(--shadow-cobalt);
 }
 
@@ -312,7 +309,6 @@
 
 .explore-scrollable .action-btn-completado--active:hover {
     background: rgba(244, 67, 54, 0.6) !important;
-    transform: scale(1.05);
 }
 
 /* Corazón en Explore cards → rojo */
