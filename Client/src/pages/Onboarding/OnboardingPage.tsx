@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PrismaticBurst from '../../components/Background/PrismaticBurst';
 import { useAuth } from '../../context/AuthContext';
 import { savePreferences } from '../../services/api';
 import logoSimple from '../../assets/Logo_simple.png';
+import PrismaticBurst from '../../components/Background/PrismaticBurst';
 import './OnboardingPage.css';
 
 // ─── DATOS DE LAS PREGUNTAS ───────────────────────────────────────────────────
@@ -35,6 +35,7 @@ const STEPS = [
             { id: 'short',  label: 'Ratitos sueltos cuando puedo',       icon: 'fa-solid fa-clock' },
             { id: 'medium', label: 'Tardes largas de fin de semana',      icon: 'fa-solid fa-mug-hot' },
             { id: 'long',   label: 'Me pierdo durante horas sin darme cuenta', icon: 'fa-solid fa-moon' },
+            { id: 'any',    label: 'Me da igual, voy a lo que sea',       icon: 'fa-solid fa-shuffle' },
         ],
     },
     {
@@ -48,6 +49,7 @@ const STEPS = [
             { id: 'relax',      label: 'Relajarme, sin presión, en mi ritmo',    icon: 'fa-solid fa-leaf' },
             { id: 'adrenaline', label: 'Adrenalina disparada',                   icon: 'fa-solid fa-fire' },
             { id: 'build',      label: 'Construir algo desde cero',               icon: 'fa-solid fa-cubes' },
+            { id: 'any',        label: 'Me da igual, voy a lo que sea',           icon: 'fa-solid fa-shuffle' },
         ],
     },
     {
@@ -61,6 +63,7 @@ const STEPS = [
             { id: 'horror',    label: 'Terror y lo desconocido',             icon: 'fa-solid fa-skull' },
             { id: 'openworld', label: 'Mundos abiertos que explorar sin rumbo', icon: 'fa-solid fa-compass' },
             { id: 'realism',   label: 'Realismo, historia o deporte',        icon: 'fa-solid fa-trophy' },
+            { id: 'any',       label: 'Me da igual, voy a lo que sea',       icon: 'fa-solid fa-shuffle' },
         ],
     },
     {
@@ -73,6 +76,7 @@ const STEPS = [
             { id: 'complex',   label: 'Que tenga sistemas complejos para dominar', icon: 'fa-solid fa-brain' },
             { id: 'narrative', label: 'Que me cuente algo que me haga pensar',  icon: 'fa-solid fa-comment-dots' },
             { id: 'challenge', label: 'Que me ponga a prueba constantemente',   icon: 'fa-solid fa-shield-halved' },
+            { id: 'any',       label: 'Me da igual, voy a lo que sea',          icon: 'fa-solid fa-shuffle' },
         ],
     },
     {
@@ -166,13 +170,9 @@ export default function OnboardingPage() {
     if (loading) {
         return (
             <div className="onboarding-root">
-                <div className="ps2-bg">
-                    <div className="land-aurora-bg">
-                        <PrismaticBurst intensity={5} speed={0.5} animationType="rotate3d"
-                            colors={['#5227FF', '#1000f5', '#10bff9']} distort={1} hoverDampness={0} rayCount={0} />
-                    </div>
-                    <div className="ps2-scanlines" />
-                    <div className="ps2-vignette" />
+                <div className="onboarding-prismatic-bg">
+                    <PrismaticBurst intensity={5} speed={0.5} animationType="rotate3d"
+                        colors={['#5227FF', '#1000f5', '#10bff9']} distort={1} hoverDampness={0} rayCount={0} />
                 </div>
                 <div className="onboarding-loading">
                     <img src={logoSimple} alt="FOMOKiller" className="onboarding-loading-logo" />
@@ -186,16 +186,10 @@ export default function OnboardingPage() {
     // ── Wizard ──
     return (
         <div className="onboarding-root">
-            {/* Fondo PS2 igual que el landing */}
-            <div className="ps2-bg">
-                <div className="land-aurora-bg">
-                    <PrismaticBurst intensity={5} speed={0.5} animationType="rotate3d"
-                        colors={['#5227FF', '#1000f5', '#10bff9']} distort={1} hoverDampness={0} rayCount={0} />
-                </div>
-                <div className="ps2-scanlines" />
-                <div className="ps2-vignette" />
+            <div className="onboarding-prismatic-bg">
+                <PrismaticBurst intensity={5} speed={0.5} animationType="rotate3d"
+                    colors={['#5227FF', '#1000f5', '#10bff9']} distort={1} hoverDampness={0} rayCount={0} />
             </div>
-
             <div className="onboarding-container">
                 {/* Logo */}
                 <div className="onboarding-logo">
@@ -234,28 +228,35 @@ export default function OnboardingPage() {
                             </div>
 
                             {yearFilter.enabled && (
-                                <div className="year-sliders">
-                                    <div className="year-slider-row">
-                                        <span className="year-slider-label">Desde</span>
+                                <div className="year-dual-range">
+                                    <div className="year-dual-values">
+                                        <span className="year-dual-val">{yearFilter.min}</span>
+                                        <span className="year-dual-val">{yearFilter.max}</span>
+                                    </div>
+                                    <div className="year-dual-track-wrap">
+                                        <div className="year-dual-track" />
+                                        <div
+                                            className="year-dual-fill"
+                                            style={{
+                                                left: `${(yearFilter.min - MIN_YEAR) / (MAX_YEAR - MIN_YEAR) * 100}%`,
+                                                right: `${(MAX_YEAR - yearFilter.max) / (MAX_YEAR - MIN_YEAR) * 100}%`,
+                                            }}
+                                        />
                                         <input
                                             type="range"
-                                            className="year-slider"
+                                            className="year-dual-input"
                                             min={MIN_YEAR}
-                                            max={MAX_YEAR - 1}
+                                            max={MAX_YEAR}
                                             value={yearFilter.min}
                                             onChange={e => {
                                                 const val = Math.min(Number(e.target.value), yearFilter.max - 1);
                                                 setYearFilter(f => ({ ...f, min: val }));
                                             }}
                                         />
-                                        <span className="year-slider-value">{yearFilter.min}</span>
-                                    </div>
-                                    <div className="year-slider-row">
-                                        <span className="year-slider-label">Hasta</span>
                                         <input
                                             type="range"
-                                            className="year-slider"
-                                            min={MIN_YEAR + 1}
+                                            className="year-dual-input"
+                                            min={MIN_YEAR}
                                             max={MAX_YEAR}
                                             value={yearFilter.max}
                                             onChange={e => {
@@ -263,7 +264,6 @@ export default function OnboardingPage() {
                                                 setYearFilter(f => ({ ...f, max: val }));
                                             }}
                                         />
-                                        <span className="year-slider-value">{yearFilter.max}</span>
                                     </div>
                                 </div>
                             )}
@@ -277,7 +277,7 @@ export default function OnboardingPage() {
                                 return (
                                     <button
                                         key={opt.id}
-                                        className={`onboarding-option ${selected ? 'selected' : ''}`}
+                                        className={`onboarding-option ${selected ? 'selected' : ''} ${opt.id === 'any' ? 'any-option' : ''}`}
                                         onClick={() => current.type === 'multi'
                                             ? togglePlatform(opt.id)
                                             : selectSingle(current.key, opt.id)

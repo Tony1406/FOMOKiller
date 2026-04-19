@@ -1,45 +1,56 @@
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import downloadImage from '../../assets/image.png';
 import './DownloadPage.css';
 
 export default function DownloadPage() {
     const { user } = useContext(AuthContext);
     return (
-        <div className="download-page">
-            <div className="download-content">
-                <div className="section-tag">DESCARGA</div>
+        <div className="download-page download-page--centered">
+            <div className="download-content download-content--centered">
+                <div className="section-tag">EMPIEZA AHORA</div>
                 <h1 className="land-section-title">
-                    Lleva <span className="fomokiller-brand">FOMO<span className="fomokiller-accent">Killer</span></span> <span>contigo</span>
+                    Tu backlog,<br />
+                    <span className="text-glow">bajo control</span>
                 </h1>
-                <p className="land-section-desc">
-                    Próximamente en iOS y Android. Mientras tanto,
-                    usa la versión web desde cualquier dispositivo.
+                <p className="land-section-desc dl-desc-centered">
+                    Crea tu cuenta gratis y empieza a organizar tus juegos en segundos.
+                    Sin descargas, sin instalaciones — funciona desde cualquier navegador.
                 </p>
-                <div className="dl-badges">
-                    <div className="dl-badge">
-                        <i className="fa-brands fa-apple"></i>
-                        <div>
-                            <span className="dl-badge-sub">Próximamente en</span>
-                            <span className="dl-badge-main">App Store</span>
-                        </div>
+
+                <div className="dl-perks dl-perks--centered">
+                    <div className="dl-perk">
+                        <i className="fa-solid fa-bolt"></i>
+                        <span>Lista y funcionando en menos de 1 minuto</span>
                     </div>
-                    <div className="dl-badge">
-                        <i className="fa-brands fa-google-play"></i>
-                        <div>
-                            <span className="dl-badge-sub">Próximamente en</span>
-                            <span className="dl-badge-main">Google Play</span>
-                        </div>
+                    <div className="dl-perk">
+                        <i className="fa-solid fa-lock-open"></i>
+                        <span>Gratis para siempre — sin tarjeta</span>
+                    </div>
+                    <div className="dl-perk">
+                        <i className="fa-solid fa-globe"></i>
+                        <span>Accede desde cualquier dispositivo</span>
                     </div>
                 </div>
-                <Link to={user ? "/app" : "/login"} className="land-btn land-btn-primary dl-web-btn">
-                    <i className="fa-solid fa-globe"></i>
-                    Usar versión web ahora
-                </Link>
-            </div>
-            <div className="download-visual">
-                <img src={downloadImage} alt="FOMOKiller App" className="dl-main-image" />
+
+                <div className="dl-cta-group dl-cta-group--centered">
+                    {user ? (
+                        <Link to="/app" className="land-btn land-btn-primary dl-cta-main">
+                            <i className="fa-solid fa-gamepad"></i>
+                            Empecemos
+                        </Link>
+                    ) : (
+                        <>
+                            <Link to="/register" className="land-btn land-btn-primary dl-cta-main">
+                                <i className="fa-solid fa-user-plus"></i>
+                                Empecemos
+                            </Link>
+                            <Link to="/login" className="land-btn land-btn-ghost">
+                                Ya tengo cuenta
+                            </Link>
+                        </>
+                    )}
+                </div>
             </div>
         </div>
     );

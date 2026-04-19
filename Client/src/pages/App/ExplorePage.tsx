@@ -23,20 +23,16 @@ export default function ExplorePage() {
     const [mostrarToast, setMostrarToast] = useState(false);
     const [enBacklog, setEnBacklog] = useState<Set<number>>(new Set());
     const [vista, setVista] = useState<VistaValue>(
-        () => (localStorage.getItem('fomo_vista_explore') as VistaValue) || 'lista'
+        () => {
+            const stored = localStorage.getItem('fomo_vista_explore');
+            return (stored === 'lista' || stored === 'cards' || stored === 'swipe') ? stored as VistaValue : 'lista';
+        }
     );
-    const [swipeIndexCollection, setSwipeIndexCollection] = useState(0);
-    const [swipeIndexSearch, setSwipeIndexSearch] = useState(0);
-    const prevVistaRef = useRef<'lista' | 'cards'>('lista');
-
-    const handleSetVista = (v: VistaValue) => {
-        if (v === 'swipe' && vista !== 'swipe') prevVistaRef.current = vista as 'lista' | 'cards';
-        setVista(v);
-    };
+    const [swipeIndex, setSwipeIndex] = useState(0);
 
     useEffect(() => { localStorage.setItem('fomo_vista_explore', vista); }, [vista]);
-    useEffect(() => { setSwipeIndexCollection(0); }, [coleccionSeleccionada]);
-    useEffect(() => { setSwipeIndexSearch(0); setPaginaSearch(1); }, [buscar]);
+    useEffect(() => { setPaginaSearch(1); }, [buscar]);
+    useEffect(() => { setSwipeIndex(0); }, [coleccionSeleccionada?.id]);
 
     const cargaInicial = async () => {
         const data = await getCollections();
@@ -89,32 +85,44 @@ export default function ExplorePage() {
         }
     };
 
-    // Silent version for swipe mode (stamps provide feedback)
-    const handleAddGameSwipe = async (game: any) => {
-        if (!user || enBacklog.has(game.id)) return;
-        await updateStatus(user.id, game.id, 'LIKED');
-        setEnBacklog(prev => new Set(prev).add(game.id));
-    };
-
-    const viewToggle = (
+    const searchToggle = (
         <div className="view-toggle-group">
             <button
                 className={`view-toggle-btn${vista === 'lista' ? ' active' : ''}`}
-                onClick={() => handleSetVista('lista')}
+                onClick={() => setVista('lista')}
                 title="Vista lista"
             >
                 <i className="fa-solid fa-list" />
             </button>
             <button
                 className={`view-toggle-btn${vista === 'cards' ? ' active' : ''}`}
-                onClick={() => handleSetVista('cards')}
+                onClick={() => setVista('cards')}
+                title="Vista cuadrícula"
+            >
+                <i className="fa-solid fa-grip" />
+            </button>
+        </div>
+    );
+
+    const collectionToggle = (
+        <div className="view-toggle-group">
+            <button
+                className={`view-toggle-btn${vista === 'lista' ? ' active' : ''}`}
+                onClick={() => setVista('lista')}
+                title="Vista lista"
+            >
+                <i className="fa-solid fa-list" />
+            </button>
+            <button
+                className={`view-toggle-btn${vista === 'cards' ? ' active' : ''}`}
+                onClick={() => setVista('cards')}
                 title="Vista cuadrícula"
             >
                 <i className="fa-solid fa-grip" />
             </button>
             <button
                 className={`view-toggle-btn${vista === 'swipe' ? ' active' : ''}`}
-                onClick={() => handleSetVista('swipe')}
+                onClick={() => { setVista('swipe'); setSwipeIndex(0); }}
                 title="Vista swipe"
             >
                 <i className="fa-solid fa-layer-group" />
@@ -122,8 +130,8 @@ export default function ExplorePage() {
         </div>
     );
 
-    const renderGames = (games: any[], vistaMode: VistaValue = 'lista') => {
-        if (vistaMode === 'cards') {
+    const renderGames = (games: any[]) => {
+        if (vista === 'cards') {
             return (
                 <div className="game-grid" key="cards">
                     {games.map((game: any) => {
@@ -195,13 +203,13 @@ export default function ExplorePage() {
         );
     };
 
-    // ── Swipe mode for collection ────────────────
+    // ── Swipe mode for collection ─────────────────
     if (vista === 'swipe' && coleccionSeleccionada !== null) {
         return (
             <div className="page page-enter page-swipe-mode">
                 <div className="swipe-mode-bar">
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <button className="back-btn-icon" onClick={() => setVista(prevVistaRef.current)} style={{ flexShrink: 0 }}>
+                        <button className="back-btn-icon" onClick={() => setVista('lista')} style={{ flexShrink: 0 }}>
                             <i className="fa-solid fa-arrow-left" />
                         </button>
                         <div>
@@ -209,75 +217,44 @@ export default function ExplorePage() {
                             <div className="section-sub">{coleccionSeleccionada.Games.length} juegos</div>
                         </div>
                     </div>
-                    {viewToggle}
+                    {collectionToggle}
                 </div>
 
                 <SwipeView
                     items={coleccionSeleccionada.Games}
-                    index={swipeIndexCollection}
-                    onIndexChange={setSwipeIndexCollection}
-                    getGame={(game) => game}
-                    onLeft={async () => { /* ignore */ }}
-                    onRight={handleAddGameSwipe}
-                    leftLabel="Ignorar"
+                    index={swipeIndex}
+                    onIndexChange={setSwipeIndex}
+                    getGame={(game) => ({
+                        id: game.id,
+                        title: game.title,
+                        imageUrl: game.imageUrl,
+                        releaseYear: game.releaseYear,
+                        developer: game.developer,
+                        playtime: game.playtime,
+                        rawgSlug: game.rawgSlug,
+                        Platforms: game.Platforms,
+                        Genres: game.Genres,
+                    })}
+                    onLeft={async () => { /* skip */ }}
+                    onRight={async (game) => {
+                        if (!user) return;
+                        if (!enBacklog.has(game.id)) {
+                            await updateStatus(user.id, game.id, 'LIKED');
+                            setEnBacklog(prev => new Set(prev).add(game.id));
+                            setMostrarToast(true);
+                            setTimeout(() => setMostrarToast(false), 1500);
+                        }
+                    }}
+                    leftLabel="Saltar"
                     rightLabel="Backlog"
-                    doneMessage="Ya viste todos los juegos de esta colección"
+                    doneMessage="Has explorado toda la colección"
                 />
 
-                <GameInfoModal
-                    isOpen={juegoSeleccionado !== null}
-                    onClose={() => setJuegoSeleccionado(null)}
-                    game={juegoSeleccionado}
-                />
-            </div>
-        );
-    }
-
-    // ── Swipe mode for search results ────────────
-    if (vista === 'swipe' && buscar.trim().length > 0) {
-        return (
-            <div className="page page-enter page-swipe-mode">
-                <div className="swipe-mode-bar" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 8 }}>
-                    <div className="search-bar" style={{ marginTop: 0 }}>
-                        <i className="fa-solid fa-search search-icon" />
-                        <input
-                            type="text"
-                            placeholder="Busca tu próximo juego..."
-                            value={buscar}
-                            onChange={(e) => setBuscar(e.target.value)}
-                        />
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div className="section-sub" style={{ margin: 0 }}>
-                            {buscarResultados.length} resultados para "{buscar}"
-                        </div>
-                        {viewToggle}
-                    </div>
-                </div>
-
-                {buscarResultados.length > 0 ? (
-                    <SwipeView
-                        items={buscarResultados}
-                        index={swipeIndexSearch}
-                        onIndexChange={setSwipeIndexSearch}
-                        getGame={(game) => game}
-                        onLeft={async () => { /* ignore */ }}
-                        onRight={handleAddGameSwipe}
-                        leftLabel="Ignorar"
-                        rightLabel="Backlog"
-                        doneMessage="Ya viste todos los resultados"
-                    />
-                ) : (
-                    <div className="swipe-view-done">
-                        <div className="swipe-view-done-text">No hay resultados para "{buscar}"</div>
+                {mostrarToast && (
+                    <div className="toast-container">
+                        <div className="toast"><i className="fa-solid fa-heart" /> Añadido a tu backlog</div>
                     </div>
                 )}
-
-                <GameInfoModal
-                    isOpen={juegoSeleccionado !== null}
-                    onClose={() => setJuegoSeleccionado(null)}
-                    game={juegoSeleccionado}
-                />
             </div>
         );
     }
@@ -291,7 +268,7 @@ export default function ExplorePage() {
                 <div className="search-results-header">
                     <div className="collection-view-toolbar search-results-toolbar">
                         <div className="section-title">Resultados de búsqueda</div>
-                        {viewToggle}
+                        {searchToggle}
                     </div>
                     <div className="backlog-legend explore-legend">
                         <div className="backlog-legend-item"><i className="fa-solid fa-heart" /><span>Añadir al backlog</span></div>
@@ -299,7 +276,7 @@ export default function ExplorePage() {
                 </div>
                 {buscarResultados.length > 0 ? (
                     <>
-                        {renderGames(buscarResultados.slice((paginaSearch - 1) * 18, paginaSearch * 18), vista)}
+                        {renderGames(buscarResultados.slice((paginaSearch - 1) * 18, paginaSearch * 18))}
                         <Paginador
                             pagina={paginaSearch}
                             total={buscarResultados.length}
@@ -322,14 +299,14 @@ export default function ExplorePage() {
                     <div className="section-title">{coleccionSeleccionada.title}</div>
                     <div className="section-sub">{coleccionSeleccionada.description}</div>
                     <div className="collection-view-toolbar">
-                        {viewToggle}
+                        {collectionToggle}
                     </div>
                     <div className="backlog-legend explore-legend">
                         <div className="backlog-legend-item"><i className="fa-solid fa-heart" /><span>Añadir al backlog</span></div>
                     </div>
                 </div>
 
-                {renderGames(coleccionSeleccionada.Games.slice((paginaColeccion - 1) * 18, paginaColeccion * 18), vista)}
+                {renderGames(coleccionSeleccionada.Games.slice((paginaColeccion - 1) * 18, paginaColeccion * 18))}
                 <Paginador
                     pagina={paginaColeccion}
                     total={coleccionSeleccionada.Games.length}

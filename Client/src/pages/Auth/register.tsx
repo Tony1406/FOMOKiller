@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import './register.css';
 import { register } from '../../services/api';
@@ -24,11 +24,19 @@ export default function Register() {
                 setErrorMsg('La contraseña debe tener al menos 6 caracteres');
                 return;
             }
-            await register(username, email, password);
+            const data = await register(username, email, password);
+            if (data?.error) {
+                if (data.error.toLowerCase().includes('email')) {
+                    setErrorMsg('Ya existe una cuenta con ese correo. Prueba con otro o inicia sesión.');
+                } else {
+                    setErrorMsg(data.error);
+                }
+                return;
+            }
             navigate('/login');
         } catch (error: any) {
             console.error("Error al registrar:", error);
-            setErrorMsg(error.response?.data?.message || 'Error al registrar la cuenta');
+            setErrorMsg('Error de conexión. Inténtalo de nuevo.');
         }
     }
     return (
@@ -60,7 +68,7 @@ export default function Register() {
                 </form>
                 <div className="login-footer">
                     ¿Ya eres miembro?
-                    <NavLink to="/login" className="login-link">Inicia Sesión</NavLink>
+                    <Link to="/login" className="login-link">Inicia Sesión</Link>
                 </div>
             </div>
         </div>

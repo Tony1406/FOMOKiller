@@ -182,18 +182,18 @@ export default function SwipePage() {
   const puedeRetroceder = idJuego > 0;
 
   const getPlatformIcons = (platforms: any[]): string[] => {
-    if (!platforms?.length) return ["fa-solid fa-gamepad"];
+    if (!platforms?.length) return [];
     const names = platforms.map((p: any) => p.name?.toLowerCase() ?? "");
     const icons: string[] = [];
-    if (names.some((n) => n.includes("playstation")))
-      icons.push("fa-brands fa-playstation");
-    if (names.some((n) => n.includes("xbox"))) icons.push("fa-brands fa-xbox");
-    if (names.some((n) => n.includes("nintendo")))
-      icons.push("fa-solid fa-gamepad");
-    if (names.some((n) => n.includes("pc"))) icons.push("fa-brands fa-steam");
-    if (names.some((n) => n.includes("mobile")))
-      icons.push("fa-solid fa-mobile-screen");
-    return icons.length ? icons : ["fa-solid fa-gamepad"];
+    if (names.some((n) => n.includes("playstation")))  icons.push("fa-brands fa-playstation");
+    if (names.some((n) => n.includes("xbox")))         icons.push("fa-brands fa-xbox");
+    if (names.some((n) => n.includes("pc")))           icons.push("fa-brands fa-steam");
+    if (names.some((n) => n === "ios" || n === "macos" || n.includes("apple") || n.includes("mac")))
+                                                        icons.push("fa-brands fa-apple");
+    if (names.some((n) => n.includes("android")))      icons.push("fa-brands fa-android");
+    if (names.some((n) => n.includes("mobile") && !n.includes("android") && !n.includes("ios")))
+                                                        icons.push("fa-solid fa-mobile-screen");
+    return icons;
   };
 
   // Animation values

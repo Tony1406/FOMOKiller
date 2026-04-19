@@ -87,21 +87,6 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
         ? description.slice(0, DESC_LIMIT) + '...'
         : description;
 
-    const PLATFORM_ICONS: Record<string, string> = {
-        'PC':               'fa-brands fa-steam',
-        'macOS':            'fa-brands fa-apple',
-        'Linux':            'fa-brands fa-linux',
-        'PlayStation 5':    'fa-brands fa-playstation',
-        'PlayStation 4':    'fa-brands fa-playstation',
-        'PlayStation 3':    'fa-brands fa-playstation',
-        'Xbox Series S/X':  'fa-brands fa-xbox',
-        'Xbox One':         'fa-brands fa-xbox',
-        'Xbox 360':         'fa-brands fa-xbox',
-        'Nintendo Switch':  'fa-solid fa-gamepad',
-        'iOS':              'fa-brands fa-apple',
-        'Android':          'fa-brands fa-android',
-    };
-
     const infoRows = [
         developer && { icon: 'fa-solid fa-code', label: 'Desarrollador', value: developer },
         details?.publisher && details.publisher && { icon: 'fa-solid fa-building', label: 'Publisher', value: details.publisher },
@@ -159,35 +144,33 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
                         </div>
                     </div>
 
-                    {/* Info rows estilo Tinder */}
+                    {/* Detalles — scroll horizontal centrado */}
                     {(infoRows.length > 0 || loadingDetails || (game.Platforms?.length ?? 0) > 0) && (
-                        <div className="modal-info-rows">
+                        <div className="modal-details-scroll">
                             {loadingDetails && infoRows.length === 0 && (
-                                <div className="modal-loading">Cargando detalles...</div>
+                                <div className="modal-detail-card">
+                                    <i className="fa-solid fa-spinner fa-spin modal-detail-icon" />
+                                    <span className="modal-detail-label">Cargando...</span>
+                                </div>
                             )}
                             {infoRows.map(row => (
-                                <div key={row.label} className="modal-info-row">
-                                    <i className={`${row.icon} modal-info-icon`} />
-                                    <div className="modal-info-text">
-                                        <span className="modal-info-label">{row.label}</span>
-                                        <span className="modal-info-value">{row.value}</span>
-                                    </div>
+                                <div key={row.label} className="modal-detail-card">
+                                    <i className={`${row.icon} modal-detail-icon`} />
+                                    <span className="modal-detail-value">{row.value}</span>
+                                    <span className="modal-detail-label">{row.label}</span>
                                 </div>
                             ))}
                             {(game.Platforms?.length ?? 0) > 0 && (
-                                <div className="modal-info-row">
-                                    <i className="fa-solid fa-display modal-info-icon" />
-                                    <div className="modal-info-text">
-                                        <span className="modal-info-label">Plataformas</span>
-                                        <div className="modal-platform-icons">
-                                            {game.Platforms!.map(p => {
-                                                const icon = PLATFORM_ICONS[p.name] ?? 'fa-solid fa-gamepad';
-                                                return (
-                                                    <i key={p.id} className={`${icon} modal-platform-icon`} title={p.name} />
-                                                );
-                                            })}
-                                        </div>
+                                <div className="modal-detail-card modal-detail-platforms">
+                                    <i className="fa-solid fa-display modal-detail-icon" />
+                                    <div className="modal-platform-names">
+                                        {game.Platforms!.map((p, i, arr) => (
+                                            <span key={p.id} className="modal-platform-name">
+                                                {p.name}{i < arr.length - 1 ? ',\u00A0' : ''}
+                                            </span>
+                                        ))}
                                     </div>
+                                    <span className="modal-detail-label">Plataformas</span>
                                 </div>
                             )}
                         </div>

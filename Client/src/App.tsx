@@ -8,9 +8,7 @@ import Top5Page from './pages/App/Top5Page';
 import ProfilePage from './pages/App/ProfilePage';
 import Aurora from './components/Background/Aurora';
 import HomePage from './pages/Landing/HomePage';
-import MissionPage from './pages/Landing/MissionPage';
 import DownloadPage from './pages/Landing/DownloadPage';
-import ContactPage from './pages/Landing/ContactPage';
 import LoginPage from './pages/Auth/login';
 import RegisterPage from './pages/Auth/register';
 import { AuthProvider } from './context/AuthContext';
@@ -33,10 +31,7 @@ export default function App() {
           {/* Landing – comparte PS2 bg, nav y footer */}
           <Route element={<LandingLayout />}>
             <Route path="/" element={<HomePage />} />
-            <Route path="/mision" element={<MissionPage />} />
-
             <Route path="/descarga" element={<DownloadPage />} />
-            <Route path="/contacto" element={<ContactPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Route>
