@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import './login.css';
@@ -66,7 +66,7 @@ export default function LoginPage() {
                 </form>
                 <div className="login-footer">
                     ¿No tienes cuenta?
-                    <NavLink to="/register" className="login-link">Regístrate aquí</NavLink>
+                    <Link to="/register" className="login-link">Regístrate aquí</Link>
                 </div>
             </div>
         </div>

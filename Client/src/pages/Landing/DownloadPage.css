@@ -2,15 +2,29 @@
 .download-page {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 60px 2rem 80px;
+    padding: 60px 2rem 200px;
     display: flex;
     align-items: center;
     gap: 4rem;
-    min-height: calc(100vh - 200px);
+    min-height: calc(100vh - 80px);
+}
+
+.download-page--centered {
+    justify-content: center;
 }
 
 .download-content {
     flex: 1;
+}
+
+.download-content--centered {
+    max-width: 680px;
+    text-align: center;
+}
+
+.dl-desc-centered {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .dl-badges {
@@ -57,8 +71,47 @@
     font-family: var(--font-primary);
 }
 
-.dl-web-btn {
-    margin-top: .5rem;
+.dl-perks {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 2rem;
+}
+
+.dl-perks--centered {
+    align-items: center;
+}
+
+.dl-perk {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+}
+
+.dl-perk i {
+    color: #2979FF;
+    font-size: 1rem;
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.dl-cta-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.dl-cta-group--centered {
+    justify-content: center;
+}
+
+.dl-cta-main {
+    font-size: 1rem;
+    padding: 1rem 2.2rem;
 }
 
 .download-visual {

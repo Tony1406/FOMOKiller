@@ -9,54 +9,88 @@
     margin-bottom: 3rem;
 }
 
-.mission-values {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+.mission-values-wrapper {
+    display: flex;
+    align-items: stretch;
+    gap: 4rem;
     margin-bottom: 4rem;
 }
 
+.mission-values {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.mission-poster {
+    flex: 0 0 480px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(41, 121, 255, 0.2);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.mission-poster-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
 .mission-card {
-    padding: 2rem;
-    background: rgba(7, 28, 58, .85);
-    border: 1px solid rgba(41, 121, 255, .18);
+    padding: 1.25rem 1.5rem;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(41, 121, 255, .12);
     border-radius: 16px;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.25rem;
 }
 
 .mission-card-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, rgba(0, 71, 171, .2), rgba(41, 121, 255, .1));
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0047AB, #2979FF);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
-    color: #2979FF;
-    margin-bottom: 1.2rem;
-    border: 1px solid rgba(41, 121, 255, .2);
+    font-size: 1.3rem;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 8px 24px rgba(0, 71, 171, .3);
+}
+
+.mission-card-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .mission-card h3 {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     font-weight: 700;
-    margin-bottom: .6rem;
+    margin-bottom: 2px;
     font-family: var(--font-primary);
+    line-height: 1.2;
 }
 
 .mission-card p {
     font-size: .85rem;
-    color: rgba(255, 255, 255, .5);
-    line-height: 1.7;
+    color: rgba(255, 255, 255, .45);
+    line-height: 1.4;
+    margin: 0;
 }
 
 /* Manifesto */
 .manifesto-card {
     padding: 3rem;
-    background: rgba(7, 28, 58, 0.92);
-    border: 1px solid rgba(41, 121, 255, .25);
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(41, 121, 255, .18);
     border-radius: 20px;
     text-align: center;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -113,8 +147,8 @@
 
 .audience-card {
     padding: 2rem;
-    background: rgba(7, 28, 58, .75);
-    border: 1px solid rgba(41, 121, 255, .15);
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(41, 121, 255, .12);
     border-radius: 16px;
 }
 
@@ -127,6 +161,7 @@
 .audience-card h3 {
     font-size: 1.1rem;
     font-weight: 700;
+    margin-top: 1rem;
     margin-bottom: .5rem;
     font-family: var(--font-primary);
     color: #2979FF;
@@ -139,6 +174,16 @@
 }
 
 @media (max-width: 768px) {
+    .mission-values-wrapper {
+        flex-direction: column-reverse;
+        gap: 2rem;
+    }
+
+    .mission-poster {
+        flex: 0 0 260px;
+        width: 100%;
+    }
+
     .mission-values {
         grid-template-columns: 1fr;
     }
@@ -157,8 +202,8 @@
 .mission-research {
     margin: 6rem 0;
     padding: 4rem 2rem;
-    background: rgba(7, 28, 58, 0.88);
-    border: 1px solid rgba(41, 121, 255, 0.2);
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(41, 121, 255, 0.12);
     border-radius: 24px;
     text-align: center;
     position: relative;

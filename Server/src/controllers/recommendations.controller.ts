@@ -211,7 +211,7 @@ export const getRecommendations = async (req: Request, res: Response) => {
             .filter((g: any) => {
                 if (!minYear && !maxYear) return true;
                 const year = g.get('releaseYear') as number | null;
-                if (!year) return true; // sin año de lanzamiento → no excluir
+                if (!year) return false; // año desconocido → excluir cuando hay filtro activo
                 if (minYear && year < minYear) return false;
                 if (maxYear && year > maxYear) return false;
                 return true;

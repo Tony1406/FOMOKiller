@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import PrismaticBurst from "../components/Background/PrismaticBurst";
 import logoSimple from "../assets/Logo_simple.png";
 import "./LandingLayout.css";
 
@@ -15,19 +14,9 @@ export default function LandingLayout() {
 
   return (
     <div className="landing-root">
-      {/* PS2 Background Effects */}
+      {/* Background */}
       <div className="ps2-bg">
-        <div className="land-aurora-bg">
-          <PrismaticBurst
-            intensity={5}
-            speed={0.5}
-            animationType="rotate3d"
-            colors={["#5227FF", "#1000f5", "#10bff9"]}
-            distort={1}
-            hoverDampness={0}
-            rayCount={0}
-          />
-        </div>
+        <div className="land-aurora-bg"></div>
         <div className="ps2-scanlines"></div>
         <div className="ps2-vignette"></div>
       </div>
@@ -44,14 +33,6 @@ export default function LandingLayout() {
               }
             >
               Inicio
-            </NavLink>
-            <NavLink
-              to="/mision"
-              className={({ isActive }) =>
-                `land-nav-link ${isActive ? "active" : ""}`
-              }
-            >
-              Misión
             </NavLink>
           </div>
           <Link to="/" className="land-nav-logo">
@@ -73,14 +54,6 @@ export default function LandingLayout() {
             >
               Empezar
             </NavLink>
-            <NavLink
-              to="/contacto"
-              className={({ isActive }) =>
-                `land-nav-link ${isActive ? "active" : ""}`
-              }
-            >
-              Contacto
-            </NavLink>
           </div>
           {/* Mobile: all links in a dropdown */}
           <div className={`land-nav-links-mobile ${isMenuOpen ? "open" : ""}`}>
@@ -94,28 +67,12 @@ export default function LandingLayout() {
               Inicio
             </NavLink>
             <NavLink
-              to="/mision"
-              className={({ isActive }) =>
-                `land-nav-link ${isActive ? "active" : ""}`
-              }
-            >
-              Misión
-            </NavLink>
-            <NavLink
               to="/descarga"
               className={({ isActive }) =>
                 `land-nav-link ${isActive ? "active" : ""}`
               }
             >
-              Descarga
-            </NavLink>
-            <NavLink
-              to="/contacto"
-              className={({ isActive }) =>
-                `land-nav-link ${isActive ? "active" : ""}`
-              }
-            >
-              Contacto
+              Empezar
             </NavLink>
           </div>
           <button
@@ -166,9 +123,7 @@ export default function LandingLayout() {
             <h4 className="footer-title">Navegación</h4>
             <div className="footer-links">
               <Link to="/">Inicio</Link>
-              <Link to="/mision">Misión</Link>
-              <Link to="/descarga">Descarga</Link>
-              <Link to="/contacto">Contacto</Link>
+              <Link to="/descarga">Empezar</Link>
             </div>
           </div>
         </div>

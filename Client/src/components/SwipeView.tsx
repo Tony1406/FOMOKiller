@@ -150,15 +150,16 @@ export default function SwipeView({
     }, [mostrarInfo, index, items.length]);
 
     const getPlatformIcons = (platforms: { id?: number; name: string }[]): string[] => {
-        if (!platforms?.length) return ["fa-solid fa-gamepad"];
+        if (!platforms?.length) return [];
         const names = platforms.map((p) => p.name?.toLowerCase() ?? "");
         const icons: string[] = [];
         if (names.some((n) => n.includes("playstation"))) icons.push("fa-brands fa-playstation");
         if (names.some((n) => n.includes("xbox"))) icons.push("fa-brands fa-xbox");
-        if (names.some((n) => n.includes("nintendo"))) icons.push("fa-solid fa-gamepad");
         if (names.some((n) => n.includes("pc"))) icons.push("fa-brands fa-steam");
-        if (names.some((n) => n.includes("mobile"))) icons.push("fa-solid fa-mobile-screen");
-        return icons.length ? icons : ["fa-solid fa-gamepad"];
+        if (names.some((n) => n === "ios" || n === "macos" || n.includes("apple") || n.includes("mac"))) icons.push("fa-brands fa-apple");
+        if (names.some((n) => n.includes("android"))) icons.push("fa-brands fa-android");
+        if (names.some((n) => n.includes("mobile") && !n.includes("android") && !n.includes("ios"))) icons.push("fa-solid fa-mobile-screen");
+        return icons;
     };
 
     if (index >= items.length) {
@@ -209,6 +210,13 @@ export default function SwipeView({
             />
 
             <div className="swipe-stack">
+                <div className="swipe-keyboard-hints">
+                    <div className="swipe-hint"><kbd>←</kbd><span>{leftLabel}</span></div>
+                    <div className="swipe-hint"><kbd>→</kbd><span>{rightLabel}</span></div>
+                    <div className="swipe-hint"><kbd>↑</kbd><span>Info</span></div>
+                    <div className="swipe-hint"><kbd>↓</kbd><span>Volver</span></div>
+                </div>
+
                 {/* Dynamic color glow */}
                 <div className="swipe-image-glow" key={game.id}>
                     <img src={game.imageUrl} alt="" aria-hidden />
