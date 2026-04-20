@@ -75,9 +75,8 @@
     overflow: hidden;
     position: relative;
     height: 216px;
-    /* Uniform height */
     cursor: pointer;
-    border: none;
+    border: 1px solid transparent;
     background: var(--bg-card);
     transition: all var(--t-base) var(--ease-spring);
 }

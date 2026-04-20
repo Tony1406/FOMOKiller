@@ -64,7 +64,7 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
         const handleKey = (e: KeyboardEvent) => {
             if (e.key === 'ArrowLeft') { e.stopPropagation(); setSlideIndex(i => (i - 1 + total) % Math.max(total, 1)); }
             else if (e.key === 'ArrowRight') { e.stopPropagation(); setSlideIndex(i => (i + 1) % Math.max(total, 1)); }
-            else if (e.key === 'Escape' || e.key === 'Enter') onClose();
+            else if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); onClose(); }
         };
         window.addEventListener('keydown', handleKey, true);
         return () => window.removeEventListener('keydown', handleKey, true);

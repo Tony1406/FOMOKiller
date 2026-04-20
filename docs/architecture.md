@@ -14,7 +14,7 @@ FOMOKiller sigue una arquitectura cliente-servidor clásica con una base de dato
                            │ Cookie: fomokiller_token
 ┌──────────────────────────▼──────────────────────────────┐
 │                       SERVIDOR                          │
-│              Express 5 + TypeScript + Node              │
+│              Express 5 + TypeScript + Node 22             │
 │                   localhost:3000                        │
 │                                                         │
 │  Middleware: CORS, cookieParser, express.json           │
@@ -51,7 +51,6 @@ FOMOKiller sigue una arquitectura cliente-servidor clásica con una base de dato
 | @react-three/fiber | 9.5.0 | React + Three.js |
 | Lucide React | 0.577.0 | Iconos |
 | Radix UI | 1.4.3 | Componentes headless accesibles |
-| TailwindCSS | 4.2.1 | Utilidades CSS |
 
 ### Backend
 

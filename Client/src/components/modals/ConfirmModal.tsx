@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import './ConfirmModal.css';
 
 interface ConfirmModalProps {
@@ -19,6 +20,15 @@ export default function ConfirmModal({
     confirmLabel = 'Confirmar',
     variant = 'primary',
 }: ConfirmModalProps) {
+    useEffect(() => {
+        if (!isOpen) return;
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' || e.key === ' ') { e.preventDefault(); onClose(); }
+        };
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
+    }, [isOpen, onClose]);
+
     if (!isOpen) return null;
 
     return (

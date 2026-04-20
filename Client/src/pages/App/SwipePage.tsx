@@ -4,8 +4,8 @@ import { getRecommendations, updateStatus } from "../../services/api";
 import { AuthContext } from "../../context/AuthContext";
 import "./SwipePage.css";
 
-const STORAGE_JUEGOS = "swipe_deck_v2";
-const STORAGE_INDICE = "swipe_index_v2";
+const STORAGE_JUEGOS = "swipe_deck_v3";
+const STORAGE_INDICE = "swipe_index_v3";
 const DRAG_THRESHOLD = 90;
 
 export default function SwipePage() {
@@ -23,6 +23,7 @@ export default function SwipePage() {
   const swipingRef = useRef(false);
 
   const cargarJuegos = async () => {
+    const modo = localStorage.getItem('swipe_explore') === 'true';
     const deckGuardado = sessionStorage.getItem(STORAGE_JUEGOS);
     const indiceGuardado = sessionStorage.getItem(STORAGE_INDICE);
     if (deckGuardado) {
@@ -33,17 +34,17 @@ export default function SwipePage() {
         setCargando(false);
         return;
       }
-      // Cache inválido (guardó un error) — limpiar y volver a pedir
       sessionStorage.removeItem(STORAGE_JUEGOS);
       sessionStorage.removeItem(STORAGE_INDICE);
     }
     try {
-      const data = await getRecommendations(user.id);
+      const data = await getRecommendations(user.id, modo);
       if (!Array.isArray(data)) {
         console.error('Recomendaciones: respuesta inválida del servidor', data);
         setCargando(false);
         return;
       }
+      console.log(`[SwipePage] Juegos cargados: ${data.length}`);
       sessionStorage.setItem(STORAGE_JUEGOS, JSON.stringify(data));
       sessionStorage.setItem(STORAGE_INDICE, "0");
       setJuegos(data);
@@ -64,6 +65,7 @@ export default function SwipePage() {
     setFlyOut(direction);
     await new Promise((r) => setTimeout(r, 380));
     const juego = juegos[idJuego];
+    if (!juego) { swipingRef.current = false; return; }
     await updateStatus(
       user.id,
       juego.id,
@@ -168,11 +170,17 @@ export default function SwipePage() {
     );
   }
 
-  if (idJuego >= juegos.length) {
+  if (juegos.length > 0 && idJuego >= juegos.length && !cargando) {
+    sessionStorage.removeItem(STORAGE_JUEGOS);
+    sessionStorage.removeItem(STORAGE_INDICE);
+    setJuegos([]);
+    setIdJuego(0);
+    setCargando(true);
+    cargarJuegos();
     return (
       <div className="swipe-page page-enter">
         <div className="swipe-loading-container">
-          <div className="swipe-loading-text">Has visto todos los juegos</div>
+          <div className="swipe-loading-text">Cargando más juegos...</div>
         </div>
       </div>
     );

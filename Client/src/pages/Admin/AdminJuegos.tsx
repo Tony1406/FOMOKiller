@@ -137,6 +137,28 @@ export default function AdminJuegos() {
         adminGetPlatforms().then(setAllPlatforms);
     }, []);
 
+    useEffect(() => {
+        if (!editingGame) return;
+        const handleKey = (e: KeyboardEvent) => {
+            const tag = (document.activeElement as HTMLElement)?.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+            if (e.key === 'Escape' || e.key === ' ') { e.preventDefault(); setEditingGame(null); }
+        };
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
+    }, [editingGame]);
+
+    useEffect(() => {
+        if (!showCreateModal) return;
+        const handleKey = (e: KeyboardEvent) => {
+            const tag = (document.activeElement as HTMLElement)?.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+            if (e.key === 'Escape' || e.key === ' ') { e.preventDefault(); setShowCreateModal(false); }
+        };
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
+    }, [showCreateModal]);
+
     const handleDelete = (game: Game) => {
         setConfirm({
             message: `¿Eliminar "${game.title}" de la base de datos? Esta acción no se puede deshacer.`,

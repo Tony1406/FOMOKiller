@@ -21,6 +21,17 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
     const [imgError, setImgError] = useState(false);
 
     useEffect(() => {
+        if (!isOpen) return;
+        const handleKey = (e: KeyboardEvent) => {
+            const tag = (document.activeElement as HTMLElement)?.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+            if (e.key === 'Escape' || e.key === ' ') { e.preventDefault(); onClose(); }
+        };
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
+    }, [isOpen, onClose]);
+
+    useEffect(() => {
         if (user && isOpen) {
             setFormData({
                 username: user.username || '',
