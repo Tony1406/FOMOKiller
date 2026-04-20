@@ -10,7 +10,7 @@ import { defineAssociations } from '../models/associations.js';
 dotenv.config();
 
 const RAWG_KEY = process.env.RAWG_API_KEY;
-const TOTAL_PAGES = 250;
+const TOTAL_PAGES = 25; // 25 páginas × 20 juegos = 500 juegos
 const DELAY_MS = 350;
 
 function sleep(ms: number) {
@@ -19,13 +19,13 @@ function sleep(ms: number) {
 
 async function main() {
     if (!RAWG_KEY) {
-        console.error('❌ RAWG_API_KEY no encontrada en .env');
+        console.error(' RAWG_API_KEY no encontrada en .env');
         process.exit(1);
     }
 
     defineAssociations();
     await sequelize.sync({ alter: true });
-    console.log('✅ Base de datos lista');
+    console.log(' Base de datos lista');
 
     let totalImportados = 0;
     let paginasVacias = 0;
@@ -37,13 +37,13 @@ async function main() {
         try {
             const res = await fetch(url);
             if (!res.ok) {
-                console.error(`❌ Error en página ${page}: ${res.status}`);
+                console.error(`Error en página ${page}: ${res.status}`);
                 await sleep(DELAY_MS);
                 continue;
             }
             data = await res.json();
         } catch (err) {
-            console.error(`❌ Error de red en página ${page}:`, err);
+            console.error(`Error de red en página ${page}:`, err);
             await sleep(DELAY_MS);
             continue;
         }
@@ -117,11 +117,11 @@ async function main() {
         await sleep(DELAY_MS);
     }
 
-    console.log(`\n✅ Importación completada: ${totalImportados} juegos en total`);
+    console.log(`\n Importación completada: ${totalImportados} juegos en total`);
     await sequelize.close();
 }
 
 main().catch(err => {
-    console.error('❌ Error fatal:', err);
+    console.error(' Error fatal:', err);
     process.exit(1);
 });

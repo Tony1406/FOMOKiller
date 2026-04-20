@@ -20,7 +20,7 @@ async function main() {
     }
 
     await sequelize.sync();
-    console.log('✅ Base de datos lista');
+    console.log('Base de datos lista');
 
     const games = await (Game as any).findAll({
         where: {
@@ -30,7 +30,7 @@ async function main() {
         attributes: ['id', 'rawgSlug'],
     });
 
-    console.log(`🎮 ${games.length} juegos sin developer — empezando...`);
+    console.log(`${games.length} juegos sin developer — empezando...`);
 
     let updated = 0;
     let skipped = 0;
@@ -62,17 +62,17 @@ async function main() {
         }
 
         if ((i + 1) % 100 === 0) {
-            console.log(`  ${i + 1}/${games.length} — ✅ ${updated} actualizados, ⚠️ ${skipped} sin developer, ❌ ${errors} errores`);
+            console.log(`  ${i + 1}/${games.length} — ${updated} actualizados, ${skipped} sin developer, ${errors} errores`);
         }
 
         await sleep(DELAY_MS);
     }
 
-    console.log(`\n✅ Completado: ${updated} developers actualizados, ${skipped} sin developer en RAWG, ${errors} errores`);
+    console.log(`\n Completado: ${updated} developers actualizados, ${skipped} sin developer en RAWG, ${errors} errores`);
     await sequelize.close();
 }
 
 main().catch(err => {
-    console.error('❌ Error fatal:', err);
+    console.error('Error fatal:', err);
     process.exit(1);
 });
