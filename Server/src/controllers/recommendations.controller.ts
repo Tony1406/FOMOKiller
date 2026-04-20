@@ -28,6 +28,7 @@ const FEELING_MAP: Record<string, string> = {
     relax:      'casual simulation puzzle platformer',
     adrenaline: 'shooter racing sports action fighting',
     build:      'strategy simulation indie sandbox',
+    any:        'action shooter fighting survival horror adventure role-playing-games rpg indie story-rich casual simulation puzzle platformer racing sports strategy sandbox',
 };
 
 const WORLD_MAP: Record<string, string> = {
@@ -36,6 +37,7 @@ const WORLD_MAP: Record<string, string> = {
     horror:     'action adventure indie horror survival',
     openworld:  'adventure role-playing-games rpg simulation open-world sandbox',
     realism:    'sports simulation adventure realistic',
+    any:        'role-playing-games rpg adventure action fantasy open-world shooter strategy science-fiction indie horror survival sports simulation realistic sandbox',
 };
 
 const DEPTH_MAP: Record<string, string> = {
@@ -43,12 +45,14 @@ const DEPTH_MAP: Record<string, string> = {
     complex:   'strategy role-playing-games rpg simulation management',
     narrative: 'adventure indie role-playing-games rpg story-rich',
     challenge: 'action shooter fighting roguelike',
+    any:       'casual puzzle platformer arcade indie strategy role-playing-games rpg simulation management adventure story-rich action shooter fighting roguelike',
 };
 
 const SESSION_MAP: Record<string, string> = {
     short:  'short quick casual',
     medium: 'medium balanced',
     long:   'long epic immersive role-playing-games rpg strategy simulation',
+    any:    'short quick casual medium balanced long epic immersive',
 };
 
 // ─── GUARDAR PREFERENCIAS ─────────────────────────────────────────────────────
@@ -132,52 +136,8 @@ export const resetHistory = async (req: Request, res: Response) => {
 export const getRecommendations = async (req: Request, res: Response) => {
     try {
         const { userId } = req.params;
+        const explore = req.query.explore === 'true';
 
-        // 1. Buscar preferencias del usuario
-        const pref = await UserPreference.findOne({ where: { userId: Number(userId) } });
-        if (!pref) { res.status(404).json({ error: 'El usuario no ha completado el onboarding' }); return; }
-
-        const prefData = pref.toJSON() as any;
-
-        // 2. Construir string de perfil base desde el onboarding
-        const onboardingContent = [
-            FEELING_MAP[prefData.feeling] ?? '',
-            WORLD_MAP[prefData.worldType] ?? '',
-            DEPTH_MAP[prefData.depth] ?? '',
-            SESSION_MAP[prefData.sessionLength] ?? '',
-            ...(prefData.platforms ?? []).map((p: string) => p.toLowerCase().replace(/\s+/g, '-')),
-        ].join(' ').trim();
-
-        // 3. Si ignoreHistory es false, enriquecer el perfil con los juegos que dio LIKE
-        //    Las palabras de géneros repetidas tienen más peso en TF-IDF automáticamente
-        let userContent = onboardingContent;
-
-        if (!prefData.ignoreHistory) {
-            const likedWhere: any = { userId: Number(userId), status: 'LIKED' };
-            if (prefData.historyResetAt) {
-                likedWhere.updatedAt = { [Op.gte]: new Date(prefData.historyResetAt) };
-            }
-            const likedGames = await UserGame.findAll({
-                where: likedWhere,
-                include: [{ model: Game, include: [{ model: Genre }, { model: Platform }] }],
-            });
-
-            if (likedGames.length > 0) {
-                const likedContent = likedGames.map((ug: any) => {
-                    const game = ug.Game;
-                    if (!game) return '';
-                    const genres = (game.Genres ?? []).map((g: any) => g.name.toLowerCase().replace(/\s+/g, '-'));
-                    const platforms = (game.Platforms ?? []).map((p: any) => p.name.toLowerCase().replace(/\s+/g, '-'));
-                    return [...genres, ...platforms].join(' ');
-                }).join(' ');
-
-                // Concatenamos onboarding + likes: las palabras que más se repiten
-                // en los likes pesan más automáticamente gracias a TF-IDF
-                userContent = `${onboardingContent} ${likedContent}`.trim();
-            }
-        }
-
-        // 4. Obtener todos los juegos con géneros y plataformas
         const games = await Game.findAll({
             include: [
                 { model: Genre, attributes: ['name'] },
@@ -187,31 +147,50 @@ export const getRecommendations = async (req: Request, res: Response) => {
 
         if (games.length === 0) { res.json([]); return; }
 
-        // 5. Obtener IDs de juegos que el usuario ya tiene en su backlog (excluirlos)
-        const userGames = await UserGame.findAll({ where: { userId: Number(userId) } });
-        const alreadyInBacklog = new Set(userGames.map((ug: any) => String(ug.get('gameId'))));
+        // Solo excluir juegos que el usuario tiene activamente (backlog, completados, abandonados).
+        // DISLIKED vuelve al pool para que el mazo nunca se quede vacío.
+        const userGames = await UserGame.findAll({
+            where: { userId: Number(userId), status: { [Op.ne]: 'DISLIKED' } },
+        });
+        const alreadySeen = new Set(userGames.map((ug: any) => String(ug.get('gameId'))));
 
-        // 6. Convertir cada juego en un documento de texto y pre-filtrar por relevancia
-        // Con 5000+ juegos, entrenar TF-IDF sobre todos es muy lento.
-        // Un juego con cero tokens en común con el perfil tendría score 0 de todas formas,
-        // así que podemos excluirlos sin afectar los resultados.
+        const unseenGames = games.filter((g: any) => !alreadySeen.has(String(g.get('id'))));
+
+        // Modo exploración: devolver todos los juegos no vistos en orden aleatorio
+        if (explore) {
+            const all = unseenGames
+                .map((g: any) => g.toJSON())
+                .sort(() => Math.random() - 0.5);
+            res.json(all);
+            return;
+        }
+
+        // Modo filtrado: usar preferencias del onboarding para ordenar por relevancia
+        const pref = await UserPreference.findOne({ where: { userId: Number(userId) } });
+        if (!pref) { res.status(404).json({ error: 'El usuario no ha completado el onboarding' }); return; }
+
+        const prefData = pref.toJSON() as any;
+
+        // Perfil del usuario solo desde el onboarding (sin likes)
+        const userContent = [
+            FEELING_MAP[prefData.feeling] ?? '',
+            WORLD_MAP[prefData.worldType] ?? '',
+            DEPTH_MAP[prefData.depth] ?? '',
+            SESSION_MAP[prefData.sessionLength] ?? '',
+            ...(prefData.platforms ?? []).map((p: string) => p.toLowerCase().replace(/\s+/g, '-')),
+        ].join(' ').trim();
+
         const userTokens = new Set(userContent.split(/\s+/).filter(Boolean));
-
-        // Filtro duro de plataforma: si el usuario especificó plataformas,
-        // excluir juegos que no estén disponibles en ninguna de ellas.
         const userPlatformTokens = (prefData.platforms ?? [])
             .map((p: string) => p.toLowerCase().replace(/\s+/g, '-')) as string[];
-
-        // Filtro duro de año: si el usuario eligió un rango, excluir juegos fuera de él.
         const minYear: number | null = prefData.minYear ?? null;
         const maxYear: number | null = prefData.maxYear ?? null;
 
-        const gameDocuments = games
-            .filter((g: any) => !alreadyInBacklog.has(String(g.get('id'))))
+        const gameDocuments = unseenGames
             .filter((g: any) => {
                 if (!minYear && !maxYear) return true;
                 const year = g.get('releaseYear') as number | null;
-                if (!year) return false; // año desconocido → excluir cuando hay filtro activo
+                if (!year) return false;
                 if (minYear && year < minYear) return false;
                 if (maxYear && year > maxYear) return false;
                 return true;
@@ -220,9 +199,11 @@ export const getRecommendations = async (req: Request, res: Response) => {
                 const data = g.toJSON();
                 const genres = (data.Genres ?? []).map((g: any) => g.name.toLowerCase().replace(/\s+/g, '-'));
                 const platforms = (data.Platforms ?? []).map((p: any) => p.name.toLowerCase().replace(/\s+/g, '-'));
-                // Incluir los primeros 12 tags (slugs de RAWG): "rpg", "survival", "horror", "sandbox"…
-                // Son slugs ya normalizados (minúsculas, guiones) que coinciden con el vocabulario de los mapas
                 const tags = (data.tags ?? '').split(',').filter(Boolean).slice(0, 12);
+
+                // Incluir descripción (primeros 500 chars) para enriquecer el matching
+                const descText = (data.description ?? '').slice(0, 500).toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim();
 
                 let sessionTag = '';
                 if (data.playtime != null) {
@@ -231,26 +212,25 @@ export const getRecommendations = async (req: Request, res: Response) => {
                     else sessionTag = 'long epic immersive';
                 }
 
-                const allTokens = [...genres, ...platforms, ...tags, sessionTag].filter(Boolean);
+                const structuredTokens = [...genres, ...platforms, ...tags, sessionTag].filter(Boolean);
+                const fullContent = `${structuredTokens.join(' ')} ${descText}`.trim();
 
-                // Filtro duro: el juego debe estar en al menos una plataforma del usuario
                 const onUserPlatform = userPlatformTokens.length === 0
                     || platforms.some((p: string) => userPlatformTokens.includes(p));
 
+                const matchCount = structuredTokens.filter(t => userTokens.has(t)).length;
+
                 return {
                     id: String(data.id),
-                    content: allTokens.join(' ').trim(),
-                    hasMatch: onUserPlatform && allTokens.some(t => userTokens.has(t)),
+                    content: fullContent,
+                    hasMatch: onUserPlatform && matchCount >= 2,
                 };
             })
             .filter(doc => doc.hasMatch && doc.content)
-            // Limitar a 800 candidatos para garantizar tiempo de respuesta razonable
-            .slice(0, 800)
             .map(({ id, content }) => ({ id, content }));
 
         if (gameDocuments.length === 0) { res.json([]); return; }
 
-        // 7. Entrenar el recomendador con todos los documentos (perfil + juegos)
         const recommender = new ContentBasedRecommender({ maxSimilarDocuments: gameDocuments.length });
         const USER_DOC_ID = `user_${userId}`;
 
@@ -259,12 +239,11 @@ export const getRecommendations = async (req: Request, res: Response) => {
             ...gameDocuments,
         ]);
 
-        // 8. Obtener los juegos más similares al perfil del usuario
-        const similar: { id: string; score: number }[] = recommender.getSimilarDocuments(USER_DOC_ID, 0, 30);
+        // Pedir todos los documentos similares (sin límite artificial)
+        const similar: { id: string; score: number }[] = recommender.getSimilarDocuments(USER_DOC_ID, 0, gameDocuments.length);
 
         if (!similar || similar.length === 0) { res.json([]); return; }
 
-        // 9. Devolver los juegos ordenados por score de recomendación
         const gameMap = new Map(games.map((g: any) => [String(g.get('id')), g.toJSON()]));
 
         const recommendations = similar
@@ -272,7 +251,8 @@ export const getRecommendations = async (req: Request, res: Response) => {
                 ...gameMap.get(id),
                 recommendationScore: Math.round(score * 100) / 100,
             }))
-            .filter(r => r.id !== undefined);
+            .filter(r => r.id !== undefined)
+            .sort(() => Math.random() - 0.5);
 
         res.json(recommendations);
     } catch (err) {

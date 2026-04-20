@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 interface ConfirmModalProps {
     message: string;
     onConfirm: () => void;
@@ -6,6 +8,14 @@ interface ConfirmModalProps {
 }
 
 export default function ConfirmModal({ message, onConfirm, onCancel, danger = true }: ConfirmModalProps) {
+    useEffect(() => {
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' || e.key === ' ') { e.preventDefault(); onCancel(); }
+        };
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
+    }, [onCancel]);
+
     return (
         <div className="admin-modal-overlay" onClick={onCancel}>
             <div className="admin-modal" style={{ maxWidth: 380 }} onClick={e => e.stopPropagation()}>

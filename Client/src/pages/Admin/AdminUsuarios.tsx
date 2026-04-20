@@ -38,6 +38,17 @@ export default function AdminUsuarios() {
 
     useEffect(() => { load(); }, []);
 
+    useEffect(() => {
+        if (!modal) return;
+        const handleKey = (e: KeyboardEvent) => {
+            const tag = (document.activeElement as HTMLElement)?.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+            if (e.key === 'Escape' || e.key === ' ') { e.preventDefault(); closeModal(); }
+        };
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
+    }, [modal]);
+
     const openCreate = () => {
         setEditing(null);
         setForm(emptyForm);

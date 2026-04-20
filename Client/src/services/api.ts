@@ -172,8 +172,9 @@ export const getPreferences = async (userId: number) => {
     return res.json();
 };
 
-export const getRecommendations = async (userId: number) => {
-    const res = await fetch(`${URL}/recommendations/${userId}`, { credentials: 'include' });
+export const getRecommendations = async (userId: number, explore = false) => {
+    const url = explore ? `${URL}/recommendations/${userId}?explore=true` : `${URL}/recommendations/${userId}`;
+    const res = await fetch(url, { credentials: 'include' });
     return res.json();
 };
 

@@ -5,8 +5,6 @@ import {
   updateUserProfile,
   getPreferences,
   getPriorities,
-  toggleExploration,
-  resetRecommendationHistory,
 } from "../../services/api";
 import EditProfileModal from "../../components/modals/EditProfileModal";
 import ConfirmModal from "../../components/modals/ConfirmModal";
@@ -24,11 +22,9 @@ export default function ProfilePage() {
   const [guardando, setGuardando] = useState(false);
   const [prefs, setPrefs] = useState<any>(null);
   const [topGame, setTopGame] = useState<string | null>(null);
-  const [togglingExploration, setTogglingExploration] = useState(false);
-  const [resetting, setResetting] = useState(false);
+  const [exploreMode, setExploreMode] = useState(() => localStorage.getItem('swipe_explore') === 'true');
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [confirmOnboarding, setConfirmOnboarding] = useState(false);
-  const [confirmReset, setConfirmReset] = useState(false);
   const [confirmLogout, setConfirmLogout] = useState(false);
 
   const showToast = (msg: string) => {
@@ -61,29 +57,23 @@ export default function ProfilePage() {
     }
   };
 
-  const handleToggleExploration = async () => {
-    if (!user || togglingExploration) return;
-    setTogglingExploration(true);
-    const res = await toggleExploration(user.id);
-    setPrefs((p: any) => ({ ...p, ignoreHistory: res.ignoreHistory }));
-    sessionStorage.removeItem("swipe_deck_v2");
-    sessionStorage.removeItem("swipe_index_v2");
-    setTogglingExploration(false);
+  const handleToggleExplore = () => {
+    const next = !exploreMode;
+    setExploreMode(next);
+    localStorage.setItem('swipe_explore', String(next));
+    sessionStorage.removeItem('swipe_deck_v3');
+    sessionStorage.removeItem('swipe_index_v3');
     showToast(
-      res.ignoreHistory
-        ? "Modo exploración activado — se ignora tu historial de likes"
-        : "Modo exploración desactivado — tus likes influyen en las recomendaciones",
+      next
+        ? 'Modo libre activado — verás todos los juegos en orden aleatorio'
+        : 'Modo "Para ti" activado — recomendaciones basadas en tus preferencias',
     );
   };
 
-  const handleResetHistory = async () => {
-    if (!user || resetting) return;
-    setResetting(true);
-    await resetRecommendationHistory(user.id);
-    setPrefs((p: any) => ({ ...p, ignoreHistory: true }));
-    sessionStorage.removeItem("swipe_deck_v2");
-    sessionStorage.removeItem("swipe_index_v2");
-    setResetting(false);
+  const handleClearDeck = () => {
+    sessionStorage.removeItem('swipe_deck_v3');
+    sessionStorage.removeItem('swipe_index_v3');
+    navigate('/app/swipe');
   };
 
   useEffect(() => {
@@ -253,16 +243,15 @@ export default function ProfilePage() {
                 </div>
                 <div className="profile-rec-row">
                   <div className="profile-rec-info">
-                    <span className="profile-rec-label">Modo exploración</span>
+                    <span className="profile-rec-label">Modo libre</span>
                     <span className="profile-rec-sub">
-                      Pausa el efecto de tus likes en el algoritmo. Útil para
-                      descubrir juegos fuera de tu zona de confort.
+                      Muestra todos los juegos en orden aleatorio. Desactívalo
+                      para ver recomendaciones basadas en tus preferencias.
                     </span>
                   </div>
                   <button
-                    className={`profile-toggle ${prefs.ignoreHistory ? "active" : ""}`}
-                    onClick={handleToggleExploration}
-                    disabled={togglingExploration}
+                    className={`profile-toggle ${exploreMode ? "active" : ""}`}
+                    onClick={handleToggleExplore}
                   >
                     <span className="profile-toggle-knob" />
                   </button>
@@ -283,18 +272,17 @@ export default function ProfilePage() {
                     </div>
                   </button>
                   <button
-                    className="profile-action-btn profile-action-btn--danger"
-                    onClick={() => setConfirmReset(true)}
-                    disabled={resetting}
+                    className="profile-action-btn"
+                    onClick={handleClearDeck}
                   >
-                    <i className="fa-solid fa-rotate-left" />
+                    <i className="fa-solid fa-shuffle" />
                     <div className="profile-action-btn-text">
                       <span className="profile-action-btn-label">
-                        Resetear historial
+                        Reiniciar mazo
                       </span>
                       <span className="profile-action-btn-sub">
-                        Olvida todos los likes pasados. Solo contarán los nuevos
-                        para alimentar las recomendaciones.
+                        Descarta el mazo actual y carga juegos frescos la
+                        próxima vez que abras Discover.
                       </span>
                     </div>
                   </button>
@@ -331,21 +319,8 @@ export default function ProfilePage() {
           navigate("/onboarding");
         }}
         title="¿Rehacer el cuestionario?"
-        description="Tus respuestas actuales se reemplazarán con las nuevas. Los likes anteriores dejarán de influir — solo contarán los que des a partir de ahora. Tus juegos del backlog no se tocan."
+        description="Tus respuestas actuales se reemplazarán con las nuevas. Las recomendaciones se basarán en el cuestionario actualizado. Tus juegos del backlog no se tocan."
         confirmLabel="Sí, rehacer"
-      />
-
-      <ConfirmModal
-        isOpen={confirmReset}
-        onClose={() => setConfirmReset(false)}
-        onConfirm={async () => {
-          setConfirmReset(false);
-          await handleResetHistory();
-        }}
-        title="¿Resetear historial de likes?"
-        description="Todos los likes anteriores dejarán de influir en las recomendaciones. Solo contarán los que des a partir de ahora. Esta acción no se puede deshacer."
-        confirmLabel="Resetear"
-        variant="danger"
       />
 
       <ConfirmModal

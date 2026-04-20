@@ -61,9 +61,14 @@ export const updateUser = async (req: Request, res: Response) => {
             const bcrypt = await import('bcrypt');
             updates.passwordHash = await bcrypt.default.hash(password, 10);
         }
-        await User.update(updates, { where: { id: Number(id) } });
-        const updated = await User.findByPk(Number(id), { attributes: { exclude: ['passwordHash'] } });
-        res.json(updated);
+        const user = await User.findByPk(Number(id));
+        if (!user) { res.status(404).json({ error: 'Usuario no encontrado' }); return; }
+        console.log('[updateUser] updates:', updates);
+        await user.update(updates);
+        console.log('[updateUser] after update avatarUrl:', (user as any).avatarUrl);
+        const json = user.toJSON() as any;
+        delete json.passwordHash;
+        res.json(json);
     } catch {
         res.status(500).json({ error: 'Error al actualizar usuario' });
     }
