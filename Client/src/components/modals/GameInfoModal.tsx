@@ -2,27 +2,17 @@ import { useState, useEffect } from 'react';
 import { getGameDetails } from '../../services/api';
 import './GameInfoModal.css';
 
-interface Genre {
-    id: number;
-    name: string;
-}
-
-interface Platform {
-    id: number;
-    name: string;
-}
-
 interface Game {
     id: number;
     title: string;
     description?: string;
-    releaseYear?: number;
-    developer?: string;
-    imageUrl?: string;
-    rawgSlug?: string;
+    releaseYear?: number | null;
+    developer?: string | null;
+    imageUrl?: string | null;
+    rawgSlug?: string | null;
     playtime?: number;
-    Genres?: Genre[];
-    Platforms?: Platform[];
+    Genres?: { id: number; name: string }[];
+    Platforms?: { id: number; name: string }[];
 }
 
 interface RawgDetails {
@@ -88,11 +78,11 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
         : description;
 
     const infoRows = [
-        developer && { icon: 'fa-solid fa-code', label: 'Desarrollador', value: developer },
+        developer && { icon: 'fa-solid fa-code', label: 'Developer', value: developer },
         details?.publisher && details.publisher && { icon: 'fa-solid fa-building', label: 'Publisher', value: details.publisher },
-        game.releaseYear && { icon: 'fa-solid fa-calendar', label: 'Lanzamiento', value: String(game.releaseYear) },
-        (game.playtime ?? 0) > 0 && { icon: 'fa-solid fa-clock', label: 'Duración media', value: `~${game.playtime}h` },
-        details?.esrb && details.esrb.trim() && { icon: 'fa-solid fa-shield-halved', label: 'Clasificación', value: details.esrb },
+        game.releaseYear && { icon: 'fa-solid fa-calendar', label: 'Release', value: String(game.releaseYear) },
+        (game.playtime ?? 0) > 0 && { icon: 'fa-solid fa-clock', label: 'Avg. playtime', value: `~${game.playtime}h` },
+        details?.esrb && details.esrb.trim() && { icon: 'fa-solid fa-shield-halved', label: 'Rating', value: details.esrb },
     ].filter(row => row && (row as any).value) as { icon: string; label: string; value: string }[];
 
     return (
@@ -100,7 +90,6 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
             <div className="modal-content has-image" onClick={e => e.stopPropagation()}>
                 <button className="modal-close-btn" onClick={onClose}>✕</button>
 
-                {/* Carrusel */}
                 <div className="modal-carousel">
                     {images.length > 0 && (
                         <img
@@ -134,7 +123,6 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
                 </div>
 
                 <div className="modal-body">
-                    {/* Título y géneros */}
                     <div className="modal-title-block">
                         <h2 className="modal-title">{game.title}</h2>
                         <div className="modal-genres">
@@ -144,13 +132,12 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
                         </div>
                     </div>
 
-                    {/* Detalles — scroll horizontal centrado */}
                     {(infoRows.length > 0 || loadingDetails || (game.Platforms?.length ?? 0) > 0) && (
                         <div className="modal-details-scroll">
                             {loadingDetails && infoRows.length === 0 && (
                                 <div className="modal-detail-card">
                                     <i className="fa-solid fa-spinner fa-spin modal-detail-icon" />
-                                    <span className="modal-detail-label">Cargando...</span>
+                                    <span className="modal-detail-label">Loading...</span>
                                 </div>
                             )}
                             {infoRows.map(row => (
@@ -170,18 +157,17 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
                                             </span>
                                         ))}
                                     </div>
-                                    <span className="modal-detail-label">Plataformas</span>
+                                    <span className="modal-detail-label">Platforms</span>
                                 </div>
                             )}
                         </div>
                     )}
 
-                    {/* Descripción */}
                     {descTruncated && (
                         <div className="modal-description-block">
                             <div className="modal-section-title">
                                 <i className="fa-solid fa-align-left" />
-                                Sobre el juego
+                                About the game
                             </div>
                             <p className="modal-desc-text">{descTruncated}</p>
                             {description && description.length > DESC_LIMIT && (
@@ -189,18 +175,17 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
                                     className="modal-desc-toggle"
                                     onClick={() => setDescExpanded(v => !v)}
                                 >
-                                    {descExpanded ? 'Ver menos' : 'Leer más'}
+                                    {descExpanded ? 'Show less' : 'Read more'}
                                 </button>
                             )}
                         </div>
                     )}
 
-                    {/* Tráiler */}
                     {details?.trailer && (
                         <div className="modal-trailer-block">
                             <div className="modal-section-title">
                                 <i className="fa-solid fa-clapperboard" />
-                                Tráiler
+                                Trailer
                             </div>
                             <video
                                 src={details.trailer}
@@ -211,7 +196,6 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
                         </div>
                     )}
 
-                    {/* Web oficial */}
                     {details?.website && (
                         <a
                             href={details.website}
@@ -220,13 +204,13 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
                             className="modal-website-btn"
                         >
                             <i className="fa-solid fa-arrow-up-right-from-square" />
-                            Web oficial
+                            Official website
                         </a>
                     )}
                 </div>
 
                 <div className="modal-footer">
-                    <button className="btn-primary" onClick={onClose}>Cerrar</button>
+                    <button className="btn-primary" onClick={onClose}>Close</button>
                 </div>
             </div>
         </div>

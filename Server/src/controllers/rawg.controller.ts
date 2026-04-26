@@ -4,7 +4,6 @@ const RAWG_KEY = process.env.RAWG_API_KEY;
 const RAWG_BASE = 'https://api.rawg.io/api';
 
 export const getGameDetails = async (req: Request, res: Response) => {
-    // El slug es el identificador único de cada juego en RAWG, por ejemplo "the-witcher-3-wild-hunt" y lo meto en la URL para obtener los detalles de ese juego específico
     const { slug } = req.params;
 
     if (!RAWG_KEY) {

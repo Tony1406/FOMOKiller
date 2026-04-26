@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../auth/AuthContext';
 import './login.css';
 import { login } from '../../services/api';
 
@@ -19,7 +19,7 @@ export default function LoginPage() {
         setErrorMsg('');
         try {
             if (email === '' || password === '') {
-                setErrorMsg('Todos los campos son obligatorios');
+                setErrorMsg('All fields are required');
                 return;
             }
             const respuesta = await login(email, password);
@@ -37,24 +37,24 @@ export default function LoginPage() {
             }
         } catch (error: any) {
             console.error("Error al iniciar sesión:", error);
-            setErrorMsg(error.response?.data?.message || 'Contraseña incorrecta o error de conexión');
+            setErrorMsg(error.response?.data?.message || 'Incorrect password or connection error');
         }
     }
     return (
         <div className="login-wrap page-enter">
             <div className="login-container">
                 <div className="login-header">
-                    <div className="login-title">Iniciar <strong className=''>Sesión</strong></div>
-                    <div className="login-subtitle">Bienvenido de nuevo</div>
+                    <div className="login-title">Log <strong className=''>In</strong></div>
+                    <div className="login-subtitle">Welcome back</div>
                 </div>
                 {errorMsg && <div className="login-error-message">{errorMsg}</div>}
                 <form className="login-form" onSubmit={handleLogin}>
                     <div className="login-form-group">
-                        <label htmlFor="email">Correo Electrónico</label>
-                        <input type="email" id="email" placeholder="tu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <label htmlFor="email">Email</label>
+                        <input type="email" id="email" placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     <div className="login-form-group">
-                        <label htmlFor="password">Contraseña</label>
+                        <label htmlFor="password">Password</label>
                         <div className="password-wrap">
                             <input type={showPassword ? 'text' : 'password'} id="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
                             <button type="button" className="password-toggle" onClick={() => setShowPassword(v => !v)}>
@@ -62,11 +62,11 @@ export default function LoginPage() {
                             </button>
                         </div>
                     </div>
-                    <button type="submit" className="login-btn">Iniciar Sesión</button>
+                    <button type="submit" className="login-btn">Log In</button>
                 </form>
                 <div className="login-footer">
-                    ¿No tienes cuenta?
-                    <Link to="/register" className="login-link">Regístrate aquí</Link>
+                    Don't have an account?
+                    <Link to="/register" className="login-link">Sign up here</Link>
                 </div>
             </div>
         </div>

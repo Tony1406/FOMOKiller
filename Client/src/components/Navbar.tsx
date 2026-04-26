@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../auth/AuthContext';
 import ConfirmModal from './modals/ConfirmModal';
 import logoSimple from '../assets/Logo_simple.png';
 import exploreIcon from '../assets/explorar.png';
@@ -42,7 +42,7 @@ export default function Navbar() {
                         <span className="nav-icon">
                             <img src={exploreIcon} alt="Explore" className="nav-icon-img" />
                         </span>
-                        <span className="nav-label">Explorar</span>
+                        <span className="nav-label">Explore</span>
                     </NavLink>
                     <NavLink to="/app/backlog" className="nav-item">
                         <span className="nav-icon">
@@ -60,17 +60,16 @@ export default function Navbar() {
                         <span className="nav-icon">
                             <img src={profileIcon} alt="profile" className="nav-icon-img" />
                         </span>
-                        <span className="nav-label">Perfil</span>
+                        <span className="nav-label">Profile</span>
                     </NavLink>
                 </div>
 
-                {/* Logout — solo desktop */}
                 <div className="nav-bottom">
                     <button className="nav-logout-btn" onClick={() => setConfirmLogout(true)}>
                         <span className="nav-icon">
                             <i className="fa-solid fa-right-from-bracket" />
                         </span>
-                        <span className="nav-label">Cerrar sesión</span>
+                        <span className="nav-label">Log out</span>
                     </button>
                 </div>
             </nav>
@@ -79,8 +78,8 @@ export default function Navbar() {
                 isOpen={confirmLogout}
                 onClose={() => setConfirmLogout(false)}
                 onConfirm={handleLogout}
-                title="¿Cerrar sesión?"
-                confirmLabel="Cerrar sesión"
+                title="Log out?"
+                confirmLabel="Log out"
                 variant="danger"
             />
         </>

@@ -58,6 +58,11 @@
     background: var(--cobalt-light);
 }
 
+.paginador-arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
 .paginador-ellipsis {
     width: 36px;
     height: 36px;

@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getUserProfile } from '../services/api';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../auth/AuthContext';
 import logoSimple from '../assets/Logo_simple.png';
 import './Header.css';
 

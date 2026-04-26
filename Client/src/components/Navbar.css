@@ -203,7 +203,7 @@
     transition: all var(--t-base) var(--ease-smooth);
     position: relative;
     text-decoration: none;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     border: none;
     background: transparent;
     width: auto;

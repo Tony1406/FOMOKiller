@@ -17,7 +17,7 @@ export default function ConfirmModal({
     onConfirm,
     title,
     description,
-    confirmLabel = 'Confirmar',
+    confirmLabel = 'Confirm',
     variant = 'primary',
 }: ConfirmModalProps) {
     useEffect(() => {
@@ -39,7 +39,7 @@ export default function ConfirmModal({
                     <h2 className="confirm-modal-title">{title}</h2>
                     {description && <p className="confirm-modal-desc">{description}</p>}
                     <div className="confirm-modal-actions">
-                        <button className="confirm-btn-cancel" onClick={onClose}>Cancelar</button>
+                        <button className="confirm-btn-cancel" onClick={onClose}>Cancel</button>
                         <button
                             className={variant === 'danger' ? 'confirm-btn-danger' : 'confirm-btn-primary'}
                             onClick={onConfirm}

@@ -405,11 +405,11 @@
     color: var(--text-primary);
 }
 
-/* Top5 → amarillo */
+/* Top5 → gris */
 .action-btn-secondary:hover {
-    background: rgba(255, 193, 7, 0.12);
-    border-color: #FFC107;
-    color: #FFC107;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #fff;
 }
 
 /* Basura → gris */
@@ -433,7 +433,13 @@
     transform: scale(0.95);
 }
 
-.action-btn-completado.active,
+.action-btn-completado.active {
+    background: rgba(0, 200, 83, 0.12);
+    border-color: #00c853;
+    color: #00c853;
+    box-shadow: 0 0 10px rgba(0, 200, 83, 0.25);
+}
+
 .action-btn-secondary.active {
     background: rgba(0, 112, 243, 0.12);
     border-color: var(--cobalt-light);
@@ -457,16 +463,16 @@
     pointer-events: none;
 }
 
-/* Star priority active – gold/yellow */
+/* Star priority active – gris */
 .action-btn-star--active {
-    background: rgba(255, 193, 7, 0.15) !important;
-    border-color: #FFC107 !important;
-    color: #FFC107 !important;
-    box-shadow: 0 0 12px rgba(255, 193, 7, 0.3);
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    color: #fff !important;
+    box-shadow: none;
 }
 
 .action-btn-star--active:hover {
-    background: rgba(255, 193, 7, 0.25) !important;
+    background: rgba(255, 255, 255, 0.16) !important;
 }
 
 
@@ -597,9 +603,9 @@
 
 /* Hovers de color en card actions de Backlog */
 .game-card-actions .action-btn-secondary:hover {
-    background: rgba(255, 193, 7, 0.15) !important;
-    border-color: #FFC107 !important;
-    color: #FFC107 !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+    color: #fff !important;
 }
 
 .game-card-actions .action-btn-drop:hover {

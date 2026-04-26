@@ -6,7 +6,7 @@ import {
   updateStatus,
   reorderPriorities,
 } from "../../services/api";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../auth/AuthContext";
 import ConfirmModal from "../../components/modals/ConfirmModal";
 import GameInfoModal from "../../components/modals/GameInfoModal";
 import "./Top5Page.css";
@@ -52,10 +52,10 @@ export default function Top5Page() {
     try {
       await setPriority(user.id, gameId, false);
       cargarPrioridades();
-      showToast("Juego eliminado del Top 5");
+      showToast("Game removed from Top 5");
     } catch (error) {
       console.error("Error quitando prioridad:", error);
-      showToast("Error al eliminar del Top 5", "error");
+      showToast("Error removing from Top 5", "error");
     }
   };
 
@@ -66,7 +66,7 @@ export default function Top5Page() {
       await markFinished(user.id, gameId, true);
       await setPriority(user.id, gameId, false);
       cargarPrioridades();
-      showToast("¡Juego completado!");
+      showToast("Game completed!");
     } catch (error) {
       console.error("Error completando juego:", error);
     }
@@ -123,29 +123,28 @@ export default function Top5Page() {
   return (
     <div className="page page-padded page-enter">
       <div className="top5-header">
-        <div className="top5-title"> Top 5 Prioridades</div>
+        <div className="top5-title"> Top 5 Priorities</div>
       </div>
 
       <div className="top5-rule-box">
         <span className="top5-rule-text">
-          Solo puedes tener 5 juegos en prioridad. Para añadir uno nuevo, debes
-          terminar o eliminar otro. Arrastra y suelta para reordenar tus
-          prioridades
+          You can only have 5 priority games. To add a new one, finish or
+          remove another. Drag and drop to reorder your priorities
         </span>
       </div>
 
       <div className="top5-status-bar">
         <span className="top5-status-text">
-          {slotCount} de 5 slots ocupados
+          {slotCount} of 5 slots used
         </span>
         <div className="top5-legend">
           <span className="top5-legend-item">
             <i className="fa-solid fa-times top5-legend-icon top5-legend-drop" />
-            Dropear del Top 5
+            Drop from Top 5
           </span>
           <span className="top5-legend-item">
             <i className="fa-solid fa-check top5-legend-icon top5-legend-done" />
-            Marcar como Completado
+            Mark as Completed
           </span>
         </div>
         <div className="top5-status-right">
@@ -162,7 +161,7 @@ export default function Top5Page() {
           <button
             className="backlog-view-btn"
             onClick={() => setVista((v) => (v === "lista" ? "cards" : "lista"))}
-            title={vista === "lista" ? "Ver como cuadrícula" : "Ver como lista"}
+            title={vista === "lista" ? "View as grid" : "View as list"}
           >
             <i
               className={`fa-solid ${vista === "lista" ? "fa-grip" : "fa-list"}`}
@@ -206,14 +205,14 @@ export default function Top5Page() {
                   <button
                     className="action-btn-drop"
                     onClick={(e) => { e.stopPropagation(); setConfirmDrop(juego); }}
-                    title="Quitar de Top 5"
+                    title="Remove from Top 5"
                   >
                     <i className="fa-solid fa-times" />
                   </button>
                   <button
                     className="action-btn-completado"
                     onClick={(e) => { e.stopPropagation(); handleComplete(juego.gameId); }}
-                    title="Marcar como completado"
+                    title="Mark as completed"
                   >
                     <i className="fa-solid fa-check" />
                   </button>
@@ -230,7 +229,7 @@ export default function Top5Page() {
                   {slotNum}
                 </div>
                 <div className="game-thumb-placeholder game-thumb-opacity"></div>
-                <span className="empty-slot-text">Slot disponible</span>
+                <span className="empty-slot-text">Available slot</span>
               </div>
             );
           })}
@@ -269,7 +268,7 @@ export default function Top5Page() {
                 {completingId === juego.gameId && (
                   <>
                     <div className="game-card-completed-overlay" />
-                    <div className="game-card-stamp">COMPLETADO</div>
+                    <div className="game-card-stamp">COMPLETED</div>
                   </>
                 )}
                 <div className="game-card-gradient" />
@@ -285,14 +284,14 @@ export default function Top5Page() {
                     <button
                       className="action-btn-drop"
                       onClick={(e) => { e.stopPropagation(); setConfirmDrop(juego); }}
-                      title="Quitar de Top 5"
+                      title="Remove from Top 5"
                     >
                       <i className="fa-solid fa-times" />
                     </button>
                     <button
                       className={`action-btn-completado${completingId === juego.gameId ? " top5-completing" : ""}`}
                       onClick={(e) => { e.stopPropagation(); handleCompleteWithAnim(juego.gameId); }}
-                      title="Marcar como completado"
+                      title="Mark as completed"
                     >
                       <i className="fa-solid fa-check" />
                     </button>
@@ -309,7 +308,7 @@ export default function Top5Page() {
                 <div className={`top5-card-badge ${numClass(slotNum)}`}>
                   {slotNum}
                 </div>
-                <div className="top5-card-empty-label">Slot disponible</div>
+                <div className="top5-card-empty-label">Available slot</div>
               </div>
             );
           })}
@@ -326,9 +325,9 @@ export default function Top5Page() {
         isOpen={confirmDrop != null}
         onClose={() => setConfirmDrop(null)}
         onConfirm={handleDropConfirmed}
-        title="¿Eliminar del Top 5?"
-        description={`"${confirmDrop?.Game?.title}" volverá a tu backlog normal. Podrás volver a añadirlo cuando quieras.`}
-        confirmLabel="Eliminar"
+        title="Remove from Top 5?"
+        description={`"${confirmDrop?.Game?.title}" will go back to your backlog. You can add it again anytime.`}
+        confirmLabel="Remove"
         variant="danger"
       />
 

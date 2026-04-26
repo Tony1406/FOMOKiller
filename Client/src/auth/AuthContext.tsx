@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { getMe, logoutUser } from "../services/api";
 
 export const AuthContext = createContext<any>(null);
 
@@ -7,8 +8,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/users/me", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
+    getMe()
       .then((data) => {
         if (data && !data.error) setUser(data);
       })
@@ -16,10 +16,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const logout = async () => {
-    await fetch("http://localhost:3000/api/users/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+    await logoutUser();
     setUser(null);
   };
 

@@ -1,7 +1,5 @@
 const URL = 'http://localhost:3000/api';
 
-// Función helper para obtener el token del localStorage y armar la cabecera
-
 export const getCollections = async () => {
     const response = await fetch(`${URL}/explore/collections`, { credentials: 'include' });
     const data = await response.json();
@@ -85,6 +83,16 @@ export const updateUserProfile = async (userId: number, profileData: any) => {
     return data;
 };
 
+export const getMe = async () => {
+    const res = await fetch(`${URL}/users/me`, { credentials: 'include' });
+    if (!res.ok) return null;
+    return res.json();
+};
+
+export const logoutUser = async () => {
+    await fetch(`${URL}/users/logout`, { method: 'POST', credentials: 'include' });
+};
+
 export const login = async (email: string, password: string) => {
     const res = await fetch(`${URL}/users/login`, {
         method: 'POST',
@@ -155,8 +163,6 @@ export const reorderPriorities = async (userId: number, order: { gameId: number;
     return response;
 };
 
-// ─── RECOMENDACIONES ──────────────────────────────────────────────────────────
-
 export const savePreferences = async (userId: number, payload: object) => {
     const res = await fetch(`${URL}/recommendations/preferences`, {
         method: 'POST',
@@ -193,8 +199,6 @@ export const resetRecommendationHistory = async (userId: number) => {
     });
     return res.json();
 };
-
-// ─── ADMIN ────────────────────────────────────────────────────────────────────
 
 export const adminGetUsers = async () => {
     const res = await fetch(`${URL}/admin/users`, { credentials: 'include' });

@@ -6,19 +6,21 @@ import ExplorePage from './pages/App/ExplorePage';
 import BacklogPage from './pages/App/BacklogPage';
 import Top5Page from './pages/App/Top5Page';
 import ProfilePage from './pages/App/ProfilePage';
-import Aurora from './components/Background/Aurora';
+import Aurora from './components/reactbits/Aurora';
 import HomePage from './pages/Landing/HomePage';
 import DownloadPage from './pages/Landing/DownloadPage';
 import LoginPage from './pages/Auth/login';
 import RegisterPage from './pages/Auth/register';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import AdminRoute from './components/AdminRoute';
+import { AuthProvider } from './auth/AuthContext';
+import ProtectedRoute from './auth/ProtectedRoute';
+import AdminRoute from './auth/AdminRoute';
 import AdminLayout from './layouts/AdminLayout';
 import AdminUsuarios from './pages/Admin/AdminUsuarios';
 import AdminJuegos from './pages/Admin/AdminJuegos';
 import AdminColecciones from './pages/Admin/AdminColecciones';
 import OnboardingPage from './pages/Onboarding/OnboardingPage';
+import NotFoundPage from './pages/Error/NotFoundPage';
+import UnauthorizedPage from './pages/Error/UnauthorizedPage';
 
 import './index.css';
 import './App.css';
@@ -28,7 +30,6 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Landing – comparte PS2 bg, nav y footer */}
           <Route element={<LandingLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/descarga" element={<DownloadPage />} />
@@ -36,7 +37,9 @@ export default function App() {
             <Route path="/register" element={<RegisterPage />} />
           </Route>
 
-          {/* Admin - Protegida por rol admin */}
+          <Route path="/401" element={<UnauthorizedPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Navigate to="/admin/usuarios" replace />} />
@@ -46,12 +49,10 @@ export default function App() {
             </Route>
           </Route>
 
-          {/* Onboarding - Protegida por Auth, fuera del AppLayout */}
           <Route element={<ProtectedRoute />}>
             <Route path="/onboarding" element={<OnboardingPage />} />
           </Route>
 
-          {/* App funcional - Protegida por Auth */}
           <Route element={<ProtectedRoute />}>
             <Route path="/app" element={
               <>

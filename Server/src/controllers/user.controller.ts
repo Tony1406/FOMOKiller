@@ -153,13 +153,8 @@ export const updateProfile = async (req: Request, res: Response) => {
 
 export const getMe = async (req: Request, res: Response) => {
     try {
-        const token = req.cookies?.fomokiller_token;
-        if (!token) {
-            res.status(401).json({ error: 'No autenticado' });
-            return;
-        }
-        const decoded = jsonwebtoken.verify(token, JWT_SECRET) as { id: number };
-        const user = await User.findByPk(decoded.id, {
+        const { id } = (req as any).user;
+        const user = await User.findByPk(id, {
             attributes: ['id', 'username', 'email', 'role', 'avatarUrl', 'bannerUrl', 'bio', 'hasCompletedOnboarding']
         });
         if (!user) {
@@ -168,7 +163,7 @@ export const getMe = async (req: Request, res: Response) => {
         }
         res.status(200).json(user);
     } catch {
-        res.status(401).json({ error: 'Token inválido' });
+        res.status(500).json({ error: 'Error al obtener usuario' });
     }
 };
 

@@ -1,11 +1,9 @@
 import { Router } from 'express';
-import { register, login, getProfile, updateProfile } from '../controllers/user.controller.js';
-
-import { getMe, logout } from '../controllers/user.controller.js';
-
+import { register, login, getMe, logout, getProfile, updateProfile } from '../controllers/user.controller.js';
+import { requireAuth } from '../middleware/requireAuth.js';
 
 const router = Router();
-router.get('/me', getMe);
+router.get('/me', requireAuth, getMe);
 router.post('/logout', logout);
 
 router.post('/register', register);

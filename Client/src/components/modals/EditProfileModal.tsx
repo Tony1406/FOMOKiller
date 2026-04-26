@@ -71,13 +71,12 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
                 <button className="modal-close-btn" onClick={onClose}>✕</button>
 
                 <div className="ep-header">
-                    <h2 className="ep-title">Editar Perfil</h2>
-                    <p className="ep-subtitle">Actualiza tu información pública</p>
+                    <h2 className="ep-title">Edit Profile</h2>
+                    <p className="ep-subtitle">Update your public information</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="ep-form">
 
-                    {/* Avatar */}
                     <div className="ep-avatar-section">
                         <div className="ep-avatar-wrap">
                             <img
@@ -89,7 +88,7 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
                         </div>
                         <div className="ep-avatar-fields">
                             <div className="ep-field">
-                                <label htmlFor="avatarUrl">URL de la foto</label>
+                                <label htmlFor="avatarUrl">Photo URL</label>
                                 <input
                                     type="text"
                                     id="avatarUrl"
@@ -100,14 +99,13 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
                                 />
                             </div>
                             <button type="button" className="ep-random-btn" onClick={handleRandomAvatar}>
-                                <i className="fa-solid fa-shuffle" /> Avatar aleatorio
+                                <i className="fa-solid fa-shuffle" /> Random avatar
                             </button>
                         </div>
                     </div>
 
-                    {/* Username */}
                     <div className="ep-field">
-                        <label htmlFor="username">Nombre de usuario</label>
+                        <label htmlFor="username">Username</label>
                         <input
                             type="text"
                             id="username"
@@ -118,9 +116,8 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
                         />
                     </div>
 
-                    {/* Bio */}
                     <div className="ep-field">
-                        <label htmlFor="bio">Sobre ti</label>
+                        <label htmlFor="bio">About you</label>
                         <textarea
                             id="bio"
                             name="bio"
@@ -128,14 +125,14 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
                             onChange={handleChange}
                             rows={3}
                             maxLength={150}
-                            placeholder="Cuéntanos algo sobre ti..."
+                            placeholder="Tell us something about you..."
                         />
                         <span className="ep-char-count">{formData.bio.length}/150</span>
                     </div>
 
                     <div className="ep-actions">
-                        <button type="button" className="ep-btn-cancel" onClick={onClose}>Cancelar</button>
-                        <button type="submit" className="ep-btn-save">Guardar cambios</button>
+                        <button type="button" className="ep-btn-cancel" onClick={onClose}>Cancel</button>
+                        <button type="submit" className="ep-btn-save">Save changes</button>
                     </div>
                 </form>
             </div>

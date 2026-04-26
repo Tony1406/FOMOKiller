@@ -15,7 +15,7 @@ function sleep(ms: number) {
 
 async function main() {
     if (!RAWG_KEY) {
-        console.error('❌ RAWG_API_KEY no encontrada en .env');
+        console.error('RAWG_API_KEY no encontrada en .env');
         process.exit(1);
     }
 

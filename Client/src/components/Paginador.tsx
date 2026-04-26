@@ -1,3 +1,5 @@
+import './Paginador.css';
+
 interface PaginadorProps {
     pagina: number;
     total: number;
@@ -28,8 +30,7 @@ export default function Paginador({ pagina, total, porPagina = 10, onChange }: P
                 className="paginador-arrow"
                 onClick={() => onChange(1)}
                 disabled={pagina === 1}
-                style={{ opacity: pagina === 1 ? 0.3 : 1, cursor: pagina === 1 ? 'default' : 'pointer' }}
-                title="Primera página"
+                title="First page"
             >
                 «
             </button>
@@ -37,7 +38,6 @@ export default function Paginador({ pagina, total, porPagina = 10, onChange }: P
                 className="paginador-arrow"
                 onClick={() => onChange(pagina - 1)}
                 disabled={pagina === 1}
-                style={{ opacity: pagina === 1 ? 0.3 : 1, cursor: pagina === 1 ? 'default' : 'pointer' }}
             >
                 ‹
             </button>
@@ -56,7 +56,6 @@ export default function Paginador({ pagina, total, porPagina = 10, onChange }: P
                 className="paginador-arrow"
                 onClick={() => onChange(pagina + 1)}
                 disabled={pagina === totalPaginas}
-                style={{ opacity: pagina === totalPaginas ? 0.3 : 1, cursor: pagina === totalPaginas ? 'default' : 'pointer' }}
             >
                 ›
             </button>
@@ -64,8 +63,7 @@ export default function Paginador({ pagina, total, porPagina = 10, onChange }: P
                 className="paginador-arrow"
                 onClick={() => onChange(totalPaginas)}
                 disabled={pagina === totalPaginas}
-                style={{ opacity: pagina === totalPaginas ? 0.3 : 1, cursor: pagina === totalPaginas ? 'default' : 'pointer' }}
-                title="Última página"
+                title="Last page"
             >
                 »
             </button>
