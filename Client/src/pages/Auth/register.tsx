@@ -17,17 +17,17 @@ export default function Register() {
         setErrorMsg('');
         try {
             if (username === '' || email === '' || password === '') {
-                setErrorMsg('Todos los campos son obligatorios');
+                setErrorMsg('All fields are required');
                 return;
             }
             if (password.length < 6) {
-                setErrorMsg('La contraseña debe tener al menos 6 caracteres');
+                setErrorMsg('Password must be at least 6 characters');
                 return;
             }
             const data = await register(username, email, password);
             if (data?.error) {
                 if (data.error.toLowerCase().includes('email')) {
-                    setErrorMsg('Ya existe una cuenta con ese correo. Prueba con otro o inicia sesión.');
+                    setErrorMsg('An account with this email already exists. Try another or log in.');
                 } else {
                     setErrorMsg(data.error);
                 }
@@ -36,27 +36,27 @@ export default function Register() {
             navigate('/login');
         } catch (error: any) {
             console.error("Error al registrar:", error);
-            setErrorMsg('Error de conexión. Inténtalo de nuevo.');
+            setErrorMsg('Connection error. Please try again.');
         }
     }
     return (
         <div className="login-wrap page-enter">
             <div className="login-container">
                 <div className="login-header">
-                    <div className="login-title">Crea tu Cuenta</div>
+                    <div className="login-title">Create Your Account</div>
                 </div>
                 {errorMsg && <div className="login-error-message">{errorMsg}</div>}
                 <form className="login-form" onSubmit={handleRegister}>
                     <div className="login-form-group">
-                        <label htmlFor="username">Nombre de Usuario</label>
-                        <input type="text" id="username" placeholder="Tu nombre de usuario" value={username} onChange={(e) => setUsername(e.target.value)} />
+                        <label htmlFor="username">Username</label>
+                        <input type="text" id="username" placeholder="Your username" value={username} onChange={(e) => setUsername(e.target.value)} />
                     </div>
                     <div className="login-form-group">
-                        <label htmlFor="email">Correo Electrónico</label>
-                        <input type="email" id="email" placeholder="tu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <label htmlFor="email">Email</label>
+                        <input type="email" id="email" placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     <div className="login-form-group">
-                        <label htmlFor="password">Contraseña</label>
+                        <label htmlFor="password">Password</label>
                         <div className="password-wrap">
                             <input type={showPassword ? 'text' : 'password'} id="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
                             <button type="button" className="password-toggle" onClick={() => setShowPassword(v => !v)}>
@@ -64,11 +64,11 @@ export default function Register() {
                             </button>
                         </div>
                     </div>
-                    <button type="submit" className="login-btn">Crear Cuenta</button>
+                    <button type="submit" className="login-btn">Create Account</button>
                 </form>
                 <div className="login-footer">
-                    ¿Ya eres miembro?
-                    <Link to="/login" className="login-link">Inicia Sesión</Link>
+                    Already a member?
+                    <Link to="/login" className="login-link">Log In</Link>
                 </div>
             </div>
         </div>

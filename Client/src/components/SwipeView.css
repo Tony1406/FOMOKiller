@@ -116,7 +116,7 @@
     max-height: 540px;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
+    box-shadow: none;
     cursor: grab;
     user-select: none;
 }
@@ -143,9 +143,9 @@
     position: absolute;
     inset: 0;
     background: linear-gradient(to bottom,
-            transparent 20%,
-            rgba(0, 0, 0, 0.25) 42%,
-            rgba(0, 0, 0, 0.82) 68%,
+            transparent 41%,
+            rgba(0, 0, 0, 0.25) 59%,
+            rgba(0, 0, 0, 0.82) 88%,
             rgba(0, 0, 0, 0.98) 100%);
 }
 
@@ -316,6 +316,14 @@
     text-shadow: 0 0 20px rgba(245, 197, 24, 0.5);
 }
 
+.swipe-drag-extra-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    border-radius: inherit;
+}
+
 /* ── Action buttons ──────────────────────────────── */
 .swipe-actions {
     display: flex;
@@ -324,6 +332,8 @@
     gap: 16px;
     padding-bottom: 12px;
     flex-shrink: 0;
+    position: relative;
+    z-index: 10;
 }
 
 .swipe-btn {
@@ -342,41 +352,39 @@
 }
 
 .swipe-btn-pass {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     background: var(--pass);
-    border: none;
     color: #fff;
-    box-shadow: 0 0 20px var(--pass-glow), 0 4px 16px rgba(0, 0, 0, 0.5);
+    box-shadow: none;
 }
 
 .swipe-btn-like {
     width: 70px;
     height: 70px;
     background: var(--cobalt);
-    border: 1.5px solid var(--cobalt-light);
     color: #fff;
     font-size: 28px;
-    box-shadow: var(--shadow-cobalt), 0 4px 16px rgba(0, 0, 0, 0.5);
+    box-shadow: none;
 }
 
 .swipe-btn-info {
     width: 52px;
     height: 52px;
     background: rgba(10, 10, 10, 0.92);
-    border: 1.5px solid rgba(255, 255, 255, 0.28);
+    border: 2.5px solid rgba(255, 255, 255, 0.28);
     color: rgba(255, 255, 255, 0.85);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+    box-shadow: none;
 }
 
 .swipe-btn-back {
     width: 52px;
     height: 52px;
     background: rgba(10, 10, 10, 0.92);
-    border: 1.5px solid rgba(255, 255, 255, 0.28);
+    border: 2.5px solid rgba(255, 255, 255, 0.28);
     color: rgba(255, 255, 255, 0.85);
     font-size: 20px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+    box-shadow: none;
 }
 
 .swipe-btn-back:disabled {
@@ -396,7 +404,7 @@
     border: none;
     color: #fff;
     font-size: 22px;
-    box-shadow: 0 0 20px rgba(245, 197, 24, 0.5), 0 4px 16px rgba(0, 0, 0, 0.5);
+    box-shadow: none;
 }
 
 /* ── Keyboard hints ──────────────────────────────── */
@@ -410,7 +418,7 @@
         flex-direction: column;
         gap: 16px;
         position: absolute;
-        right: 140px;
+        right: 50px;
         top: 50%;
         transform: translateY(-50%);
         pointer-events: none;
@@ -437,7 +445,7 @@
     padding: 0 10px;
     border-radius: 8px;
     background: rgba(10, 10, 10, 0.62);
-    border: 1.5px solid rgba(255, 255, 255, 0.22);
+    border: 2.5px solid rgba(255, 255, 255, 0.28);
     font-size: 19px;
     font-family: inherit;
     color: rgba(255, 255, 255, 0.85);
@@ -494,9 +502,9 @@
     }
 
     .swipe-btn-pass {
-        width: 72px;
-        height: 72px;
-        font-size: 26px;
+        width: 78px;
+        height: 78px;
+        font-size: 34px;
         border: none;
     }
 

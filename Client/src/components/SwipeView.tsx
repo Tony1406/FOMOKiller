@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import GameInfoModal from "./modals/GameInfoModal";
+import { getPlatformIcons } from "../utils/platformIcons";
 import "./SwipeView.css";
 
 const DRAG_THRESHOLD = 90;
@@ -41,11 +42,11 @@ export default function SwipeView({
     onRight,
     onExtra,
     leftLabel = "Drop",
-    rightLabel = "Queda",
+    rightLabel = "Keep",
     extraLabel = "Top 5",
     extraIcon = "fa-solid fa-ranking-star",
     extraColor = "#f5c518",
-    doneMessage = "Has revisado todos los juegos",
+    doneMessage = "You've reviewed all games",
 }: SwipeViewProps) {
     const [mostrarInfo, setMostrarInfo] = useState(false);
     const [dragX, setDragX] = useState(0);
@@ -56,7 +57,6 @@ export default function SwipeView({
     const startXRef = useRef(0);
     const swipingRef = useRef(false);
 
-    // Refs for stable callback access inside keydown handler
     const onLeftRef = useRef(onLeft);
     const onRightRef = useRef(onRight);
     const onExtraRef = useRef(onExtra);
@@ -112,7 +112,6 @@ export default function SwipeView({
         else setDragX(0);
     };
 
-    // Expose triggerSwipe and handleRetroceder via refs for keydown
     const triggerSwipeRef = useRef(triggerSwipe);
     const handleRetrocederRef = useRef(handleRetroceder);
 
@@ -149,18 +148,6 @@ export default function SwipeView({
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [mostrarInfo, index, items.length]);
 
-    const getPlatformIcons = (platforms: { id?: number; name: string }[]): string[] => {
-        if (!platforms?.length) return [];
-        const names = platforms.map((p) => p.name?.toLowerCase() ?? "");
-        const icons: string[] = [];
-        if (names.some((n) => n.includes("playstation"))) icons.push("fa-brands fa-playstation");
-        if (names.some((n) => n.includes("xbox"))) icons.push("fa-brands fa-xbox");
-        if (names.some((n) => n.includes("pc"))) icons.push("fa-brands fa-steam");
-        if (names.some((n) => n === "ios" || n === "macos" || n.includes("apple") || n.includes("mac"))) icons.push("fa-brands fa-apple");
-        if (names.some((n) => n.includes("android"))) icons.push("fa-brands fa-android");
-        if (names.some((n) => n.includes("mobile") && !n.includes("android") && !n.includes("ios"))) icons.push("fa-solid fa-mobile-screen");
-        return icons;
-    };
 
     if (index >= items.length) {
         return (
@@ -214,15 +201,13 @@ export default function SwipeView({
                     <div className="swipe-hint"><kbd>←</kbd><span>{leftLabel}</span></div>
                     <div className="swipe-hint"><kbd>→</kbd><span>{rightLabel}</span></div>
                     <div className="swipe-hint"><kbd>↑</kbd><span>Info</span></div>
-                    <div className="swipe-hint"><kbd>↓</kbd><span>Volver</span></div>
+                    <div className="swipe-hint"><kbd>↓</kbd><span>Back</span></div>
                 </div>
 
-                {/* Dynamic color glow */}
                 <div className="swipe-image-glow" key={game.id}>
                     <img src={game.imageUrl} alt="" aria-hidden />
                 </div>
 
-                {/* Next card — always behind */}
                 {nextGame && (
                     <div className="swipe-card swipe-card-back">
                         <div className="swipe-card-bg">
@@ -235,7 +220,6 @@ export default function SwipeView({
                     </div>
                 )}
 
-                {/* Current card */}
                 <div
                     className="swipe-card swipe-card-front"
                     onPointerDown={onPointerDown}
@@ -253,7 +237,6 @@ export default function SwipeView({
                     </div>
                     <div className="swipe-card-gradient" />
 
-                    {/* Overlays */}
                     {isRightish && (
                         <div className="swipe-card-drag-overlay swipe-drag-like" style={{ opacity: overlayOpacity }} />
                     )}
@@ -262,12 +245,11 @@ export default function SwipeView({
                     )}
                     {isExtraFly && (
                         <div
-                            className="swipe-card-drag-overlay"
-                            style={{ opacity: overlayOpacity, background: extraColor, position: "absolute", inset: 0, zIndex: 5, pointerEvents: "none", borderRadius: "inherit" }}
+                            className="swipe-drag-extra-overlay"
+                            style={{ opacity: overlayOpacity, background: extraColor }}
                         />
                     )}
 
-                    {/* Stamps */}
                     {isRightish && (
                         <div className="swipe-stamp swipe-stamp--like" style={{ opacity: stampOpacity }}>
                             {rightLabel}
@@ -287,7 +269,6 @@ export default function SwipeView({
                         </div>
                     )}
 
-                    {/* Platform badges */}
                     <div className="swipe-card-platforms">
                         {getPlatformIcons(game.Platforms ?? []).map((icon, i) => (
                             <div key={i} className="swipe-card-platform">
@@ -313,13 +294,12 @@ export default function SwipeView({
                 </div>
             </div>
 
-            {/* Action buttons */}
             <div className="swipe-actions">
                 <button
                     className="swipe-btn swipe-btn-back"
                     onClick={handleRetroceder}
                     disabled={index <= 0}
-                    title="Volver"
+                    title="Back"
                 >
                     <i className="fa-solid fa-rotate-left" />
                 </button>

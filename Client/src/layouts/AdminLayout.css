@@ -8,21 +8,21 @@
 
 /* ── Sidebar ──────────────────────────────── */
 .admin-sidebar {
-    width: 220px;
+    width: 275px;
     flex-shrink: 0;
     background: #111;
     border-right: 1px solid rgba(255, 255, 255, 0.07);
     display: flex;
     flex-direction: column;
-    padding: 24px 0;
+    padding: 30px 0;
 }
 
 .admin-sidebar-header {
-    padding: 0 24px 28px;
+    padding: 0 30px 35px;
 }
 
 .admin-logo {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 900;
     letter-spacing: 0.05em;
     color: #fff;
@@ -32,8 +32,8 @@
     color: #0070f3;
 }
 
-.admin-logo span:not(.admin-logo-killer) {
-    color: #e53935;
+.admin-logo-admin {
+    color: #0070f3;
 }
 
 .admin-nav {
@@ -47,12 +47,12 @@
 .admin-nav-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
+    gap: 14px;
+    padding: 13px 18px;
     border-radius: 8px;
     border: 1px solid transparent;
     color: rgba(255, 255, 255, 0.5);
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 500;
     text-decoration: none;
     transition: all 0.15s;
@@ -87,7 +87,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 14px;
+    font-size: 17px;
     color: rgba(255, 255, 255, 0.7);
     overflow: hidden;
 }
@@ -100,8 +100,8 @@
 }
 
 .admin-user-avatar {
-    width: 36px;
-    height: 36px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -132,20 +132,20 @@
 .admin-main {
     flex: 1;
     overflow-y: auto;
-    padding: 40px 48px;
+    padding: 50px 60px;
 }
 
 /* ── Shared admin page styles ─────────────── */
 .admin-page-title {
-    font-size: 28px;
+    font-size: 35px;
     font-weight: 800;
     margin-bottom: 6px;
 }
 
 .admin-page-sub {
-    font-size: 15px;
+    font-size: 18px;
     color: rgba(255, 255, 255, 0.4);
-    margin-bottom: 28px;
+    margin-bottom: 35px;
 }
 
 .admin-toolbar {
@@ -165,8 +165,8 @@
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 8px;
-    padding: 0 14px;
-    height: 40px;
+    padding: 0 18px;
+    height: 50px;
 }
 
 .admin-search input {
@@ -175,7 +175,7 @@
     border: none;
     outline: none;
     color: #fff;
-    font-size: 14px;
+    font-size: 17px;
     font-family: inherit;
 }
 
@@ -187,10 +187,10 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 0 16px;
-    height: 40px;
+    padding: 0 20px;
+    height: 50px;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 17px;
     font-weight: 600;
     cursor: pointer;
     border: none;
@@ -241,13 +241,13 @@
 .admin-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 16px;
+    font-size: 20px;
 }
 
 .admin-table th {
     text-align: left;
-    padding: 14px 16px;
-    font-size: 13px;
+    padding: 18px 20px;
+    font-size: 16px;
     text-transform: uppercase;
     letter-spacing: 0.8px;
     color: rgba(255, 255, 255, 0.35);
@@ -257,7 +257,7 @@
 }
 
 .admin-table td {
-    padding: 14px 16px;
+    padding: 18px 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     color: rgba(255, 255, 255, 0.85);
     vertical-align: middle;
@@ -278,8 +278,8 @@
 }
 
 .admin-icon-btn {
-    width: 34px;
-    height: 34px;
+    width: 42px;
+    height: 42px;
     border-radius: 7px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: transparent;
@@ -288,7 +288,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 17px;
     transition: all 0.15s;
 }
 
@@ -331,30 +331,50 @@
 .admin-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 24px;
+    animation: adminFadeIn 0.18s ease;
+}
+
+@keyframes adminFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes adminSlideUp {
+    from { opacity: 0; transform: translateY(24px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .admin-modal {
-    background: #161616;
+    background: #111;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 28px;
+    border-radius: 16px;
+    padding: 0;
     width: 100%;
     max-width: 480px;
     max-height: 90vh;
     overflow-y: auto;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7);
+    animation: adminSlideUp 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .admin-modal-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0;
+    padding: 28px 28px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-modal-body {
+    padding: 24px 28px 8px;
 }
 
 .admin-form-group {
@@ -365,17 +385,17 @@
 }
 
 .admin-form-group label {
-    font-size: 13px;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.8px;
     color: rgba(255, 255, 255, 0.4);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .admin-form-group input,
 .admin-form-group textarea,
 .admin-form-group select {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     color: #fff;
@@ -383,13 +403,15 @@
     font-family: inherit;
     padding: 10px 14px;
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
 }
 
 .admin-form-group input:focus,
 .admin-form-group textarea:focus,
 .admin-form-group select:focus {
     border-color: #0070f3;
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.12);
 }
 
 .admin-form-group textarea {
@@ -398,14 +420,20 @@
 }
 
 .admin-form-group select option {
-    background: #161616;
+    background: #111;
+}
+
+.admin-modal-error {
+    margin: 0 28px 12px;
 }
 
 .admin-modal-actions {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
-    margin-top: 24px;
+    margin-top: 8px;
+    padding: 20px 28px 28px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .admin-modal-actions .admin-btn {
@@ -490,9 +518,9 @@
 }
 
 .admin-rawg-msg.ok {
-    background: rgba(0, 200, 83, 0.1);
-    color: #00c853;
-    border: 1px solid rgba(0, 200, 83, 0.2);
+    background: rgba(0, 112, 243, 0.1);
+    color: #4d9fff;
+    border: 1px solid rgba(0, 112, 243, 0.2);
 }
 
 .admin-rawg-msg.err {
@@ -598,23 +626,23 @@
 
 /* ── Game thumb (tabla juegos) ────────────── */
 .admin-game-thumb {
-    width: 62px;
-    height: 62px;
+    width: 78px;
+    height: 78px;
     object-fit: cover;
     border-radius: 6px;
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .admin-game-thumb-placeholder {
-    width: 62px;
-    height: 62px;
+    width: 78px;
+    height: 78px;
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 800;
     color: #4d9fff;
 }
@@ -708,8 +736,8 @@
 }
 
 .admin-platform-tag {
-    font-size: 11px;
-    padding: 2px 7px;
+    font-size: 14px;
+    padding: 3px 9px;
     border-radius: 4px;
     background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 255, 255, 0.1);

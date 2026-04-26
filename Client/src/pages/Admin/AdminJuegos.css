@@ -1,0 +1,39 @@
+.admin-th-right     { text-align: right; }
+.admin-th-img       { width: 78px; }
+.admin-tr-clickable { cursor: pointer; }
+.admin-td-bold      { font-weight: 600; }
+.admin-td-dim       { color: rgba(255,255,255,0.5); }
+.admin-no-platforms { color: rgba(255,255,255,0.3); }
+.admin-search-icon  { color: rgba(255,255,255,0.3); font-size: 13px; }
+.admin-toolbar--mt  { margin-top: 32px; }
+.admin-modal--lg    { max-width: 780px; }
+.admin-form-grid    { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+.admin-form-full    { grid-column: 1 / -1; }
+
+.admin-img-preview {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.admin-btn-full {
+    width: 100%;
+    justify-content: center;
+    margin-top: 12px;
+}
+.admin-btn-load-more {
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+    height: 52px;
+}
+.admin-btn-import {
+    padding: 0 12px;
+    height: 32px;
+    font-size: 12px;
+}
+
+.admin-rawg-search  { margin-bottom: 12px; }
+.admin-platforms-grid { margin-top: 10px; }

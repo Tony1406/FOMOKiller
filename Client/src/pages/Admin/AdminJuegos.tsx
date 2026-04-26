@@ -3,14 +3,15 @@ import {
     adminGetGames, adminDeleteGame, adminCreateGame, adminUpdateGame, adminGetPlatforms,
     adminSearchRawg, adminImportFromRawg,
 } from '../../services/api';
-import ConfirmModal from '../../components/ConfirmModal';
+import ConfirmModal from '../../components/modals/ConfirmModal';
 import GameInfoModal from '../../components/modals/GameInfoModal';
+import './AdminJuegos.css';
 
 interface Game {
     id: number;
     title: string;
     developer: string | null;
-    releaseYear: number | null;
+    releaseYear?: number | null;
     imageUrl: string | null;
     rawgSlug: string | null;
     description?: string;
@@ -37,7 +38,6 @@ export default function AdminJuegos() {
     const [confirm, setConfirm] = useState<{ message: string; onConfirm: () => void } | null>(null);
     const [selectedGame, setSelectedGame] = useState<Game | null>(null);
 
-    // Crear juego manual
     const emptyForm = { title: '', developer: '', releaseYear: '', imageUrl: '', trailerUrl: '', description: '' };
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [createForm, setCreateForm] = useState(emptyForm);
@@ -47,7 +47,6 @@ export default function AdminJuegos() {
     const [selectedPlatformIds, setSelectedPlatformIds] = useState<number[]>([]);
     const [platformsOpen, setPlatformsOpen] = useState(false);
 
-    // Editar juego
     const [editingGame, setEditingGame] = useState<Game | null>(null);
     const [editForm, setEditForm] = useState(emptyForm);
     const [editPlatformIds, setEditPlatformIds] = useState<number[]>([]);
@@ -87,12 +86,12 @@ export default function AdminJuegos() {
             setEditingGame(null);
             load();
         } else {
-            setEditError(res?.error || 'Error al actualizar el juego');
+            setEditError(res?.error || 'Error updating game');
         }
     };
 
     const handleCreateGame = async () => {
-        if (!createForm.title.trim()) { setCreateError('El título es obligatorio'); return; }
+        if (!createForm.title.trim()) { setCreateError('Title is required'); return; }
         setCreateSaving(true);
         setCreateError(null);
         const payload: any = { title: createForm.title };
@@ -110,11 +109,10 @@ export default function AdminJuegos() {
             setSelectedPlatformIds([]);
             load();
         } else {
-            setCreateError(res?.error || 'Error al crear el juego');
+            setCreateError(res?.error || 'Error creating game');
         }
     };
 
-    // RAWG import panel
     const [rawgQuery, setRawgQuery] = useState('');
     const [rawgResults, setRawgResults] = useState<RawgResult[]>([]);
     const [rawgPage, setRawgPage] = useState(1);
@@ -161,7 +159,7 @@ export default function AdminJuegos() {
 
     const handleDelete = (game: Game) => {
         setConfirm({
-            message: `¿Eliminar "${game.title}" de la base de datos? Esta acción no se puede deshacer.`,
+            message: `Delete "${game.title}" from the database? This action cannot be undone.`,
             onConfirm: async () => {
                 setConfirm(null);
                 await adminDeleteGame(game.id);
@@ -198,10 +196,10 @@ export default function AdminJuegos() {
         setImportMsg(null);
         try {
             await adminImportFromRawg(result.rawgSlug);
-            setImportMsg({ text: `"${result.title}" importado correctamente`, ok: true });
+            setImportMsg({ text: `"${result.title}" imported successfully`, ok: true });
             load();
         } catch (e: any) {
-            setImportMsg({ text: e.message || 'Error al importar', ok: false });
+            setImportMsg({ text: e.message || 'Import error', ok: false });
         } finally {
             setImporting(null);
         }
@@ -215,23 +213,22 @@ export default function AdminJuegos() {
 
     return (
         <div>
-            <div className="admin-page-title">Juegos</div>
-            <div className="admin-page-sub">{games.length} juegos en la base de datos</div>
+            <div className="admin-page-title">Games</div>
+            <div className="admin-page-sub">{games.length} games in the database</div>
 
-            {/* ── Importar desde RAWG ── */}
             <div className="admin-rawg-panel">
                 <div className="admin-rawg-panel-title">
                     <i className="fa-solid fa-cloud-arrow-down" />
-                    Importar desde RAWG
+                    Import from RAWG
                 </div>
-                <div className="admin-search" style={{ marginBottom: 12 }}>
-                    <i className="fa-solid fa-magnifying-glass" style={{ color: 'rgba(255,255,255,0.3)', fontSize: 13 }} />
+                <div className="admin-search admin-rawg-search">
+                    <i className="fa-solid fa-magnifying-glass admin-search-icon" />
                     <input
-                        placeholder="Buscar juego en RAWG..."
+                        placeholder="Search game in RAWG..."
                         value={rawgQuery}
                         onChange={e => setRawgQuery(e.target.value)}
                     />
-                    {rawgSearching && <i className="fa-solid fa-spinner fa-spin" style={{ color: 'rgba(255,255,255,0.3)', fontSize: 13 }} />}
+                    {rawgSearching && <i className="fa-solid fa-spinner fa-spin admin-search-icon" />}
                 </div>
 
                 {importMsg && (
@@ -257,14 +254,13 @@ export default function AdminJuegos() {
                                         </div>
                                     </div>
                                     <button
-                                        className="admin-btn admin-btn-primary"
-                                        style={{ padding: '0 12px', height: 32, fontSize: 12 }}
+                                        className="admin-btn admin-btn-primary admin-btn-import"
                                         disabled={importing === r.rawgId}
                                         onClick={() => handleImport(r)}
                                     >
                                         {importing === r.rawgId
                                             ? <i className="fa-solid fa-spinner fa-spin" />
-                                            : <><i className="fa-solid fa-plus" /> Importar</>
+                                            : <><i className="fa-solid fa-plus" /> Import</>
                                         }
                                     </button>
                                 </div>
@@ -272,14 +268,13 @@ export default function AdminJuegos() {
                         </div>
                         {rawgHasMore && (
                             <button
-                                className="admin-btn admin-btn-ghost"
-                                style={{ width: '100%', justifyContent: 'center', marginTop: 8, height: 52 }}
+                                className="admin-btn admin-btn-ghost admin-btn-load-more"
                                 onClick={handleLoadMore}
                                 disabled={rawgLoadingMore}
                             >
                                 {rawgLoadingMore
-                                    ? <><i className="fa-solid fa-spinner fa-spin" /> Cargando...</>
-                                    : <><i className="fa-solid fa-chevron-down" /> Cargar más resultados</>
+                                    ? <><i className="fa-solid fa-spinner fa-spin" /> Loading...</>
+                                    : <><i className="fa-solid fa-chevron-down" /> Load more results</>
                                 }
                             </button>
                         )}
@@ -287,15 +282,14 @@ export default function AdminJuegos() {
                 )}
             </div>
 
-            {/* ── Tabla de juegos ── */}
-            <div className="admin-toolbar" style={{ marginTop: 32 }}>
+            <div className="admin-toolbar admin-toolbar--mt">
                 <button className="admin-btn admin-btn-primary" onClick={() => { setCreateForm(emptyForm); setCreateError(null); setSelectedPlatformIds([]); setShowCreateModal(true); }}>
-                    <i className="fa-solid fa-plus" /> Nuevo juego
+                    <i className="fa-solid fa-plus" /> New game
                 </button>
                 <div className="admin-search">
-                    <i className="fa-solid fa-magnifying-glass" style={{ color: 'rgba(255,255,255,0.3)', fontSize: 13 }} />
+                    <i className="fa-solid fa-magnifying-glass admin-search-icon" />
                     <input
-                        placeholder="Filtrar juegos..."
+                        placeholder="Filter games..."
                         value={search}
                         onChange={e => { setSearch(e.target.value); setVisibleCount(20); }}
                     />
@@ -303,65 +297,50 @@ export default function AdminJuegos() {
             </div>
 
             {loading ? (
-                <div className="admin-empty">Cargando...</div>
+                <div className="admin-empty">Loading...</div>
             ) : filtered.length === 0 ? (
-                <div className="admin-empty">No hay juegos</div>
+                <div className="admin-empty">No games found</div>
             ) : (
                 <div className="admin-table-wrap">
                     <table className="admin-table">
                         <thead>
                             <tr>
-                                <th style={{ width: 78 }}>Img</th>
-                                <th>Título</th>
-                                <th>Desarrollador</th>
-                                <th>Año</th>
-                                <th>Plataformas</th>
-                                <th style={{ textAlign: 'right' }}>Acciones</th>
+                                <th className="admin-th-img">Img</th>
+                                <th>Title</th>
+                                <th>Developer</th>
+                                <th>Year</th>
+                                <th>Platforms</th>
+                                <th className="admin-th-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {visibleGames.map(game => (
-                                <tr key={game.id}>
+                                <tr key={game.id} className="admin-tr-clickable" onClick={() => setSelectedGame(game)}>
                                     <td>
                                         {game.imageUrl
                                             ? <img src={game.imageUrl} className="admin-game-thumb" alt={game.title} />
                                             : <div className="admin-game-thumb-placeholder">{game.title[0]}</div>
                                         }
                                     </td>
-                                    <td style={{ fontWeight: 600 }}>{game.title}</td>
-                                    <td style={{ color: 'rgba(255,255,255,0.5)' }}>{game.developer ?? '—'}</td>
-                                    <td style={{ color: 'rgba(255,255,255,0.4)' }}>{game.releaseYear ?? '—'}</td>
+                                    <td className="admin-td-bold">{game.title}</td>
+                                    <td className="admin-td-dim">{game.developer ?? '—'}</td>
+                                    <td className="admin-td-muted">{game.releaseYear ?? '—'}</td>
                                     <td>
                                         <div className="admin-platforms">
                                             {game.Platforms && game.Platforms.length > 0
                                                 ? game.Platforms.map(p => (
                                                     <span key={p.id} className="admin-platform-tag">{p.name}</span>
                                                 ))
-                                                : <span style={{ color: 'rgba(255,255,255,0.3)' }}>—</span>
+                                                : <span className="admin-no-platforms">—</span>
                                             }
                                         </div>
                                     </td>
-                                    <td>
+                                    <td onClick={e => e.stopPropagation()}>
                                         <div className="admin-table-actions">
-                                            <button
-                                                className="admin-icon-btn"
-                                                title="Ver info"
-                                                onClick={() => setSelectedGame(game)}
-                                            >
-                                                <i className="fa-solid fa-eye" />
-                                            </button>
-                                            <button
-                                                className="admin-icon-btn"
-                                                title="Editar juego"
-                                                onClick={() => openEdit(game)}
-                                            >
+                                            <button className="admin-icon-btn" title="Edit game" onClick={() => openEdit(game)}>
                                                 <i className="fa-solid fa-pen" />
                                             </button>
-                                            <button
-                                                className="admin-icon-btn danger"
-                                                title="Eliminar juego"
-                                                onClick={() => handleDelete(game)}
-                                            >
+                                            <button className="admin-icon-btn danger" title="Delete game" onClick={() => handleDelete(game)}>
                                                 <i className="fa-solid fa-trash" />
                                             </button>
                                         </div>
@@ -372,23 +351,22 @@ export default function AdminJuegos() {
                     </table>
                     {visibleCount < filtered.length && (
                         <button
-                            className="admin-btn admin-btn-ghost"
-                            style={{ width: '100%', justifyContent: 'center', marginTop: 12 }}
+                            className="admin-btn admin-btn-ghost admin-btn-full"
                             onClick={() => setVisibleCount(v => v + 20)}
                         >
-                            <i className="fa-solid fa-chevron-down" /> Cargar más ({filtered.length - visibleCount} restantes)
+                            <i className="fa-solid fa-chevron-down" /> Load more ({filtered.length - visibleCount} remaining)
                         </button>
                     )}
                 </div>
             )}
 
-            {confirm && (
-                <ConfirmModal
-                    message={confirm.message}
-                    onConfirm={confirm.onConfirm}
-                    onCancel={() => setConfirm(null)}
-                />
-            )}
+            <ConfirmModal
+                isOpen={!!confirm}
+                title={confirm?.message ?? ''}
+                onConfirm={confirm?.onConfirm ?? (() => {})}
+                onClose={() => setConfirm(null)}
+                variant="danger"
+            />
 
             <GameInfoModal
                 isOpen={selectedGame !== null}
@@ -396,155 +374,156 @@ export default function AdminJuegos() {
                 onClose={() => setSelectedGame(null)}
             />
 
-            {/* ── Modal editar juego ── */}
             {editingGame && (
                 <div className="admin-modal-overlay" onClick={() => setEditingGame(null)}>
-                    <div className="admin-modal" style={{ maxWidth: 780 }} onClick={e => e.stopPropagation()}>
-                        <div className="admin-modal-title">Editar — {editingGame.title}</div>
+                    <div className="admin-modal admin-modal--lg" onClick={e => e.stopPropagation()}>
+                        <div className="admin-modal-title">Edit — {editingGame.title}</div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
-                            <div className="admin-form-group">
-                                <label>Título *</label>
-                                <input value={editForm.title} onChange={e => setEditForm(f => ({ ...f, title: e.target.value }))} />
-                            </div>
-                            <div className="admin-form-group">
-                                <label>Desarrollador</label>
-                                <input value={editForm.developer} onChange={e => setEditForm(f => ({ ...f, developer: e.target.value }))} placeholder="Ej: Capcom" />
-                            </div>
-                            <div className="admin-form-group">
-                                <label>Año de lanzamiento</label>
-                                <input type="number" value={editForm.releaseYear} onChange={e => setEditForm(f => ({ ...f, releaseYear: e.target.value }))} />
-                            </div>
-                            <div className="admin-form-group">
-                                <label>URL de imagen</label>
-                                <input value={editForm.imageUrl} onChange={e => setEditForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." />
-                            </div>
-                            <div className="admin-form-group" style={{ gridColumn: '1 / -1' }}>
-                                <label>URL de tráiler (YouTube embed)</label>
-                                <input value={editForm.trailerUrl} onChange={e => setEditForm(f => ({ ...f, trailerUrl: e.target.value }))} placeholder="https://www.youtube.com/embed/..." />
-                            </div>
-                            <div className="admin-form-group" style={{ gridColumn: '1 / -1' }}>
-                                <label>Descripción</label>
-                                <textarea value={editForm.description} onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))} placeholder="Descripción del juego..." />
-                            </div>
-                        </div>
-
-                        {editForm.imageUrl && (
-                            <img src={editForm.imageUrl} alt="preview" style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8, marginBottom: 12 }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                        )}
-
-                        <div className="admin-form-group">
-                            <button type="button" className="admin-platforms-toggle" onClick={() => setEditPlatformsOpen(o => !o)}>
-                                <span>Plataformas{editPlatformIds.length > 0 ? ` (${editPlatformIds.length} seleccionadas)` : ''}</span>
-                                <i className={`fa-solid fa-chevron-${editPlatformsOpen ? 'up' : 'down'}`} />
-                            </button>
-                            {editPlatformsOpen && (
-                                <div className="admin-platforms-grid" style={{ marginTop: 10 }}>
-                                    {allPlatforms.map(p => {
-                                        const active = editPlatformIds.includes(p.id);
-                                        return (
-                                            <button key={p.id} type="button"
-                                                className={`admin-platform-pick${active ? ' active' : ''}`}
-                                                onClick={() => setEditPlatformIds(prev =>
-                                                    active ? prev.filter(id => id !== p.id) : [...prev, p.id]
-                                                )}
-                                            >{p.name}</button>
-                                        );
-                                    })}
+                        <div className="admin-modal-body">
+                            <div className="admin-form-grid">
+                                <div className="admin-form-group">
+                                    <label>Title *</label>
+                                    <input value={editForm.title} onChange={e => setEditForm(f => ({ ...f, title: e.target.value }))} />
                                 </div>
+                                <div className="admin-form-group">
+                                    <label>Developer</label>
+                                    <input value={editForm.developer} onChange={e => setEditForm(f => ({ ...f, developer: e.target.value }))} placeholder="e.g. Capcom" />
+                                </div>
+                                <div className="admin-form-group">
+                                    <label>Release year</label>
+                                    <input type="number" value={editForm.releaseYear} onChange={e => setEditForm(f => ({ ...f, releaseYear: e.target.value }))} />
+                                </div>
+                                <div className="admin-form-group">
+                                    <label>Image URL</label>
+                                    <input value={editForm.imageUrl} onChange={e => setEditForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." />
+                                </div>
+                                <div className="admin-form-group admin-form-full">
+                                    <label>Trailer URL (YouTube embed)</label>
+                                    <input value={editForm.trailerUrl} onChange={e => setEditForm(f => ({ ...f, trailerUrl: e.target.value }))} placeholder="https://www.youtube.com/embed/..." />
+                                </div>
+                                <div className="admin-form-group admin-form-full">
+                                    <label>Description</label>
+                                    <textarea value={editForm.description} onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))} placeholder="Game description..." />
+                                </div>
+                            </div>
+
+                            {editForm.imageUrl && (
+                                <img src={editForm.imageUrl} alt="preview" className="admin-img-preview" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                             )}
+
+                            <div className="admin-form-group">
+                                <button type="button" className="admin-platforms-toggle" onClick={() => setEditPlatformsOpen(o => !o)}>
+                                    <span>Platforms{editPlatformIds.length > 0 ? ` (${editPlatformIds.length} selected)` : ''}</span>
+                                    <i className={`fa-solid fa-chevron-${editPlatformsOpen ? 'up' : 'down'}`} />
+                                </button>
+                                {editPlatformsOpen && (
+                                    <div className="admin-platforms-grid">
+                                        {allPlatforms.map(p => {
+                                            const active = editPlatformIds.includes(p.id);
+                                            return (
+                                                <button key={p.id} type="button"
+                                                    className={`admin-platform-pick${active ? ' active' : ''}`}
+                                                    onClick={() => setEditPlatformIds(prev =>
+                                                        active ? prev.filter(id => id !== p.id) : [...prev, p.id]
+                                                    )}
+                                                >{p.name}</button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {editError && (
-                            <div className="admin-rawg-msg err" style={{ marginBottom: 8 }}>
+                            <div className="admin-rawg-msg err admin-modal-error">
                                 <i className="fa-solid fa-xmark" /> {editError}
                             </div>
                         )}
 
                         <div className="admin-modal-actions">
-                            <button className="admin-btn admin-btn-ghost" onClick={() => setEditingGame(null)}>Cancelar</button>
+                            <button className="admin-btn admin-btn-ghost" onClick={() => setEditingGame(null)}>Cancel</button>
                             <button className="admin-btn admin-btn-primary" onClick={handleUpdateGame} disabled={editSaving || !editForm.title.trim()}>
-                                {editSaving ? 'Guardando...' : 'Guardar cambios'}
+                                {editSaving ? 'Saving...' : 'Save changes'}
                             </button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* ── Modal crear juego manual ── */}
             {showCreateModal && (
                 <div className="admin-modal-overlay" onClick={() => setShowCreateModal(false)}>
-                    <div className="admin-modal" style={{ maxWidth: 780 }} onClick={e => e.stopPropagation()}>
-                        <div className="admin-modal-title">Nuevo juego</div>
+                    <div className="admin-modal admin-modal--lg" onClick={e => e.stopPropagation()}>
+                        <div className="admin-modal-title">New game</div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
-                            <div className="admin-form-group">
-                                <label>Título *</label>
-                                <input value={createForm.title} onChange={e => setCreateForm(f => ({ ...f, title: e.target.value }))} placeholder="Nombre del juego" />
-                            </div>
-                            <div className="admin-form-group">
-                                <label>Desarrollador</label>
-                                <input value={createForm.developer} onChange={e => setCreateForm(f => ({ ...f, developer: e.target.value }))} placeholder="Ej: Capcom" />
-                            </div>
-                            <div className="admin-form-group">
-                                <label>Año de lanzamiento</label>
-                                <input type="number" value={createForm.releaseYear} onChange={e => setCreateForm(f => ({ ...f, releaseYear: e.target.value }))} placeholder="Ej: 2024" />
-                            </div>
-                            <div className="admin-form-group">
-                                <label>URL de imagen</label>
-                                <input value={createForm.imageUrl} onChange={e => setCreateForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." />
-                            </div>
-                            <div className="admin-form-group" style={{ gridColumn: '1 / -1' }}>
-                                <label>URL de tráiler (YouTube embed)</label>
-                                <input value={createForm.trailerUrl} onChange={e => setCreateForm(f => ({ ...f, trailerUrl: e.target.value }))} placeholder="https://www.youtube.com/embed/..." />
-                            </div>
-                            <div className="admin-form-group" style={{ gridColumn: '1 / -1' }}>
-                                <label>Descripción</label>
-                                <textarea value={createForm.description} onChange={e => setCreateForm(f => ({ ...f, description: e.target.value }))} placeholder="Descripción del juego..." />
-                            </div>
-                        </div>
-
-                        {createForm.imageUrl && (
-                            <img src={createForm.imageUrl} alt="preview" style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8, marginBottom: 12 }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                        )}
-
-                        {/* Plataformas desplegable */}
-                        <div className="admin-form-group">
-                            <button type="button" className="admin-platforms-toggle" onClick={() => setPlatformsOpen(o => !o)}>
-                                <span>Plataformas{selectedPlatformIds.length > 0 ? ` (${selectedPlatformIds.length} seleccionadas)` : ''}</span>
-                                <i className={`fa-solid fa-chevron-${platformsOpen ? 'up' : 'down'}`} />
-                            </button>
-                            {platformsOpen && (
-                                <div className="admin-platforms-grid" style={{ marginTop: 10 }}>
-                                    {allPlatforms.map(p => {
-                                        const active = selectedPlatformIds.includes(p.id);
-                                        return (
-                                            <button
-                                                key={p.id}
-                                                type="button"
-                                                className={`admin-platform-pick${active ? ' active' : ''}`}
-                                                onClick={() => setSelectedPlatformIds(prev =>
-                                                    active ? prev.filter(id => id !== p.id) : [...prev, p.id]
-                                                )}
-                                            >
-                                                {p.name}
-                                            </button>
-                                        );
-                                    })}
+                        <div className="admin-modal-body">
+                            <div className="admin-form-grid">
+                                <div className="admin-form-group">
+                                    <label>Title *</label>
+                                    <input value={createForm.title} onChange={e => setCreateForm(f => ({ ...f, title: e.target.value }))} placeholder="Game name" />
                                 </div>
+                                <div className="admin-form-group">
+                                    <label>Developer</label>
+                                    <input value={createForm.developer} onChange={e => setCreateForm(f => ({ ...f, developer: e.target.value }))} placeholder="e.g. Capcom" />
+                                </div>
+                                <div className="admin-form-group">
+                                    <label>Release year</label>
+                                    <input type="number" value={createForm.releaseYear} onChange={e => setCreateForm(f => ({ ...f, releaseYear: e.target.value }))} placeholder="e.g. 2024" />
+                                </div>
+                                <div className="admin-form-group">
+                                    <label>Image URL</label>
+                                    <input value={createForm.imageUrl} onChange={e => setCreateForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." />
+                                </div>
+                                <div className="admin-form-group admin-form-full">
+                                    <label>Trailer URL (YouTube embed)</label>
+                                    <input value={createForm.trailerUrl} onChange={e => setCreateForm(f => ({ ...f, trailerUrl: e.target.value }))} placeholder="https://www.youtube.com/embed/..." />
+                                </div>
+                                <div className="admin-form-group admin-form-full">
+                                    <label>Description</label>
+                                    <textarea value={createForm.description} onChange={e => setCreateForm(f => ({ ...f, description: e.target.value }))} placeholder="Game description..." />
+                                </div>
+                            </div>
+
+                            {createForm.imageUrl && (
+                                <img src={createForm.imageUrl} alt="preview" className="admin-img-preview" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                             )}
+
+                            <div className="admin-form-group">
+                                <button type="button" className="admin-platforms-toggle" onClick={() => setPlatformsOpen(o => !o)}>
+                                    <span>Platforms{selectedPlatformIds.length > 0 ? ` (${selectedPlatformIds.length} selected)` : ''}</span>
+                                    <i className={`fa-solid fa-chevron-${platformsOpen ? 'up' : 'down'}`} />
+                                </button>
+                                {platformsOpen && (
+                                    <div className="admin-platforms-grid">
+                                        {allPlatforms.map(p => {
+                                            const active = selectedPlatformIds.includes(p.id);
+                                            return (
+                                                <button
+                                                    key={p.id}
+                                                    type="button"
+                                                    className={`admin-platform-pick${active ? ' active' : ''}`}
+                                                    onClick={() => setSelectedPlatformIds(prev =>
+                                                        active ? prev.filter(id => id !== p.id) : [...prev, p.id]
+                                                    )}
+                                                >
+                                                    {p.name}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {createError && (
-                            <div className="admin-rawg-msg err" style={{ marginBottom: 8 }}>
+                            <div className="admin-rawg-msg err admin-modal-error">
                                 <i className="fa-solid fa-xmark" /> {createError}
                             </div>
                         )}
 
                         <div className="admin-modal-actions">
-                            <button className="admin-btn admin-btn-ghost" onClick={() => setShowCreateModal(false)}>Cancelar</button>
+                            <button className="admin-btn admin-btn-ghost" onClick={() => setShowCreateModal(false)}>Cancel</button>
                             <button className="admin-btn admin-btn-primary" onClick={handleCreateGame} disabled={createSaving || !createForm.title.trim()}>
-                                {createSaving ? 'Guardando...' : 'Crear juego'}
+                                {createSaving ? 'Saving...' : 'Create game'}
                             </button>
                         </div>
                     </div>

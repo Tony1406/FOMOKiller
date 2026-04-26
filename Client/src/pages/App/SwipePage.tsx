@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import GameInfoModal from "../../components/modals/GameInfoModal";
 import { getRecommendations, updateStatus } from "../../services/api";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../auth/AuthContext";
+import { getPlatformIcons } from "../../utils/platformIcons";
 import "./SwipePage.css";
 
 const STORAGE_JUEGOS = "swipe_deck_v3";
@@ -82,7 +83,6 @@ export default function SwipePage() {
   const handleRetroceder = () => {
     if (swipingRef.current || idJuego <= 0) return;
     const nuevoIndice = idJuego - 1;
-    // Place card off-screen right instantly, then slide it in
     setFlyIn(true);
     setIdJuego(nuevoIndice);
     sessionStorage.setItem(STORAGE_INDICE, String(nuevoIndice));
@@ -148,7 +148,7 @@ export default function SwipePage() {
     return (
       <div className="swipe-page page-enter">
         <div className="swipe-loading-container">
-          <div className="swipe-loading-text">Cargando recomendaciones...</div>
+          <div className="swipe-loading-text">Loading recommendations...</div>
         </div>
       </div>
     );
@@ -158,12 +158,12 @@ export default function SwipePage() {
     return (
       <div className="swipe-page page-enter">
         <div className="swipe-loading-container">
-          <div className="swipe-loading-text">No se pudieron cargar las recomendaciones</div>
+          <div className="swipe-loading-text">Couldn't load recommendations</div>
           <button
             style={{ marginTop: 16, padding: '8px 20px', background: 'var(--cobalt)', border: 'none', borderRadius: 8, color: '#fff', cursor: 'pointer' }}
             onClick={() => { sessionStorage.removeItem(STORAGE_JUEGOS); sessionStorage.removeItem(STORAGE_INDICE); cargarJuegos(); }}
           >
-            Reintentar
+            Retry
           </button>
         </div>
       </div>
@@ -180,7 +180,7 @@ export default function SwipePage() {
     return (
       <div className="swipe-page page-enter">
         <div className="swipe-loading-container">
-          <div className="swipe-loading-text">Cargando más juegos...</div>
+          <div className="swipe-loading-text">Loading more games...</div>
         </div>
       </div>
     );
@@ -189,22 +189,8 @@ export default function SwipePage() {
   const juegoActual = juegos[idJuego];
   const puedeRetroceder = idJuego > 0;
 
-  const getPlatformIcons = (platforms: any[]): string[] => {
-    if (!platforms?.length) return [];
-    const names = platforms.map((p: any) => p.name?.toLowerCase() ?? "");
-    const icons: string[] = [];
-    if (names.some((n) => n.includes("playstation")))  icons.push("fa-brands fa-playstation");
-    if (names.some((n) => n.includes("xbox")))         icons.push("fa-brands fa-xbox");
-    if (names.some((n) => n.includes("pc")))           icons.push("fa-brands fa-steam");
-    if (names.some((n) => n === "ios" || n === "macos" || n.includes("apple") || n.includes("mac")))
-                                                        icons.push("fa-brands fa-apple");
-    if (names.some((n) => n.includes("android")))      icons.push("fa-brands fa-android");
-    if (names.some((n) => n.includes("mobile") && !n.includes("android") && !n.includes("ios")))
-                                                        icons.push("fa-solid fa-mobile-screen");
-    return icons;
-  };
 
-  // Animation values
+
   const progress = Math.min(Math.abs(dragX) / DRAG_THRESHOLD, 1);
   const rotation = flyOut ? (flyOut === "right" ? 20 : -20) : dragX * 0.07;
   const translateX = flyOut
@@ -237,26 +223,26 @@ export default function SwipePage() {
         game={juegoActual}
       />
 
-      <div className="swipe-stack">
-        <div className="swipe-keyboard-hints">
-          <div className="swipe-hint">
-            <kbd>←</kbd>
-            <span>Nope</span>
-          </div>
-          <div className="swipe-hint">
-            <kbd>→</kbd>
-            <span>Backlog</span>
-          </div>
-          <div className="swipe-hint">
-            <kbd>↑</kbd>
-            <span>Info</span>
-          </div>
-          <div className="swipe-hint">
-            <kbd>↓</kbd>
-            <span>Volver</span>
-          </div>
+      <div className="swipe-keyboard-hints">
+        <div className="swipe-hint">
+          <kbd>←</kbd>
+          <span>Nope</span>
         </div>
+        <div className="swipe-hint">
+          <kbd>→</kbd>
+          <span>Backlog</span>
+        </div>
+        <div className="swipe-hint">
+          <kbd>↑</kbd>
+          <span>Info</span>
+        </div>
+        <div className="swipe-hint">
+          <kbd>↓</kbd>
+          <span>Back</span>
+        </div>
+      </div>
 
+      <div className="swipe-stack">
         {/* Glow dinámico del color del juego */}
         <div className="swipe-image-glow" key={juegoActual.id}>
           <img src={juegoActual.imageUrl} alt="" aria-hidden />

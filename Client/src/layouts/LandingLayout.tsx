@@ -14,14 +14,12 @@ export default function LandingLayout() {
 
   return (
     <div className="landing-root">
-      {/* Background */}
       <div className="ps2-bg">
         <div className="land-aurora-bg"></div>
         <div className="ps2-scanlines"></div>
         <div className="ps2-vignette"></div>
       </div>
 
-      {/* Navegacion */}
       <nav className="land-nav">
         <div className="land-nav-inner">
           <div className="land-nav-left">
@@ -32,7 +30,7 @@ export default function LandingLayout() {
                 `land-nav-link ${isActive ? "active" : ""}`
               }
             >
-              Inicio
+              Home
             </NavLink>
           </div>
           <Link to="/" className="land-nav-logo">
@@ -52,10 +50,9 @@ export default function LandingLayout() {
                 `land-nav-link ${isActive ? "active" : ""}`
               }
             >
-              Empezar
+              Get started
             </NavLink>
           </div>
-          {/* Mobile: all links in a dropdown */}
           <div className={`land-nav-links-mobile ${isMenuOpen ? "open" : ""}`}>
             <NavLink
               to="/"
@@ -64,7 +61,7 @@ export default function LandingLayout() {
                 `land-nav-link ${isActive ? "active" : ""}`
               }
             >
-              Inicio
+              Home
             </NavLink>
             <NavLink
               to="/descarga"
@@ -72,7 +69,7 @@ export default function LandingLayout() {
                 `land-nav-link ${isActive ? "active" : ""}`
               }
             >
-              Empezar
+              Get started
             </NavLink>
           </div>
           <button
@@ -84,12 +81,10 @@ export default function LandingLayout() {
         </div>
       </nav>
 
-      {/* Contenido */}
       <main className="land-page-content">
         <Outlet />
       </main>
 
-      {/* Footer */}
       <footer className="land-footer">
         <div className="land-footer-grid">
           <div className="land-footer-col brand-col">
@@ -120,10 +115,10 @@ export default function LandingLayout() {
           </div>
 
           <div className="land-footer-col">
-            <h4 className="footer-title">Navegación</h4>
+            <h4 className="footer-title">Navigation</h4>
             <div className="footer-links">
-              <Link to="/">Inicio</Link>
-              <Link to="/descarga">Empezar</Link>
+              <Link to="/">Home</Link>
+              <Link to="/descarga">Get started</Link>
             </div>
           </div>
         </div>
@@ -131,9 +126,9 @@ export default function LandingLayout() {
         <div className="land-footer-bottom">
           <div className="land-footer-separator"></div>
           <div className="land-footer-bottom-inner">
-            <p>&copy; 2026 FOMOKiller. Todos los derechos reservados.</p>
+            <p>&copy; 2026 FOMOKiller. All rights reserved.</p>
             <div className="land-footer-bottom-extra">
-              <span>Plataformas: PC - Consola - Movil</span>
+              <span>Platforms: PC - Console - Mobile</span>
             </div>
           </div>
         </div>

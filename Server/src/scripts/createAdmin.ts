@@ -20,7 +20,7 @@ const main = async () => {
     const passwordHash = await bcrypt.hash(PASSWORD, 10);
     await User.create({ username: USERNAME, email: EMAIL, passwordHash, role: 'admin' });
 
-    console.log('✓ Usuario admin creado:');
+    console.log('Usuario admin creado:');
     console.log(`  Email:    ${EMAIL}`);
     console.log(`  Password: ${PASSWORD}`);
     process.exit(0);

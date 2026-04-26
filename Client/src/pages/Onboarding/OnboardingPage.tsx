@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../auth/AuthContext';
 import { savePreferences } from '../../services/api';
 import logoSimple from '../../assets/Logo_simple.png';
-import PrismaticBurst from '../../components/Background/PrismaticBurst';
+import PrismaticBurst from '../../components/reactbits/PrismaticBurst';
 import './OnboardingPage.css';
-
-// ─── DATOS DE LAS PREGUNTAS ───────────────────────────────────────────────────
 
 const PLATFORMS = [
     { id: 'PC', label: 'PC', icon: 'fa-solid fa-desktop' },
@@ -21,74 +19,72 @@ const PLATFORMS = [
 const STEPS = [
     {
         key: 'platforms',
-        question: '¿En qué juegas?',
-        subtitle: 'Puedes elegir varias.',
+        question: 'What do you play on?',
+        subtitle: 'You can choose multiple.',
         type: 'multi',
         options: PLATFORMS,
     },
     {
         key: 'sessionLength',
-        question: '¿Cómo son tus sesiones de juego normalmente?',
-        subtitle: 'Elige la que mejor te describe.',
+        question: 'What do your gaming sessions usually look like?',
+        subtitle: 'Pick the one that best describes you.',
         type: 'single',
         options: [
-            { id: 'short',  label: 'Ratitos sueltos cuando puedo',       icon: 'fa-solid fa-clock' },
-            { id: 'medium', label: 'Tardes largas de fin de semana',      icon: 'fa-solid fa-mug-hot' },
-            { id: 'long',   label: 'Me pierdo durante horas sin darme cuenta', icon: 'fa-solid fa-moon' },
-            { id: 'any',    label: 'Me da igual, voy a lo que sea',       icon: 'fa-solid fa-shuffle' },
+            { id: 'short',  label: 'Short bursts whenever I can',       icon: 'fa-solid fa-clock' },
+            { id: 'medium', label: 'Long weekend afternoons',           icon: 'fa-solid fa-mug-hot' },
+            { id: 'long',   label: 'I lose track of time for hours',    icon: 'fa-solid fa-moon' },
+            { id: 'any',    label: "Doesn't matter, I go with anything", icon: 'fa-solid fa-shuffle' },
         ],
     },
     {
         key: 'feeling',
-        question: 'Cuando abres un juego, ¿qué buscas?',
-        subtitle: 'Lo que te hace darle al botón de encendido.',
+        question: 'When you open a game, what are you looking for?',
+        subtitle: 'What makes you hit that power button.',
         type: 'single',
         options: [
-            { id: 'tension',    label: 'Estar en tensión, al borde del asiento', icon: 'fa-solid fa-bolt' },
-            { id: 'story',      label: 'Perderme en una historia que no olvidaré', icon: 'fa-solid fa-book-open' },
-            { id: 'relax',      label: 'Relajarme, sin presión, en mi ritmo',    icon: 'fa-solid fa-leaf' },
-            { id: 'adrenaline', label: 'Adrenalina disparada',                   icon: 'fa-solid fa-fire' },
-            { id: 'build',      label: 'Construir algo desde cero',               icon: 'fa-solid fa-cubes' },
-            { id: 'any',        label: 'Me da igual, voy a lo que sea',           icon: 'fa-solid fa-shuffle' },
+            { id: 'tension',    label: 'Tension, sitting on the edge of my seat', icon: 'fa-solid fa-bolt' },
+            { id: 'story',      label: "Getting lost in a story I won't forget",  icon: 'fa-solid fa-book-open' },
+            { id: 'relax',      label: 'Relaxing, no pressure, at my own pace',   icon: 'fa-solid fa-leaf' },
+            { id: 'adrenaline', label: 'Pure adrenaline',                          icon: 'fa-solid fa-fire' },
+            { id: 'build',      label: 'Building something from scratch',          icon: 'fa-solid fa-cubes' },
+            { id: 'any',        label: "Doesn't matter, I go with anything",       icon: 'fa-solid fa-shuffle' },
         ],
     },
     {
         key: 'worldType',
-        question: '¿Qué tipo de mundo te atrae más?',
-        subtitle: 'El universo en el que quieres perderte.',
+        question: 'What kind of world appeals to you most?',
+        subtitle: 'The universe you want to get lost in.',
         type: 'single',
         options: [
-            { id: 'fantasy',   label: 'Fantasía épica y magia',              icon: 'fa-solid fa-hat-wizard' },
-            { id: 'scifi',     label: 'Sci-fi y futuros distópicos',         icon: 'fa-solid fa-rocket' },
-            { id: 'horror',    label: 'Terror y lo desconocido',             icon: 'fa-solid fa-skull' },
-            { id: 'openworld', label: 'Mundos abiertos que explorar sin rumbo', icon: 'fa-solid fa-compass' },
-            { id: 'realism',   label: 'Realismo, historia o deporte',        icon: 'fa-solid fa-trophy' },
-            { id: 'any',       label: 'Me da igual, voy a lo que sea',       icon: 'fa-solid fa-shuffle' },
+            { id: 'fantasy',   label: 'Epic fantasy and magic',              icon: 'fa-solid fa-hat-wizard' },
+            { id: 'scifi',     label: 'Sci-fi and dystopian futures',        icon: 'fa-solid fa-rocket' },
+            { id: 'horror',    label: 'Horror and the unknown',              icon: 'fa-solid fa-skull' },
+            { id: 'openworld', label: 'Open worlds to explore without direction', icon: 'fa-solid fa-compass' },
+            { id: 'realism',   label: 'Realism, history or sports',         icon: 'fa-solid fa-trophy' },
+            { id: 'any',       label: "Doesn't matter, I go with anything", icon: 'fa-solid fa-shuffle' },
         ],
     },
     {
         key: 'depth',
-        question: 'Cuando un juego te engancha, ¿qué lo hace?',
-        subtitle: 'Tu razón para seguir jugando.',
+        question: 'When a game hooks you, what does it?',
+        subtitle: 'Your reason to keep playing.',
         type: 'single',
         options: [
-            { id: 'casual',    label: 'Que sea fácil de coger y dejar',         icon: 'fa-solid fa-hand' },
-            { id: 'complex',   label: 'Que tenga sistemas complejos para dominar', icon: 'fa-solid fa-brain' },
-            { id: 'narrative', label: 'Que me cuente algo que me haga pensar',  icon: 'fa-solid fa-comment-dots' },
-            { id: 'challenge', label: 'Que me ponga a prueba constantemente',   icon: 'fa-solid fa-shield-halved' },
-            { id: 'any',       label: 'Me da igual, voy a lo que sea',          icon: 'fa-solid fa-shuffle' },
+            { id: 'casual',    label: 'Easy to pick up and put down',     icon: 'fa-solid fa-hand' },
+            { id: 'complex',   label: 'Complex systems to master',        icon: 'fa-solid fa-brain' },
+            { id: 'narrative', label: 'A story that makes me think',      icon: 'fa-solid fa-comment-dots' },
+            { id: 'challenge', label: 'Constantly challenging me',        icon: 'fa-solid fa-shield-halved' },
+            { id: 'any',       label: "Doesn't matter, I go with anything", icon: 'fa-solid fa-shuffle' },
         ],
     },
     {
         key: 'yearRange',
-        question: '¿De qué época quieres jugar?',
-        subtitle: 'Puedes no poner límite si te da igual la edad del juego.',
+        question: 'What era do you want to play?',
+        subtitle: "Leave it open if you don't care about the game's age.",
         type: 'yearRange',
         options: [],
     },
 ];
-
-// ─── COMPONENTE ───────────────────────────────────────────────────────────────
 
 const MIN_YEAR = 1980;
 const MAX_YEAR = new Date().getFullYear();
@@ -107,7 +103,7 @@ export default function OnboardingPage() {
     });
     const [yearFilter, setYearFilter] = useState({ enabled: false, min: 2000, max: MAX_YEAR });
     const [loading, setLoading] = useState(false);
-    const [loadingText, setLoadingText] = useState('Guardando tus preferencias...');
+    const [loadingText, setLoadingText] = useState('Saving your preferences...');
 
     const current = STEPS[step];
     const isLast = step === STEPS.length - 1;
@@ -136,7 +132,6 @@ export default function OnboardingPage() {
         if (!canContinue()) return;
         if (!isLast) { setStep(s => s + 1); return; }
 
-        // Último paso → guardar y animar
         setLoading(true);
         const payload = {
             ...answers,
@@ -148,10 +143,10 @@ export default function OnboardingPage() {
         sessionStorage.removeItem('swipe_index_v2');
 
         const messages = [
-            'Guardando tus preferencias...',
-            'Analizando tus gustos...',
-            'Construyendo tu perfil...',
-            'Casi listo...',
+            'Saving your preferences...',
+            'Analyzing your taste...',
+            'Building your profile...',
+            'Almost done...',
         ];
         let i = 0;
         const interval = setInterval(() => {
@@ -166,7 +161,6 @@ export default function OnboardingPage() {
         }, 3800);
     };
 
-    // ── Pantalla de carga ──
     if (loading) {
         return (
             <div className="onboarding-root">
@@ -183,7 +177,7 @@ export default function OnboardingPage() {
         );
     }
 
-    // ── Wizard ──
+
     return (
         <div className="onboarding-root">
             <div className="onboarding-prismatic-bg">
@@ -217,13 +211,13 @@ export default function OnboardingPage() {
                                     className={`year-era-btn ${!yearFilter.enabled ? 'active' : ''}`}
                                     onClick={() => setYearFilter(f => ({ ...f, enabled: false }))}
                                 >
-                                    <i className="fa-solid fa-infinity" /> Cualquier época
+                                    <i className="fa-solid fa-infinity" /> Any era
                                 </button>
                                 <button
                                     className={`year-era-btn ${yearFilter.enabled ? 'active' : ''}`}
                                     onClick={() => setYearFilter(f => ({ ...f, enabled: true }))}
                                 >
-                                    <i className="fa-solid fa-calendar-days" /> Elegir rango
+                                    <i className="fa-solid fa-calendar-days" /> Choose range
                                 </button>
                             </div>
 
@@ -296,7 +290,7 @@ export default function OnboardingPage() {
                 <div className="onboarding-nav">
                     {step > 0 && (
                         <button className="onboarding-btn-back" onClick={() => setStep(s => s - 1)}>
-                            <i className="fa-solid fa-arrow-left" /> Atrás
+                            <i className="fa-solid fa-arrow-left" /> Back
                         </button>
                     )}
                     <button
@@ -304,7 +298,7 @@ export default function OnboardingPage() {
                         onClick={handleNext}
                         disabled={!canContinue()}
                     >
-                        {isLast ? 'Empezar' : 'Siguiente'} <i className={`fa-solid ${isLast ? 'fa-rocket' : 'fa-arrow-right'}`} />
+                        {isLast ? 'Start' : 'Next'} <i className={`fa-solid ${isLast ? 'fa-rocket' : 'fa-arrow-right'}`} />
                     </button>
                 </div>
             </div>

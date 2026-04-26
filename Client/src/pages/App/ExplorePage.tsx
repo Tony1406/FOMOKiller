@@ -3,7 +3,7 @@ import { getCollections, getCollectionGames, searchGames, updateStatus } from '.
 import GameInfoModal from '../../components/modals/GameInfoModal';
 import SwipeView from '../../components/SwipeView';
 import Paginador from '../../components/Paginador';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../auth/AuthContext';
 import './ExplorePage.css';
 import '../../components/Paginador.css';
 
@@ -90,14 +90,14 @@ export default function ExplorePage() {
             <button
                 className={`view-toggle-btn${vista === 'lista' ? ' active' : ''}`}
                 onClick={() => setVista('lista')}
-                title="Vista lista"
+                title="List view"
             >
                 <i className="fa-solid fa-list" />
             </button>
             <button
                 className={`view-toggle-btn${vista === 'cards' ? ' active' : ''}`}
                 onClick={() => setVista('cards')}
-                title="Vista cuadrícula"
+                title="Grid view"
             >
                 <i className="fa-solid fa-grip" />
             </button>
@@ -109,21 +109,21 @@ export default function ExplorePage() {
             <button
                 className={`view-toggle-btn${vista === 'lista' ? ' active' : ''}`}
                 onClick={() => setVista('lista')}
-                title="Vista lista"
+                title="List view"
             >
                 <i className="fa-solid fa-list" />
             </button>
             <button
                 className={`view-toggle-btn${vista === 'cards' ? ' active' : ''}`}
                 onClick={() => setVista('cards')}
-                title="Vista cuadrícula"
+                title="Grid view"
             >
                 <i className="fa-solid fa-grip" />
             </button>
             <button
                 className={`view-toggle-btn${vista === 'swipe' ? ' active' : ''}`}
                 onClick={() => { setVista('swipe'); setSwipeIndex(0); }}
-                title="Vista swipe"
+                title="Swipe view"
             >
                 <i className="fa-solid fa-layer-group" />
             </button>
@@ -147,7 +147,7 @@ export default function ExplorePage() {
                                 {estaEnBacklog && (
                                     <>
                                         <div className="game-card-backlog-overlay" />
-                                        <div className="game-card-backlog-stamp">GUARDADO</div>
+                                        <div className="game-card-backlog-stamp">SAVED</div>
                                     </>
                                 )}
                                 <div className="game-card-gradient" />
@@ -158,7 +158,7 @@ export default function ExplorePage() {
                                         <button
                                             className={`action-btn-completado${estaEnBacklog ? ' action-btn-completado--active' : ''}`}
                                             onClick={(e) => { e.stopPropagation(); handleAddGame(game.id); }}
-                                            title={estaEnBacklog ? 'Quitar del backlog' : 'Añadir al backlog'}
+                                            title={estaEnBacklog ? 'Remove from backlog' : 'Add to backlog'}
                                         >
                                             <i className="fa-solid fa-heart"></i>
                                         </button>
@@ -203,7 +203,6 @@ export default function ExplorePage() {
         );
     };
 
-    // ── Swipe mode for collection ─────────────────
     if (vista === 'swipe' && coleccionSeleccionada !== null) {
         return (
             <div className="page page-enter page-swipe-mode">
@@ -214,7 +213,7 @@ export default function ExplorePage() {
                         </button>
                         <div>
                             <div className="section-title">{coleccionSeleccionada.title}</div>
-                            <div className="section-sub">{coleccionSeleccionada.Games.length} juegos</div>
+                            <div className="section-sub">{coleccionSeleccionada.Games.length} games</div>
                         </div>
                     </div>
                     {collectionToggle}
@@ -245,21 +244,20 @@ export default function ExplorePage() {
                             setTimeout(() => setMostrarToast(false), 1500);
                         }
                     }}
-                    leftLabel="Saltar"
+                    leftLabel="Skip"
                     rightLabel="Backlog"
-                    doneMessage="Has explorado toda la colección"
+                    doneMessage="You've explored the whole collection"
                 />
 
                 {mostrarToast && (
                     <div className="toast-container">
-                        <div className="toast"><i className="fa-solid fa-heart" /> Añadido a tu backlog</div>
+                        <div className="toast"><i className="fa-solid fa-heart" /> Added to your backlog</div>
                     </div>
                 )}
             </div>
         );
     }
 
-    // ── Normal mode ──────────────────────────────
     let vistaPrincipal;
 
     if (buscar.trim().length > 0) {
@@ -267,11 +265,11 @@ export default function ExplorePage() {
             <div className="search-results-container">
                 <div className="search-results-header">
                     <div className="collection-view-toolbar search-results-toolbar">
-                        <div className="section-title">Resultados de búsqueda</div>
+                        <div className="section-title">Search results</div>
                         {searchToggle}
                     </div>
                     <div className="backlog-legend explore-legend">
-                        <div className="backlog-legend-item"><i className="fa-solid fa-heart" /><span>Añadir al backlog</span></div>
+                        <div className="backlog-legend-item"><i className="fa-solid fa-heart" /><span>Add to backlog</span></div>
                     </div>
                 </div>
                 {buscarResultados.length > 0 ? (
@@ -285,7 +283,7 @@ export default function ExplorePage() {
                         />
                     </>
                 ) : (
-                    <div className="section-sub">No hemos encontrado nada para "{buscar}"</div>
+                    <div className="section-sub">No results found for "{buscar}"</div>
                 )}
             </div>
         );
@@ -302,7 +300,7 @@ export default function ExplorePage() {
                         {collectionToggle}
                     </div>
                     <div className="backlog-legend explore-legend">
-                        <div className="backlog-legend-item"><i className="fa-solid fa-heart" /><span>Añadir al backlog</span></div>
+                        <div className="backlog-legend-item"><i className="fa-solid fa-heart" /><span>Add to backlog</span></div>
                     </div>
                 </div>
 
@@ -318,8 +316,8 @@ export default function ExplorePage() {
     } else {
         vistaPrincipal = (
             <div className="collections-container page-enter">
-                <div className="section-title">Explorar</div>
-                <div className="section-sub">Descubre nuevos juegos por categorías</div>
+                <div className="section-title">Explore</div>
+                <div className="section-sub">Discover new games by category</div>
 
                 <div className="collections-grid">
                     {colecciones.map((coleccion) => (
@@ -341,7 +339,7 @@ export default function ExplorePage() {
                 <i className="fa-solid fa-search search-icon"></i>
                 <input
                     type="text"
-                    placeholder="Busca tu próximo juego..."
+                    placeholder="Search your next game..."
                     value={buscar}
                     onChange={(e) => setBuscar(e.target.value)}
                 />
@@ -358,7 +356,7 @@ export default function ExplorePage() {
                 <div className="toast-container">
                     <div className="toast">
                         <i className="fa-solid fa-heart"></i>
-                        Añadido a tu backlog
+                        Added to your backlog
                     </div>
                 </div>
             )}

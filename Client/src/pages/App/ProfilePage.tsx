@@ -1,14 +1,13 @@
 import { useState, useEffect, useContext } from "react";
 import {
   getUserProfile,
-  getBacklog,
   updateUserProfile,
   getPreferences,
   getPriorities,
 } from "../../services/api";
 import EditProfileModal from "../../components/modals/EditProfileModal";
 import ConfirmModal from "../../components/modals/ConfirmModal";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./ProfilePage.css";
 
@@ -65,8 +64,8 @@ export default function ProfilePage() {
     sessionStorage.removeItem('swipe_index_v3');
     showToast(
       next
-        ? 'Modo libre activado — verás todos los juegos en orden aleatorio'
-        : 'Modo "Para ti" activado — recomendaciones basadas en tus preferencias',
+        ? 'Free mode on — you\'ll see all games in random order'
+        : '"For You" mode on — recommendations based on your preferences',
     );
   };
 
@@ -88,7 +87,7 @@ export default function ProfilePage() {
       setUsuario(savedUser);
       setIsEditModalOpen(false);
       setGuardando(false);
-      showToast("Datos actualizados");
+      showToast("Profile updated");
     } catch (error) {
       console.error("Error al guardar perfil:", error);
       setGuardando(false);
@@ -105,11 +104,11 @@ export default function ProfilePage() {
     : "2025";
 
   const WORLD_META: Record<string, { label: string; icon: string }> = {
-    fantasy:   { label: "Fantasía",        icon: "fa-solid fa-hat-wizard" },
-    scifi:     { label: "Ciencia Ficción", icon: "fa-solid fa-rocket" },
-    horror:    { label: "Terror",          icon: "fa-solid fa-skull" },
-    openworld: { label: "Mundo Abierto",   icon: "fa-solid fa-compass" },
-    realism:   { label: "Realismo",        icon: "fa-solid fa-trophy" },
+    fantasy:   { label: "Fantasy",    icon: "fa-solid fa-hat-wizard" },
+    scifi:     { label: "Sci-Fi",     icon: "fa-solid fa-rocket" },
+    horror:    { label: "Horror",     icon: "fa-solid fa-skull" },
+    openworld: { label: "Open World", icon: "fa-solid fa-compass" },
+    realism:   { label: "Realism",    icon: "fa-solid fa-trophy" },
   };
   const worldMeta = prefs?.worldType ? (WORLD_META[prefs.worldType] ?? null) : null;
 
@@ -129,7 +128,7 @@ export default function ProfilePage() {
       <div className="profile-inner">
         {/* Cabecera */}
         <div className="profile-topbar">
-          <h2 className="profile-title">Mi Perfil</h2>
+          <h2 className="profile-title">My Profile</h2>
         </div>
 
         {/* Bento grid */}
@@ -157,14 +156,14 @@ export default function ProfilePage() {
 
             <p className="profile-bio">
               {usuario?.bio ||
-                "Hola, soy un gamer apasionado usando FOMOKiller."}
+                "Hey, I'm a passionate gamer using FOMOKiller."}
             </p>
 
             <div className="profile-identity-tags">
               {worldMeta && (
                 <div className="profile-identity-tag">
                   <span className="profile-identity-label">
-                    Género favorito
+                    Favorite genre
                   </span>
                   <span className="profile-identity-value">
                     {worldMeta.label}
@@ -173,14 +172,14 @@ export default function ProfilePage() {
               )}
               {prefs?.minYear && prefs?.maxYear && (
                 <div className="profile-identity-tag">
-                  <span className="profile-identity-label">Época preferida</span>
+                  <span className="profile-identity-label">Preferred era</span>
                   <span className="profile-identity-value">
                     {prefs.minYear} — {prefs.maxYear}
                   </span>
                 </div>
               )}
               <div className="profile-identity-tag">
-                <span className="profile-identity-label">Jugando ahora</span>
+                <span className="profile-identity-label">Playing now</span>
                 <span className="profile-identity-value">
                   {topGame ?? "..."}
                 </span>
@@ -192,7 +191,7 @@ export default function ProfilePage() {
               onClick={() => setIsEditModalOpen(true)}
             >
               <i className="fa-solid fa-pencil" />{" "}
-              {guardando ? "Guardando..." : "Editar perfil"}
+              {guardando ? "Saving..." : "Edit profile"}
             </button>
           </div>
 
@@ -202,17 +201,17 @@ export default function ProfilePage() {
             <div className="profile-stats-row">
               <div className="glass-card profile-stat-card">
                 <span className="stat-number">{completedCount}</span>
-                <span className="stat-label">Completados</span>
+                <span className="stat-label">Completed</span>
               </div>
               <div className="glass-card profile-stat-card">
                 <span className="stat-number">{joinYear}</span>
-                <span className="stat-label">Miembro desde</span>
+                <span className="stat-label">Member since</span>
               </div>
             </div>
 
             {/* Plataformas */}
             <div className="glass-card profile-platforms-card">
-              <span className="platforms-label">Plataformas</span>
+              <span className="platforms-label">Platforms</span>
               <div className="platforms-icons">
                 {userPlatforms.length > 0 ? (
                   userPlatforms.map((p) => {
@@ -228,7 +227,7 @@ export default function ProfilePage() {
                   })
                 ) : (
                   <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                    Completa el cuestionario
+                    Complete the questionnaire
                   </span>
                 )}
               </div>
@@ -239,14 +238,14 @@ export default function ProfilePage() {
               <div className="glass-card profile-card-actions">
                 <div className="profile-rec-header">
                   <i className="fa-solid fa-wand-magic-sparkles" />
-                  <span>Recomendaciones</span>
+                  <span>Recommendations</span>
                 </div>
                 <div className="profile-rec-row">
                   <div className="profile-rec-info">
-                    <span className="profile-rec-label">Modo libre</span>
+                    <span className="profile-rec-label">Free mode</span>
                     <span className="profile-rec-sub">
-                      Muestra todos los juegos en orden aleatorio. Desactívalo
-                      para ver recomendaciones basadas en tus preferencias.
+                      Shows all games in random order. Disable it to see
+                      recommendations based on your preferences.
                     </span>
                   </div>
                   <button
@@ -264,10 +263,10 @@ export default function ProfilePage() {
                     <i className="fa-solid fa-sliders" />
                     <div className="profile-action-btn-text">
                       <span className="profile-action-btn-label">
-                        Rehacer cuestionario
+                        Redo questionnaire
                       </span>
                       <span className="profile-action-btn-sub">
-                        Cambia tus preferencias.
+                        Change your preferences.
                       </span>
                     </div>
                   </button>
@@ -278,11 +277,11 @@ export default function ProfilePage() {
                     <i className="fa-solid fa-shuffle" />
                     <div className="profile-action-btn-text">
                       <span className="profile-action-btn-label">
-                        Reiniciar mazo
+                        Reset deck
                       </span>
                       <span className="profile-action-btn-sub">
-                        Descarta el mazo actual y carga juegos frescos la
-                        próxima vez que abras Discover.
+                        Discards the current deck and loads fresh games next
+                        time you open Discover.
                       </span>
                     </div>
                   </button>
@@ -296,7 +295,7 @@ export default function ProfilePage() {
                 className="btn-logout"
                 onClick={() => setConfirmLogout(true)}
               >
-                <i className="fa-solid fa-right-from-bracket" /> Cerrar sesión
+                <i className="fa-solid fa-right-from-bracket" /> Log out
               </button>
             </div>
           </div>
@@ -318,17 +317,17 @@ export default function ProfilePage() {
           setConfirmOnboarding(false);
           navigate("/onboarding");
         }}
-        title="¿Rehacer el cuestionario?"
-        description="Tus respuestas actuales se reemplazarán con las nuevas. Las recomendaciones se basarán en el cuestionario actualizado. Tus juegos del backlog no se tocan."
-        confirmLabel="Sí, rehacer"
+        title="Redo the questionnaire?"
+        description="Your current answers will be replaced with new ones. Recommendations will be based on the updated questionnaire. Your backlog games are untouched."
+        confirmLabel="Yes, redo"
       />
 
       <ConfirmModal
         isOpen={confirmLogout}
         onClose={() => setConfirmLogout(false)}
         onConfirm={handleLogout}
-        title="¿Cerrar sesión?"
-        confirmLabel="Cerrar sesión"
+        title="Log out?"
+        confirmLabel="Log out"
         variant="danger"
       />
 

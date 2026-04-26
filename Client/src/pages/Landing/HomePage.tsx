@@ -1,223 +1,447 @@
-import eyeps from '../../assets/eyeps.jpg';
-import fondoPS2 from '../../assets/fondoPS2.png';
-import ps2poster2 from '../../assets/ps2poster2.jpg';
-import swipeIcon from '../../assets/swipe.png';
-import exploreIcon from '../../assets/explorar.png';
-import backlogIcon from '../../assets/backlog.png';
-import top5Icon from '../../assets/top5.png';
-import './HomePage.css';
-import './MissionPage.css';
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import eyeps from "../../assets/eyeps.jpg";
+import fondoPS2 from "../../assets/fondoPS2.png";
+import ps2poster2 from "../../assets/ps2poster2.jpg";
+import "./HomePage.css";
 
-export default function HomePage() { 
-    return (
-        <div className="home-page">
-            {/* ═══ HERO ═══ */}
-            <section className="home-hero-section">
-                {/* Imagen hero – web */}
-                <div className="home-hero-img-wrap home-hero-web">
-                    <img src={fondoPS2} alt="" className="home-hero-img" />
-                    <div className="home-hero-img-overlay"></div>
-                </div>
-                {/* Imagen hero – mobile */}
-                <div className="home-hero-img-wrap home-hero-mobile">
-                    <img src={fondoPS2} alt="" className="home-hero-img" />
-                    <div className="home-hero-img-overlay home-hero-img-overlay-mobile"></div>
-                </div>
+const NAV_SECTIONS = [
+  { id: "hero", icon: "fa-house", label: "Home" },
+  { id: "features", icon: "fa-bolt", label: "Features" },
+  { id: "mission", icon: "fa-crosshairs", label: "Mission" },
+  { id: "audience", icon: "fa-users", label: "For who?" },
+  { id: "research", icon: "fa-chart-bar", label: "Research" },
+  { id: "manifesto", icon: "fa-quote-left", label: "Manifesto" },
+];
 
-                <div className="home-hero">
-                    <div className="home-hero-content">
-                        <h1 className="home-title">
-                            <span className="home-title-line">Mata tu</span>
-                            <span className="home-title-line home-title-accent">
-                                FOMO
-                                <svg className="home-title-underline" viewBox="0 0 300 12" preserveAspectRatio="none">
-                                    <path d="M0 6 Q75 0 150 6 Q225 12 300 6" stroke="currentColor" strokeWidth="3" fill="none" />
-                                </svg>
-                            </span>
-                        </h1>
-                        <p className="home-desc">
-                            Organiza tu backlog, descubre nuevos juegos,
-                            y enfócate en lo que realmente quieres jugar.
-                        </p>
-                        <div className="home-stats">
-                            <div className="home-stat">
-                                <span className="home-stat-num">Organiza</span>
-                                <span className="home-stat-label">tu backlog</span>
-                            </div>
-                            <div className="home-stat-divider"></div>
-                            <div className="home-stat">
-                                <span className="home-stat-num">Descubre</span>
-                                <span className="home-stat-label">Nuevos Juegos</span>
-                            </div>
-                            <div className="home-stat-divider"></div>
-                            <div className="home-stat">
-                                <span className="home-stat-num">Prioriza</span>
-                                <span className="home-stat-label">lo que importa</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+function LandingSidenav() {
+  const [active, setActive] = useState("hero");
 
-            {/* ═══ FEATURES ═══ */}
-            <section className="home-features">
-                <div className="home-section-inner">
-                    <div className="section-tag">CARACTERÍSTICAS</div>
-                    <h2 className="land-section-title">
-                        Todo lo que <span className="text-glow">necesitas</span>
-                    </h2>
-                    <p className="land-section-desc">
-                        Cada herramienta está diseñada para ayudarte a gestionar tu backlog
-                        y descubrir juegos.
-                    </p>
+  useEffect(() => {
+    const scroller = document.querySelector(
+      ".landing-root",
+    ) as HTMLElement | null;
+    if (!scroller) return;
 
-                    <div className="home-features-wrapper">
-                        <div className="home-features-poster">
-                            <img src={eyeps} alt="PS2 Poster" className="ps2-poster-img" />
-                            <div className="poster-glow"></div>
-                        </div>
+    const onScroll = () => {
+      const mid = scroller.scrollTop + scroller.clientHeight / 2;
+      let closest = NAV_SECTIONS[0].id;
+      let minDist = Infinity;
+      NAV_SECTIONS.forEach(({ id }) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const absTop = el.getBoundingClientRect().top + scroller.scrollTop;
+        const center = absTop + el.offsetHeight / 2;
+        const dist = Math.abs(center - mid);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = id;
+        }
+      });
+      setActive(closest);
+    };
 
-                        <div className="home-features-content">
-                            <div className="home-feat-grid">
-                                <div className="home-feat-card">
-                                    <div className="home-feat-icon home-feat-icon-cyan">
-                                        <i className="fa-solid fa-hand-pointer" />
-                                    </div>
-                                    <div className="home-feat-info">
-                                        <h3>Swipe & Discover</h3>
-                                        <p>Desliza para descubrir juegos. Like = agregar a tu backlog. Pass = siguiente.</p>
-                                    </div>
-                                </div>
-                                <div className="home-feat-card">
-                                    <div className="home-feat-icon home-feat-icon-purple">
-                                        <i className="fa-solid fa-compass" />
-                                    </div>
-                                    <div className="home-feat-info">
-                                        <h3>Explorar</h3>
-                                        <p>Colecciones curadas por género, época y temática.</p>
-                                    </div>
-                                </div>
-                                <div className="home-feat-card">
-                                    <div className="home-feat-icon home-feat-icon-green">
-                                        <i className="fa-solid fa-list-check" />
-                                    </div>
-                                    <div className="home-feat-info">
-                                        <h3>Backlog</h3>
-                                        <p>Tu lista de juegos pendientes.</p>
-                                    </div>
-                                </div>
-                                <div className="home-feat-card">
-                                    <div className="home-feat-icon home-feat-icon-orange">
-                                        <i className="fa-solid fa-trophy" />
-                                    </div>
-                                    <div className="home-feat-info">
-                                        <h3>Top 5</h3>
-                                        <p>Solo 5 slots. Prioriza tus juegos.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+    scroller.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => scroller.removeEventListener("scroll", onScroll);
+  }, []);
 
-            {/* ═══ MISIÓN ═══ */}
-            <section className="mission-page">
-                <div className="mission-header">
-                    <div className="section-tag">NUESTRA MISIÓN</div>
-                    <h2 className="land-section-title">
-                        Juega lo que <span className="text-glow">importa</span>
-                    </h2>
-                    <p className="land-section-desc">
-                        En un mundo con miles de lanzamientos cada año, el FOMO gamer es real.
-                        FOMOKiller te ayuda a filtrar el ruido y centrarte en los juegos que realmente merece la pena jugar.
-                    </p>
-                </div>
+  const scrollTo = (id: string) => {
+    const scroller = document.querySelector(
+      ".landing-root",
+    ) as HTMLElement | null;
+    const el = document.getElementById(id);
+    if (!scroller || !el) return;
+    const absTop = el.getBoundingClientRect().top + scroller.scrollTop;
+    scroller.scrollTo({ top: absTop, behavior: "smooth" });
+  };
 
-                <div className="mission-values-wrapper">
-                    <div className="mission-values">
-                        <div className="mission-card">
-                            <div className="mission-card-icon"><i className="fa-solid fa-crosshairs"></i></div>
-                            <div className="mission-card-info">
-                                <h3>Enfoque</h3>
-                                <p>Prioriza tus juegos para no perderte entre 100 títulos a medio empezar. Con nuestro sistema Top 5, solo juegas lo que realmente te importa.</p>
-                            </div>
-                        </div>
-                        <div className="mission-card">
-                            <div className="mission-card-icon"><i className="fa-solid fa-trophy"></i></div>
-                            <div className="mission-card-info">
-                                <h3>Logros</h3>
-                                <p>Marca juegos como completados y celebra tu progreso. Cada juego terminado es una victoria contra el FOMO.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="mission-poster">
-                        <img src={ps2poster2} alt="" className="mission-poster-img" />
-                    </div>
-                </div>
+  return (
+    <nav className="home-sidenav">
+      {NAV_SECTIONS.map(({ id, icon, label }) => (
+        <button
+          key={id}
+          className={`home-sidenav-item${active === id ? " active" : ""}`}
+          onClick={() => scrollTo(id)}
+          title={label}
+        >
+          <i className={`fa-solid ${icon}`} />
+          <span className="home-sidenav-label">{label}</span>
+        </button>
+      ))}
+    </nav>
+  );
+}
 
-                <section className="mission-audience">
-                    <div className="section-tag">¿PARA QUIÉN ES FOMOKILLER?</div>
-                    <h2 className="land-section-title">Creado para:</h2>
-                    <div className="audience-grid">
-                        <div className="audience-card">
-                            <div className="mission-card-icon"><i className="fa-solid fa-cubes"></i></div>
-                            <h3>El Acumulador</h3>
-                            <p>Tienes 200 juegos en Steam y no sabes por cuál empezar. Los descuentos llenan tu biblioteca pero nunca juegas a nada.</p>
-                        </div>
-                        <div className="audience-card">
-                            <div className="mission-card-icon"><i className="fa-solid fa-clock"></i></div>
-                            <h3>El Ocupado</h3>
-                            <p>Tienes poco tiempo para jugar y no quieres perderlo eligiendo. Necesitas un filtro rápido y eficaz.</p>
-                        </div>
-                        <div className="audience-card">
-                            <div className="mission-card-icon"><i className="fa-solid fa-medal"></i></div>
-                            <h3>El Completista</h3>
-                            <p>Quieres terminar lo que empiezas antes de comprar otro juego. El Top 5 es tu herramienta perfecta.</p>
-                        </div>
-                    </div>
-                </section>
+function AnimatedCounter({ to, suffix = "" }: { to: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
 
-                <section className="mission-research">
-                    <div className="section-tag">INVESTIGACIÓN Y DATOS</div>
-                    <h2 className="land-section-title">El impacto del <span className="text-glow">"Pile of Shame"</span></h2>
-                    <div className="research-grid">
-                        <div className="research-item">
-                            <div className="research-value">$19B</div>
-                            <div className="research-label">Inversión Perdida</div>
-                            <p>Se estima que los usuarios de Steam han gastado más de 19 mil millones de dólares en juegos que nunca se han ejecutado ni una sola vez.</p>
-                        </div>
-                        <div className="research-item">
-                            <div className="research-value">51%</div>
-                            <div className="research-label">Bibliotecas Intactas</div>
-                            <p>Más de la mitad de los juegos en la biblioteca del jugador promedio permanecen sin jugar debido a la fatiga de decisión.</p>
-                        </div>
-                        <div className="research-item">
-                            <div className="research-value">25%</div>
-                            <div className="research-label">Abandono Total</div>
-                            <p>Uno de cada cuatro juegos comprados digitalmente jamás llega a iniciarse, víctimas de compras impulsivas y ofertas masivas.</p>
-                        </div>
-                    </div>
-                    <div className="research-source">
-                        <p>* Datos basados en análisis de cuentas públicas de Steam y estudios de consumo digital (2024).</p>
-                    </div>
-                </section>
-
-                <div className="mission-manifesto">
-                    <div className="manifesto-card">
-                        <h2><i className="fa-solid fa-quote-left"></i></h2>
-                        <p className="manifesto-text">
-                            No necesitas jugar todos los juegos. Necesitas jugar <strong>los juegos correctos</strong>.
-                            FOMOKiller existe para que dejes de acumular y empieces a disfrutar.
-                        </p>
-                        <div className="manifesto-values-list">
-                            <div className="manifesto-value"><span className="manifesto-icon">✦</span>Simplicidad</div>
-                            <div className="manifesto-value"><span className="manifesto-icon">✦</span>Enfoque</div>
-                            <div className="manifesto-value"><span className="manifesto-icon">✦</span>Disfrute</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        const duration = 1600;
+        const step = (ts: number, t0: number) => {
+          const p = Math.min((ts - t0) / duration, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          setCount(Math.floor(eased * to));
+          if (p < 1) requestAnimationFrame((t) => step(t, t0));
+        };
+        requestAnimationFrame((t) => step(t, t));
+      },
+      { threshold: 0.5 },
     );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [to]);
+
+  return (
+    <span ref={ref}>
+      {count}
+      {suffix}
+    </span>
+  );
+}
+
+function useScrollReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll("[data-reveal]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("visible");
+            observer.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12 },
+    );
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+}
+
+export default function HomePage() {
+  useScrollReveal();
+  return (
+    <div className="home-page">
+      <LandingSidenav />
+
+      <section id="hero" className="home-hero-section">
+        <div className="home-hero-img-wrap home-hero-web">
+          <img src={fondoPS2} alt="" className="home-hero-img" />
+          <div className="home-hero-img-overlay"></div>
+        </div>
+        <div className="home-hero-img-wrap home-hero-mobile">
+          <img src={fondoPS2} alt="" className="home-hero-img" />
+          <div className="home-hero-img-overlay home-hero-img-overlay-mobile"></div>
+        </div>
+        <div className="home-hero">
+          <div className="home-hero-content" data-reveal>
+            <h1 className="home-title">
+              <span className="home-title-line">Kill your</span>
+              <span
+                className="home-title-line home-title-accent text-glitch text-glitch-gradient"
+                data-text="FOMO"
+              >
+                FOMO
+                <svg
+                  className="home-title-underline"
+                  viewBox="0 0 300 12"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M0 6 Q75 0 150 6 Q225 12 300 6"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    fill="none"
+                  />
+                </svg>
+              </span>
+            </h1>
+            <p className="home-desc">
+              Organize your backlog, discover new games, and focus on what you
+              really want to play.
+            </p>
+            <div className="home-hero-cta">
+              <Link
+                to="/descarga"
+                className="land-btn land-btn-primary home-hero-btn"
+              >
+                <span className="text-glitch" data-text="Get Started">
+                  Get Started
+                </span>{" "}
+                <i className="fa-solid fa-arrow-right" />
+              </Link>
+            </div>
+            <div className="home-stats">
+              <div className="home-stat">
+                <span className="home-stat-num">Organize</span>
+                <span className="home-stat-label">your backlog</span>
+              </div>
+              <div className="home-stat-divider"></div>
+              <div className="home-stat">
+                <span className="home-stat-num">Discover</span>
+                <span className="home-stat-label">New Games</span>
+              </div>
+              <div className="home-stat-divider"></div>
+              <div className="home-stat">
+                <span className="home-stat-num">Prioritize</span>
+                <span className="home-stat-label">what matters</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" className="home-features">
+        <div className="home-section-inner">
+          <div className="section-tag">FEATURES</div>
+          <h2 className="land-section-title">
+            Everything you{" "}
+            <span className="text-glow text-glitch" data-text="need">
+              need
+            </span>
+          </h2>
+          <p className="land-section-desc">
+            Every tool is designed to help you manage your backlog and discover
+            games.
+          </p>
+
+          <div className="home-features-wrapper" data-reveal>
+            <div className="home-features-poster">
+              <img src={eyeps} alt="PS2 Poster" className="ps2-poster-img" />
+              <div className="poster-glow"></div>
+            </div>
+
+            <div className="home-features-content">
+              <div className="home-feat-grid">
+                <div className="home-feat-card">
+                  <div className="home-feat-icon home-feat-icon-cyan">
+                    <i className="fa-solid fa-hand-pointer" />
+                  </div>
+                  <div className="home-feat-info">
+                    <h3>Swipe & Discover</h3>
+                    <p>
+                      Swipe to discover games. Like = add to your backlog. Pass
+                      = next.
+                    </p>
+                  </div>
+                </div>
+                <div className="home-feat-card">
+                  <div className="home-feat-icon home-feat-icon-purple">
+                    <i className="fa-solid fa-compass" />
+                  </div>
+                  <div className="home-feat-info">
+                    <h3>Explore</h3>
+                    <p>Collections curated by genre, era and theme.</p>
+                  </div>
+                </div>
+                <div className="home-feat-card">
+                  <div className="home-feat-icon home-feat-icon-green">
+                    <i className="fa-solid fa-list-check" />
+                  </div>
+                  <div className="home-feat-info">
+                    <h3>Backlog</h3>
+                    <p>Your list of pending games.</p>
+                  </div>
+                </div>
+                <div className="home-feat-card">
+                  <div className="home-feat-icon home-feat-icon-orange">
+                    <i className="fa-solid fa-trophy" />
+                  </div>
+                  <div className="home-feat-info">
+                    <h3>Top 5</h3>
+                    <p>Only 5 slots. Prioritize your games.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ MISSION ═══ */}
+      <section id="mission" className="mission-section">
+        <div className="mission-inner">
+          <div className="mission-header">
+            <div className="section-tag">OUR MISSION</div>
+            <h2 className="land-section-title">
+              Play what{" "}
+              <span className="text-glow text-glitch" data-text="matters">
+                matters
+              </span>
+            </h2>
+            <p className="land-section-desc">
+              In a world with thousands of releases every year, gamer FOMO is
+              real. FOMOKiller helps you filter the noise and focus on the games
+              truly worth playing.
+            </p>
+          </div>
+
+          <div className="mission-values-wrapper" data-reveal>
+            <div className="mission-values">
+              <div className="mission-card">
+                <div className="mission-card-icon">
+                  <i className="fa-solid fa-crosshairs"></i>
+                </div>
+                <div className="mission-card-info">
+                  <h3>Focus</h3>
+                  <p>
+                    Prioritize your games so you don't get lost among 100
+                    half-started titles. With our Top 5 system, you only play
+                    what truly matters to you.
+                  </p>
+                </div>
+              </div>
+              <div className="mission-card">
+                <div className="mission-card-icon">
+                  <i className="fa-solid fa-trophy"></i>
+                </div>
+                <div className="mission-card-info">
+                  <h3>Achievements</h3>
+                  <p>
+                    Mark games as completed and celebrate your progress. Every
+                    finished game is a win against FOMO.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="mission-poster">
+              <img src={ps2poster2} alt="" className="mission-poster-img" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ AUDIENCE ═══ */}
+      <section id="audience" className="audience-section">
+        <div className="mission-inner">
+          <div className="section-tag">WHO IS FOMOKILLER FOR?</div>
+          <h2 className="land-section-title">
+            <span className="text-glitch" data-text="Made for:">
+              Made for:
+            </span>
+          </h2>
+          <div className="audience-grid" data-reveal>
+            <div className="audience-card">
+              <div className="mission-card-icon">
+                <i className="fa-solid fa-cubes"></i>
+              </div>
+              <h3>The Hoarder</h3>
+              <p>
+                You have 200 games on Steam and don't know where to start. Deals
+                fill your library but you never play anything.
+              </p>
+            </div>
+            <div className="audience-card">
+              <div className="mission-card-icon">
+                <i className="fa-solid fa-clock"></i>
+              </div>
+              <h3>The Busy One</h3>
+              <p>
+                You have little time to play and don't want to waste it
+                choosing. You need a quick, effective filter.
+              </p>
+            </div>
+            <div className="audience-card">
+              <div className="mission-card-icon">
+                <i className="fa-solid fa-medal"></i>
+              </div>
+              <h3>The Completionist</h3>
+              <p>
+                You want to finish what you start before buying another game.
+                Top 5 is your perfect tool.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ RESEARCH ═══ */}
+      <section id="research" className="research-section">
+        <div className="mission-inner">
+          <div className="section-tag">RESEARCH & DATA</div>
+          <h2 className="land-section-title">
+            The impact of the{" "}
+            <span className="text-glow text-glitch" data-text='"Pile of Shame"'>
+              "Pile of Shame"
+            </span>
+          </h2>
+          <div className="research-grid" data-reveal>
+            <div className="research-item">
+              <div className="research-value">
+                $<AnimatedCounter to={19} />B
+              </div>
+              <div className="research-label">Lost Investment</div>
+              <p>
+                Steam users are estimated to have spent over 19 billion dollars
+                on games that were never launched even once.
+              </p>
+            </div>
+            <div className="research-item">
+              <div className="research-value">
+                <AnimatedCounter to={51} suffix="%" />
+              </div>
+              <div className="research-label">Untouched Libraries</div>
+              <p>
+                Over half the games in the average player's library remain
+                unplayed due to decision fatigue.
+              </p>
+            </div>
+            <div className="research-item">
+              <div className="research-value">
+                <AnimatedCounter to={25} suffix="%" />
+              </div>
+              <div className="research-label">Total Abandonment</div>
+              <p>
+                One in four digitally purchased games is never launched, victims
+                of impulse buying and massive sales.
+              </p>
+            </div>
+          </div>
+          <div className="research-source">
+            <p>
+              * Data based on analysis of public Steam accounts and digital
+              consumption studies (2024).
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ MANIFESTO ═══ */}
+      <section id="manifesto" className="manifesto-section">
+        <div className="mission-inner">
+          <div className="manifesto-card" data-reveal>
+            <h2>
+              <i className="fa-solid fa-quote-left"></i>
+            </h2>
+            <p className="manifesto-text">
+              You don't need to play every game. You need to play{" "}
+              <strong className="text-glitch" data-text="the right games">
+                the right games
+              </strong>
+              . FOMOKiller exists so you stop hoarding and start enjoying.
+            </p>
+            <div className="manifesto-values-list">
+              <div className="manifesto-value">
+                <span className="manifesto-icon">✦</span>Simplicity
+              </div>
+              <div className="manifesto-value">
+                <span className="manifesto-icon">✦</span>Focus
+              </div>
+              <div className="manifesto-value">
+                <span className="manifesto-icon">✦</span>Enjoyment
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }

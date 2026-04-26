@@ -160,7 +160,7 @@ export const markFinished = async (req: Request, res: Response) => {
         });
 
         if (updated) {
-            res.status(200).json({ message: isFinished ? "¡Juego completado! 🎉" : "Juego vuelto a pendientes" });
+            res.status(200).json({ message: isFinished ? "¡Juego completado!" : "Juego vuelto a pendientes" });
         } else {
             res.status(404).json({ message: "Relación no encontrada" });
         }
