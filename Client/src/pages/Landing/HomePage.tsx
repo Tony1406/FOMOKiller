@@ -207,7 +207,6 @@ export default function HomePage() {
       </section>
       <section id="features" className="home-features">
         <div className="home-section-inner">
-          <div className="section-tag">FEATURES</div>
           <h2 className="land-section-title">
             Everything you{" "}
             <span className="text-glow text-glitch" data-text="need">
@@ -270,7 +269,6 @@ export default function HomePage() {
       <section id="mission" className="mission-section">
         <div className="mission-inner">
           <div className="mission-header">
-            <div className="section-tag">OUR MISSION</div>
             <h2 className="land-section-title">
               Play what{" "}
               <span className="text-glow text-glitch" data-text="matters">
@@ -316,7 +314,6 @@ export default function HomePage() {
       {/* ═══ AUDIENCE ═══ */}
       <section id="audience" className="audience-section">
         <div className="mission-inner">
-          <div className="section-tag">WHO IS FOMOKILLER FOR?</div>
           <h2 className="land-section-title">
             <span className="text-glitch" data-text="Made for:">
               Made for:
@@ -359,7 +356,6 @@ export default function HomePage() {
       {/* ═══ RESEARCH ═══ */}
       <section id="research" className="research-section">
         <div className="mission-inner">
-          <div className="section-tag">RESEARCH & DATA</div>
           <h2 className="land-section-title research-title-center">
             The impact of the{" "}
             <span className="text-glow text-glitch" data-text='"Pile of Shame"'>

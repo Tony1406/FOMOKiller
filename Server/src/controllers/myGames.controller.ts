@@ -23,7 +23,8 @@ export const getBacklog = async (req: Request, res: Response) => {
                     ]
                 }
             },
-            include: [{ model: Game, include: [{ model: Genre }, { model: Platform }] }]
+            include: [{ model: Game, include: [{ model: Genre }, { model: Platform }] }],
+            order: [['createdAt', 'DESC']]
         });
         res.status(200).json(backlog);
     } catch (error) {
