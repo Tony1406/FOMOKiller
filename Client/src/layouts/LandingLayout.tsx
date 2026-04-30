@@ -8,7 +8,8 @@ export default function LandingLayout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    window.scrollTo({ top: 0 });
+    const root = document.querySelector('.landing-root') as HTMLElement | null;
+    if (root) root.scrollTop = 0;
     setIsMenuOpen(false);
   }, [location.pathname]);
 

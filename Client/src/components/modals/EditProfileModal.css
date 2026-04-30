@@ -100,6 +100,49 @@
     gap: 8px;
 }
 
+.ep-avatar-wrap {
+    position: relative;
+}
+
+.ep-avatar-uploading {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+}
+
+.ep-upload-btn {
+    align-self: flex-start;
+    background: var(--cobalt);
+    border: 1px solid var(--cobalt);
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--t-fast);
+}
+
+.ep-upload-btn:hover:not(:disabled) {
+    background: var(--cobalt-light);
+    border-color: var(--cobalt-light);
+}
+
+.ep-upload-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .ep-random-btn {
     align-self: flex-start;
     background: transparent;
@@ -117,9 +160,14 @@
     transition: all var(--t-fast);
 }
 
-.ep-random-btn:hover {
+.ep-random-btn:hover:not(:disabled) {
     border-color: var(--cobalt);
     color: var(--text-primary);
+}
+
+.ep-random-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 /* ── Fields ──────────────────────────────────── */

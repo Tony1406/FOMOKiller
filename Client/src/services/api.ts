@@ -147,10 +147,33 @@ export const getPriorities = async (userId: number) => {
     return data;
 };
 
+export const uploadImage = async (file: File): Promise<string | null> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${URL}/upload`, { method: 'POST', credentials: 'include', body: formData });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.url ?? null;
+};
+
 export const getGameDetails = async (slug: string) => {
     const response = await fetch(`${URL}/rawg/${slug}`, { credentials: 'include' });
     const data = await response.json();
     return data;
+};
+
+export const getGameTrailer = async (slug: string): Promise<string | null> => {
+    const response = await fetch(`${URL}/rawg/${slug}/trailer`, { credentials: 'include' });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data.trailerUrl ?? null;
+};
+
+export const getGameplayVideo = async (slug: string): Promise<string | null> => {
+    const response = await fetch(`${URL}/rawg/${slug}/gameplay`, { credentials: 'include' });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data.gameplayUrl ?? null;
 };
 
 export const reorderPriorities = async (userId: number, order: { gameId: number; priorityOrder: number }[]) => {

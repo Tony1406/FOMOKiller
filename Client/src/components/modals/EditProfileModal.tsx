@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { uploadImage } from '../../services/api';
 import './EditProfileModal.css';
 
 interface User {
@@ -18,7 +19,9 @@ const AVATAR_SEEDS = ['Felix', 'Milo', 'Luna', 'Nova', 'Sage', 'Zara', 'Ash', 'R
 
 export default function EditProfileModal({ user, isOpen, onClose, onSave }: EditProfileModalProps) {
     const [formData, setFormData] = useState({ username: '', bio: '', avatarUrl: '' });
-    const [imgError, setImgError] = useState(false);
+    const [previewSrc, setPreviewSrc] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -33,12 +36,9 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
 
     useEffect(() => {
         if (user && isOpen) {
-            setFormData({
-                username: user.username || '',
-                bio: user.bio || '',
-                avatarUrl: user.avatarUrl || '',
-            });
-            setImgError(false);
+            setFormData({ username: user.username || '', bio: user.bio || '', avatarUrl: user.avatarUrl || '' });
+            setPreviewSrc(null);
+            setUploading(false);
         }
     }, [user, isOpen]);
 
@@ -47,7 +47,23 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
-        if (name === 'avatarUrl') setImgError(false);
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setPreviewSrc(URL.createObjectURL(file));
+        setUploading(true);
+        const url = await uploadImage(file);
+        setUploading(false);
+        if (url) setFormData(prev => ({ ...prev, avatarUrl: url }));
+    };
+
+    const handleRandomAvatar = () => {
+        const seed = AVATAR_SEEDS[Math.floor(Math.random() * AVATAR_SEEDS.length)];
+        const url = `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}`;
+        setPreviewSrc(null);
+        setFormData(prev => ({ ...prev, avatarUrl: url }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -55,15 +71,7 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
         onSave(formData);
     };
 
-    const avatarSrc = !imgError && formData.avatarUrl
-        ? formData.avatarUrl
-        : `https://api.dicebear.com/9.x/avataaars/svg?seed=${user.username || 'Felix'}`;
-
-    const handleRandomAvatar = () => {
-        const seed = AVATAR_SEEDS[Math.floor(Math.random() * AVATAR_SEEDS.length)];
-        setFormData(prev => ({ ...prev, avatarUrl: `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}` }));
-        setImgError(false);
-    };
+    const avatarSrc = previewSrc || formData.avatarUrl || `https://api.dicebear.com/9.x/avataaars/svg?seed=${user.username || 'Felix'}`;
 
     return (
         <div className="ep-overlay" onClick={onClose}>
@@ -79,26 +87,31 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
 
                     <div className="ep-avatar-section">
                         <div className="ep-avatar-wrap">
-                            <img
-                                src={avatarSrc}
-                                alt="Avatar"
-                                className="ep-avatar-img"
-                                onError={() => setImgError(true)}
-                            />
+                            <img src={avatarSrc} alt="Avatar" className="ep-avatar-img" />
+                            {uploading && (
+                                <div className="ep-avatar-uploading">
+                                    <i className="fa-solid fa-spinner fa-spin" />
+                                </div>
+                            )}
                         </div>
                         <div className="ep-avatar-fields">
-                            <div className="ep-field">
-                                <label htmlFor="avatarUrl">Photo URL</label>
-                                <input
-                                    type="text"
-                                    id="avatarUrl"
-                                    name="avatarUrl"
-                                    value={formData.avatarUrl}
-                                    onChange={handleChange}
-                                    placeholder="https://..."
-                                />
-                            </div>
-                            <button type="button" className="ep-random-btn" onClick={handleRandomAvatar}>
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                onChange={handleFileChange}
+                            />
+                            <button
+                                type="button"
+                                className="ep-upload-btn"
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={uploading}
+                            >
+                                <i className="fa-solid fa-upload" />
+                                {uploading ? 'Uploading...' : 'Upload photo'}
+                            </button>
+                            <button type="button" className="ep-random-btn" onClick={handleRandomAvatar} disabled={uploading}>
                                 <i className="fa-solid fa-shuffle" /> Random avatar
                             </button>
                         </div>
@@ -132,7 +145,7 @@ export default function EditProfileModal({ user, isOpen, onClose, onSave }: Edit
 
                     <div className="ep-actions">
                         <button type="button" className="ep-btn-cancel" onClick={onClose}>Cancel</button>
-                        <button type="submit" className="ep-btn-save">Save changes</button>
+                        <button type="submit" className="ep-btn-save" disabled={uploading}>Save changes</button>
                     </div>
                 </form>
             </div>

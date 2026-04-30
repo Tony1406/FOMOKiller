@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getGameDetails } from '../../services/api';
+import { getGameDetails, getGameTrailer, getGameplayVideo } from '../../services/api';
 import './GameInfoModal.css';
 
 interface Game {
@@ -34,18 +34,32 @@ interface GameInfoModalProps {
 export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalProps) {
     const [details, setDetails] = useState<RawgDetails | null>(null);
     const [loadingDetails, setLoadingDetails] = useState(false);
+    const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
+    const [trailerOpen, setTrailerOpen] = useState(false);
+    const [gameplayUrl, setGameplayUrl] = useState<string | null>(null);
+    const [gameplayOpen, setGameplayOpen] = useState(false);
     const [slideIndex, setSlideIndex] = useState(0);
     const [descExpanded, setDescExpanded] = useState(false);
 
     useEffect(() => {
         if (!isOpen || !game?.rawgSlug) return;
         setDetails(null);
+        setTrailerUrl(null);
+        setTrailerOpen(false);
+        setGameplayUrl(null);
+        setGameplayOpen(false);
         setSlideIndex(0);
         setDescExpanded(false);
         setLoadingDetails(true);
-        getGameDetails(game.rawgSlug)
-            .then(data => setDetails(data))
-            .finally(() => setLoadingDetails(false));
+        Promise.all([
+            getGameDetails(game.rawgSlug),
+            getGameTrailer(game.rawgSlug),
+            getGameplayVideo(game.rawgSlug),
+        ]).then(([detailData, trailer, gameplay]) => {
+            setDetails(detailData);
+            setTrailerUrl(trailer);
+            setGameplayUrl(gameplay);
+        }).finally(() => setLoadingDetails(false));
     }, [isOpen, game?.rawgSlug]);
 
     useEffect(() => {
@@ -87,7 +101,7 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content has-image" onClick={e => e.stopPropagation()}>
+            <div className="modal-content game-info-modal has-image" onClick={e => e.stopPropagation()}>
                 <button className="modal-close-btn" onClick={onClose}>✕</button>
 
                 <div className="modal-carousel">
@@ -122,6 +136,7 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
                     )}
                 </div>
 
+                <div className="modal-right-col">
                 <div className="modal-body">
                     <div className="modal-title-block">
                         <h2 className="modal-title">{game.title}</h2>
@@ -181,18 +196,49 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
                         </div>
                     )}
 
-                    {details?.trailer && (
+                    {trailerUrl && (
                         <div className="modal-trailer-block">
-                            <div className="modal-section-title">
-                                <i className="fa-solid fa-clapperboard" />
-                                Trailer
-                            </div>
-                            <video
-                                src={details.trailer}
-                                controls
-                                className="modal-trailer-video"
-                                poster={game.imageUrl}
-                            />
+                            <button
+                                className={`modal-trailer-toggle ${trailerOpen ? 'open' : ''}`}
+                                onClick={() => setTrailerOpen(v => !v)}
+                            >
+                                <i className={`fa-solid ${trailerOpen ? 'fa-chevron-up' : 'fa-play'}`} />
+                                {trailerOpen ? 'Hide trailer' : 'Watch Trailer'}
+                            </button>
+                            {trailerOpen && (
+                                <div className="modal-trailer-wrapper">
+                                    <iframe
+                                        className="modal-trailer-iframe"
+                                        src={`https://www.youtube.com/embed/${trailerUrl.split('v=')[1]?.split('&')[0]}?rel=0&autoplay=1`}
+                                        title={`${game.title} trailer`}
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {gameplayUrl && (
+                        <div className="modal-trailer-block">
+                            <button
+                                className={`modal-trailer-toggle ${gameplayOpen ? 'open' : ''}`}
+                                onClick={() => setGameplayOpen(v => !v)}
+                            >
+                                <i className={`fa-solid ${gameplayOpen ? 'fa-chevron-up' : 'fa-play'}`} />
+                                {gameplayOpen ? 'Hide gameplay' : 'Watch Gameplay'}
+                            </button>
+                            {gameplayOpen && (
+                                <div className="modal-trailer-wrapper">
+                                    <iframe
+                                        className="modal-trailer-iframe"
+                                        src={`https://www.youtube.com/embed/${gameplayUrl.split('v=')[1]?.split('&')[0]}?rel=0&autoplay=1`}
+                                        title={`${game.title} gameplay`}
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                    />
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -211,6 +257,7 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
 
                 <div className="modal-footer">
                     <button className="btn-primary" onClick={onClose}>Close</button>
+                </div>
                 </div>
             </div>
         </div>

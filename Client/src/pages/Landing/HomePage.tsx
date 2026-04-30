@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import eyeps from "../../assets/eyeps.jpg";
 import fondoPS2 from "../../assets/fondoPS2.png";
 import ps2poster2 from "../../assets/ps2poster2.jpg";
+import ColorBends from "../../components/backgrounds/ColorBends";
 import "./HomePage.css";
 
 const NAV_SECTIONS = [
@@ -130,8 +131,17 @@ export default function HomePage() {
   useScrollReveal();
   return (
     <div className="home-page">
+      <ColorBends
+        colors={["#0b00ff", "#0b00ff", "#0b00ff"]}
+        rotation={95}
+        speed={0.7}
+        bandWidth={7}
+        intensity={1.5}
+        noise={0}
+        iterations={1}
+        transparent={false}
+      />{" "}
       <LandingSidenav />
-
       <section id="hero" className="home-hero-section">
         <div className="home-hero-img-wrap home-hero-web">
           <img src={fondoPS2} alt="" className="home-hero-img" />
@@ -173,10 +183,7 @@ export default function HomePage() {
                 to="/descarga"
                 className="land-btn land-btn-primary home-hero-btn"
               >
-                <span className="text-glitch" data-text="Get Started">
-                  Get Started
-                </span>{" "}
-                <i className="fa-solid fa-arrow-right" />
+                Get Started <i className="fa-solid fa-arrow-right" />
               </Link>
             </div>
             <div className="home-stats">
@@ -198,7 +205,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       <section id="features" className="home-features">
         <div className="home-section-inner">
           <div className="section-tag">FEATURES</div>
@@ -208,17 +214,12 @@ export default function HomePage() {
               need
             </span>
           </h2>
-          <p className="land-section-desc">
-            Every tool is designed to help you manage your backlog and discover
-            games.
-          </p>
 
           <div className="home-features-wrapper" data-reveal>
             <div className="home-features-poster">
-              <img src={eyeps} alt="PS2 Poster" className="ps2-poster-img" />
+              <img src={eyeps} alt="" className="ps2-poster-img" />
               <div className="poster-glow"></div>
             </div>
-
             <div className="home-features-content">
               <div className="home-feat-grid">
                 <div className="home-feat-card">
@@ -265,7 +266,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       {/* ═══ MISSION ═══ */}
       <section id="mission" className="mission-section">
         <div className="mission-inner">
@@ -277,11 +277,6 @@ export default function HomePage() {
                 matters
               </span>
             </h2>
-            <p className="land-section-desc">
-              In a world with thousands of releases every year, gamer FOMO is
-              real. FOMOKiller helps you filter the noise and focus on the games
-              truly worth playing.
-            </p>
           </div>
 
           <div className="mission-values-wrapper" data-reveal>
@@ -318,7 +313,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       {/* ═══ AUDIENCE ═══ */}
       <section id="audience" className="audience-section">
         <div className="mission-inner">
@@ -362,12 +356,11 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       {/* ═══ RESEARCH ═══ */}
       <section id="research" className="research-section">
         <div className="mission-inner">
           <div className="section-tag">RESEARCH & DATA</div>
-          <h2 className="land-section-title">
+          <h2 className="land-section-title research-title-center">
             The impact of the{" "}
             <span className="text-glow text-glitch" data-text='"Pile of Shame"'>
               "Pile of Shame"
@@ -413,7 +406,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       {/* ═══ MANIFESTO ═══ */}
       <section id="manifesto" className="manifesto-section">
         <div className="mission-inner">

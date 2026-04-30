@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
     adminGetCollections, adminCreateCollection, adminUpdateCollection, adminDeleteCollection,
     adminGetCollectionGames, adminAddGameToCollection, adminRemoveGameFromCollection,
-    adminGetGames,
+    adminGetGames, uploadImage,
 } from '../../services/api';
 import ConfirmModal from '../../components/modals/ConfirmModal';
 import './AdminColecciones.css';
@@ -30,6 +30,9 @@ export default function AdminColecciones() {
     const [editing, setEditing] = useState<Collection | null>(null);
     const [form, setForm] = useState({ title: '', description: '', imageUrl: '' });
     const [saving, setSaving] = useState(false);
+    const [uploadingCol, setUploadingCol] = useState(false);
+    const [colPreview, setColPreview] = useState<string | null>(null);
+    const colFileInputRef = useRef<HTMLInputElement>(null);
     const [confirm, setConfirm] = useState<{ message: string; onConfirm: () => void } | null>(null);
 
     const [selectedCol, setSelectedCol] = useState<Collection | null>(null);
@@ -59,16 +62,28 @@ export default function AdminColecciones() {
     const openCreate = () => {
         setEditing(null);
         setForm({ title: '', description: '', imageUrl: '' });
+        setColPreview(null);
         setModal('create');
     };
 
     const openEdit = (col: Collection) => {
         setEditing(col);
         setForm({ title: col.title, description: col.description ?? '', imageUrl: col.imageUrl ?? '' });
+        setColPreview(null);
         setModal('edit');
     };
 
-    const closeModal = () => { setModal(null); setEditing(null); };
+    const closeModal = () => { setModal(null); setEditing(null); setColPreview(null); };
+
+    const handleColFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setColPreview(URL.createObjectURL(file));
+        setUploadingCol(true);
+        const url = await uploadImage(file);
+        setUploadingCol(false);
+        if (url) setForm(f => ({ ...f, imageUrl: url }));
+    };;
 
     const handleSave = async () => {
         if (!form.title.trim()) return;
@@ -286,12 +301,27 @@ export default function AdminColecciones() {
                                 <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Optional description..." />
                             </div>
                             <div className="admin-form-group">
-                                <label>Image URL</label>
-                                <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." />
+                                <label>Image</label>
+                                <input
+                                    ref={colFileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={handleColFileChange}
+                                />
+                                <button
+                                    type="button"
+                                    className="admin-btn admin-btn-ghost"
+                                    onClick={() => colFileInputRef.current?.click()}
+                                    disabled={uploadingCol}
+                                >
+                                    <i className={`fa-solid ${uploadingCol ? 'fa-spinner fa-spin' : 'fa-upload'}`} />
+                                    {uploadingCol ? 'Uploading...' : 'Upload image'}
+                                </button>
                             </div>
-                            {form.imageUrl && (
+                            {(colPreview || form.imageUrl) && (
                                 <img
-                                    src={form.imageUrl}
+                                    src={colPreview || form.imageUrl}
                                     alt="preview"
                                     className="admin-img-preview"
                                     onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}

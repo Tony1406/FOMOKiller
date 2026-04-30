@@ -33,9 +33,10 @@ export default function App() {
           <Route element={<LandingLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/descarga" element={<DownloadPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
           </Route>
+
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
           <Route path="/401" element={<UnauthorizedPage />} />
           <Route path="*" element={<NotFoundPage />} />

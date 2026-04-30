@@ -207,8 +207,8 @@ export default function ExplorePage() {
         return (
             <div className="page page-enter page-swipe-mode">
                 <div className="swipe-mode-bar">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <button className="back-btn-icon" onClick={() => setVista('lista')} style={{ flexShrink: 0 }}>
+                    <div className="swipe-mode-bar-left">
+                        <button className="back-btn-icon" onClick={() => setVista('lista')}>
                             <i className="fa-solid fa-arrow-left" />
                         </button>
                         <div>

@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import {
   getUserProfile,
   updateUserProfile,
+  getBacklog,
   getPreferences,
   getPriorities,
 } from "../../services/api";
@@ -9,6 +10,7 @@ import EditProfileModal from "../../components/modals/EditProfileModal";
 import ConfirmModal from "../../components/modals/ConfirmModal";
 import { AuthContext } from "../../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { getPlatformIcons } from "../../utils/platformIcons";
 import "./ProfilePage.css";
 
 export default function ProfilePage() {
@@ -112,16 +114,8 @@ export default function ProfilePage() {
   };
   const worldMeta = prefs?.worldType ? (WORLD_META[prefs.worldType] ?? null) : null;
 
-  const PLATFORM_ICONS: Record<string, { icon: string; title: string }> = {
-    "PC":              { icon: "fa-brands fa-steam",      title: "PC / Steam" },
-    "PlayStation 5":   { icon: "fa-brands fa-playstation", title: "PlayStation 5" },
-    "PlayStation 4":   { icon: "fa-brands fa-playstation", title: "PlayStation 4" },
-    "Xbox Series S/X": { icon: "fa-brands fa-xbox",        title: "Xbox" },
-    "Nintendo Switch": { icon: "fa-solid fa-gamepad",      title: "Nintendo Switch" },
-    "iOS":             { icon: "fa-brands fa-apple",       title: "iOS" },
-    "Android":         { icon: "fa-brands fa-android",     title: "Android" },
-  };
   const userPlatforms: string[] = prefs?.platforms ?? [];
+  const platformIcons = getPlatformIcons(userPlatforms.map(p => ({ name: p })));
 
   return (
     <div className="profile-page page-enter">
@@ -213,20 +207,12 @@ export default function ProfilePage() {
             <div className="glass-card profile-platforms-card">
               <span className="platforms-label">Platforms</span>
               <div className="platforms-icons">
-                {userPlatforms.length > 0 ? (
-                  userPlatforms.map((p) => {
-                    const meta = PLATFORM_ICONS[p];
-                    if (!meta) return null;
-                    return (
-                      <i
-                        key={p}
-                        className={`${meta.icon} platforms-icon`}
-                        title={meta.title}
-                      />
-                    );
-                  })
+                {platformIcons.length > 0 ? (
+                  platformIcons.map((icon, i) => (
+                    <i key={i} className={`${icon} platforms-icon`} />
+                  ))
                 ) : (
-                  <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
+                  <span className="profile-pref-empty">
                     Complete the questionnaire
                   </span>
                 )}

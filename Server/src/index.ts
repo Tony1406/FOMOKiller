@@ -17,6 +17,7 @@ import exploreRoutes from './routes/explore.routes.js';
 import rawgRoutes from './routes/rawg.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import recommendationRoutes from './routes/recommendations.routes.js';
+import uploadRoutes from './routes/upload.routes.js';
 
 process.on('uncaughtException', (err: any) => {
     console.error('uncaughtException →', err?.message ?? err?.code ?? JSON.stringify(err));
@@ -44,6 +45,7 @@ app.use('/api/explore', exploreRoutes);
 app.use('/api/rawg', rawgRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/upload', uploadRoutes);
 
 const main = async () => {
     try {

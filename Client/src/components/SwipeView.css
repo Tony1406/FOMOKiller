@@ -50,6 +50,14 @@
     flex-shrink: 0;
 }
 
+.swipe-mode-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.back-btn-icon { flex-shrink: 0; }
+
 .swipe-mode-bar .section-title {
     font-size: 20px;
     margin-bottom: 2px;
