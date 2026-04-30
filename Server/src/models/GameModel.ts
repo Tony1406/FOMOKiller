@@ -29,6 +29,10 @@ export const Game = sequelize.define('Game', {
         type: DataTypes.STRING(255),
         field: 'trailer_url'
     },
+    gameplayUrl: {
+        type: DataTypes.STRING(255),
+        field: 'gameplay_url'
+    },
     rawgId: {
         type: DataTypes.INTEGER,
         unique: true,

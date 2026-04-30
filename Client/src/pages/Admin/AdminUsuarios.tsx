@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { adminGetUsers, adminCreateUser, adminUpdateUser, adminDeleteUser } from '../../services/api';
+import { useState, useEffect, useRef } from 'react';
+import { adminGetUsers, adminCreateUser, adminUpdateUser, adminDeleteUser, uploadImage } from '../../services/api';
 import ConfirmModal from '../../components/modals/ConfirmModal';
 import './AdminUsuarios.css';
 
@@ -29,6 +29,9 @@ export default function AdminUsuarios() {
     const [saving, setSaving] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
+    const [uploadingAvatar, setUploadingAvatar] = useState(false);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    const avatarFileRef = useRef<HTMLInputElement>(null);
 
     const load = async () => {
         setLoading(true);
@@ -55,6 +58,7 @@ export default function AdminUsuarios() {
         setForm(emptyForm);
         setFormError(null);
         setShowPassword(false);
+        setAvatarPreview(null);
         setModal('create');
     };
 
@@ -63,10 +67,21 @@ export default function AdminUsuarios() {
         setForm({ username: user.username, email: user.email, password: '', role: user.role, bio: user.bio ?? '', avatarUrl: user.avatarUrl ?? '' });
         setFormError(null);
         setShowPassword(false);
+        setAvatarPreview(null);
         setModal('edit');
     };
 
-    const closeModal = () => { setModal(null); setEditing(null); setFormError(null); };
+    const closeModal = () => { setModal(null); setEditing(null); setFormError(null); setAvatarPreview(null); };
+
+    const handleAvatarFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setAvatarPreview(URL.createObjectURL(file));
+        setUploadingAvatar(true);
+        const url = await uploadImage(file);
+        setUploadingAvatar(false);
+        if (url) setForm(f => ({ ...f, avatarUrl: url }));
+    };
 
     const handleSave = async () => {
         if (!form.username.trim() || !form.email.trim()) { setFormError('Username and email are required'); return; }
@@ -225,20 +240,29 @@ export default function AdminUsuarios() {
                             </div>
 
                             <div className="admin-form-group">
-                                <label>Avatar URL</label>
+                                <label>Avatar</label>
                                 <div className="admin-avatar-row">
                                     <input
-                                        value={form.avatarUrl}
-                                        onChange={e => setForm(f => ({ ...f, avatarUrl: e.target.value }))}
-                                        placeholder="https://..."
+                                        ref={avatarFileRef}
+                                        type="file"
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                        onChange={handleAvatarFileChange}
                                     />
-                                    {form.avatarUrl ? (
+                                    <button
+                                        type="button"
+                                        className="admin-btn admin-btn-ghost"
+                                        onClick={() => avatarFileRef.current?.click()}
+                                        disabled={uploadingAvatar}
+                                    >
+                                        <i className={`fa-solid ${uploadingAvatar ? 'fa-spinner fa-spin' : 'fa-upload'}`} />
+                                        {uploadingAvatar ? 'Uploading...' : 'Upload photo'}
+                                    </button>
+                                    {(avatarPreview || form.avatarUrl) ? (
                                         <img
-                                            src={form.avatarUrl}
+                                            src={avatarPreview || form.avatarUrl}
                                             alt="Preview"
                                             className="admin-avatar-preview"
-                                            onError={e => { (e.target as HTMLImageElement).style.opacity = '0'; }}
-                                            onLoad={e => { (e.target as HTMLImageElement).style.opacity = '1'; }}
                                         />
                                     ) : (
                                         <div className="admin-avatar-preview-empty">

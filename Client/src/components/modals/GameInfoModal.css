@@ -293,10 +293,44 @@
 }
 
 /* ─── TRÁILER ─── */
-.modal-trailer-video {
+.modal-trailer-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     width: 100%;
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-light);
     border-radius: var(--radius-sm);
-    margin-top: 2px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--t-fast);
+}
+
+.modal-trailer-toggle:hover,
+.modal-trailer-toggle.open {
+    border-color: var(--cobalt-light);
+    color: var(--cobalt-light);
+    background: rgba(99, 140, 255, 0.08);
+}
+
+.modal-trailer-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.modal-trailer-iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
 /* ─── WEB OFICIAL ─── */
@@ -344,14 +378,19 @@
     background: var(--cobalt-light);
 }
 
-/* ─── DESKTOP ─── */
+/* ─── RIGHT COLUMN WRAPPER ─── */
+.modal-right-col {
+    display: contents;
+}
+
+/* ─── TABLET ─── */
 @media (min-width: 768px) {
     .modal-content {
-        max-width: 720px;
+        max-width: 680px;
     }
 
     .modal-carousel {
-        height: 400px;
+        height: 380px;
     }
 
     .modal-title {
@@ -359,17 +398,41 @@
     }
 }
 
-@media (min-width: 1200px) {
-    .modal-content {
-        max-width: 900px;
+/* ─── DESKTOP: two-column layout ─── */
+@media (min-width: 1024px) {
+    .game-info-modal.modal-content {
+        flex-direction: row;
+        max-width: 1430px;
+        height: 82vh;
+        max-height: 82vh;
     }
 
     .modal-carousel {
-        height: 480px;
+        width: 50%;
+        height: auto;
+        flex-shrink: 0;
+    }
+
+    .modal-hero-image {
+        object-fit: contain;
+        object-position: center center;
+        background: #000;
+    }
+
+    .modal-hero-gradient {
+        display: none;
+    }
+
+    .modal-right-col {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+        min-height: 0;
     }
 
     .modal-title {
-        font-size: 34px;
+        font-size: 26px;
     }
 }
 

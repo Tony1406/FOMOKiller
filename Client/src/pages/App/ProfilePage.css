@@ -21,6 +21,11 @@
     gap: 12px;
 }
 
+.profile-pref-empty {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
 @media (min-width: 768px) {
     .profile-inner {
         gap: 20px;

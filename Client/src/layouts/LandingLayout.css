@@ -446,6 +446,71 @@
     text-shadow: 0 0 30px rgba(41, 121, 255, .3);
 }
 
+.text-glitch {
+    position: relative;
+    display: inline-block;
+    z-index: 0;
+}
+
+.text-glitch::before,
+.text-glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    z-index: 1;
+}
+
+.text-glitch::before {
+    color: #2979FF;
+    clip-path: inset(0 0 55% 0);
+    opacity: 0.75;
+    animation: glitchTop 1.2s steps(1) infinite;
+}
+
+.text-glitch::after {
+    color: #00cfff;
+    clip-path: inset(58% 0 0 0);
+    opacity: 0.75;
+    animation: glitchBot 1.2s steps(1) 0.1s infinite;
+}
+
+.text-glitch-gradient::before {
+    background: linear-gradient(135deg, #2979FF, #00cfff, #2979FF);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.text-glitch-gradient::after {
+    background: linear-gradient(135deg, #00cfff, #2979FF, #00cfff);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+@keyframes glitchTop {
+    0%   { opacity: 1; transform: translate(-4px, -1px); clip-path: inset(0 0 55% 0); }
+    20%  { opacity: 1; transform: translate(3px, 0);     clip-path: inset(5% 0 50% 0); }
+    40%  { opacity: 1; transform: translate(-2px, 1px);  clip-path: inset(0 0 58% 0); }
+    60%  { opacity: 1; transform: translate(4px, -1px);  clip-path: inset(8% 0 45% 0); }
+    80%  { opacity: 1; transform: translate(-3px, 0);    clip-path: inset(0 0 55% 0); }
+    100% { opacity: 1; transform: translate(-4px, -1px); clip-path: inset(0 0 55% 0); }
+}
+
+@keyframes glitchBot {
+    0%   { opacity: 1; transform: translate(4px, 1px);   clip-path: inset(58% 0 0 0); }
+    20%  { opacity: 1; transform: translate(-2px, 0);    clip-path: inset(52% 0 5% 0); }
+    40%  { opacity: 1; transform: translate(3px, -1px);  clip-path: inset(60% 0 0 0); }
+    60%  { opacity: 1; transform: translate(-4px, 1px);  clip-path: inset(55% 0 3% 0); }
+    80%  { opacity: 1; transform: translate(2px, 0);     clip-path: inset(58% 0 0 0); }
+    100% { opacity: 1; transform: translate(4px, 1px);   clip-path: inset(58% 0 0 0); }
+}
+
 .land-section-desc {
     font-size: 1rem;
     color: rgba(255, 255, 255, .5);

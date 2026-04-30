@@ -1,4 +1,16 @@
 /* ─── DOWNLOAD PAGE ─── */
+.download-bg-root {
+    position: relative;
+    overflow: hidden;
+    min-height: calc(100vh - 70px);
+    background: #020a18;
+}
+
+.download-bg-root .download-page {
+    position: relative;
+    z-index: 1;
+}
+
 .download-page {
     max-width: 1200px;
     margin: 0 auto;

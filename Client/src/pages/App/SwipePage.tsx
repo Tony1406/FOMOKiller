@@ -160,7 +160,7 @@ export default function SwipePage() {
         <div className="swipe-loading-container">
           <div className="swipe-loading-text">Couldn't load recommendations</div>
           <button
-            style={{ marginTop: 16, padding: '8px 20px', background: 'var(--cobalt)', border: 'none', borderRadius: 8, color: '#fff', cursor: 'pointer' }}
+            className="swipe-retry-btn"
             onClick={() => { sessionStorage.removeItem(STORAGE_JUEGOS); sessionStorage.removeItem(STORAGE_INDICE); cargarJuegos(); }}
           >
             Retry
