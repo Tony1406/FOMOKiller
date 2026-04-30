@@ -310,7 +310,7 @@ export default function BacklogPage() {
             {/* Filtrar */}
             <div className="backlog-dropdown-wrap" ref={filtroRef}>
               <button
-                className={`backlog-dropdown-btn${pestañaActiva !== "Todos" ? " active" : ""}`}
+                className={`backlog-dropdown-btn${pestañaActiva !== "All" ? " active" : ""}`}
                 onClick={() => { setFiltroOpen((o) => !o); setOrdenOpen(false); }}
               >
                 <i className="fa-solid fa-filter" />

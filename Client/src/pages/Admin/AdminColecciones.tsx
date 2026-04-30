@@ -134,16 +134,10 @@ export default function AdminColecciones() {
         setColGames(updated);
     };
 
-    const handleRemoveGame = (game: Game) => {
+    const handleRemoveGame = async (game: Game) => {
         if (!selectedCol) return;
-        setConfirm({
-            message: `Remove "${game.title}" from collection "${selectedCol.title}"?`,
-            onConfirm: async () => {
-                setConfirm(null);
-                await adminRemoveGameFromCollection(selectedCol.id, game.id);
-                setColGames(prev => prev.filter(g => g.id !== game.id));
-            },
-        });
+        await adminRemoveGameFromCollection(selectedCol.id, game.id);
+        setColGames(prev => prev.filter(g => g.id !== game.id));
     };
 
     const colGameIds = new Set(colGames.map(g => g.id));

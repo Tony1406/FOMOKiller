@@ -62,10 +62,7 @@
     white-space: nowrap;
 }
 
-.backlog-dropdown-btn:hover {
-    border-color: var(--cobalt);
-    color: #fff;
-}
+.backlog-dropdown-btn:hover {}
 
 .backlog-dropdown-btn.active {
     background: var(--cobalt);
@@ -405,11 +402,11 @@
     color: var(--text-primary);
 }
 
-/* Top5 → gris */
+/* Top5 → amarillo */
 .action-btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.35);
-    color: #fff;
+    background: rgba(255, 193, 7, 0.12);
+    border-color: #FFC107;
+    color: #FFC107;
 }
 
 /* Basura → gris */
@@ -463,16 +460,10 @@
     pointer-events: none;
 }
 
-/* Star priority active – gris */
+/* Star priority active – amarillo (bajo especificidad, se sobreescribe abajo) */
 .action-btn-star--active {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-color: rgba(255, 255, 255, 0.4) !important;
-    color: #fff !important;
-    box-shadow: none;
-}
-
-.action-btn-star--active:hover {
-    background: rgba(255, 255, 255, 0.16) !important;
+    border-color: #FFC107;
+    color: #FFC107;
 }
 
 
@@ -603,9 +594,9 @@
 
 /* Hovers de color en card actions de Backlog */
 .game-card-actions .action-btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-color: rgba(255, 255, 255, 0.35) !important;
-    color: #fff !important;
+    background: rgba(255, 193, 7, 0.15) !important;
+    border-color: #FFC107 !important;
+    color: #FFC107 !important;
 }
 
 .game-card-actions .action-btn-drop:hover {
@@ -625,6 +616,32 @@
     border-color: #22c55e;
     color: #fff;
     box-shadow: 0 0 12px rgba(34, 197, 94, 0.35);
+}
+
+.game-card-actions .action-btn-secondary.action-btn-star--active {
+    background: rgba(255, 193, 7, 0.35);
+    border-color: #FFC107;
+    color: #FFC107;
+    box-shadow: 0 0 12px rgba(255, 193, 7, 0.35);
+}
+
+.game-card-actions .action-btn-secondary.action-btn-star--active:hover {
+    background: rgba(255, 193, 7, 0.5);
+    border-color: #FFC107;
+    color: #FFC107;
+}
+
+.game-actions .action-btn-secondary.action-btn-star--active {
+    background: rgba(255, 193, 7, 0.18);
+    border-color: #FFC107;
+    color: #FFC107;
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+}
+
+.game-actions .action-btn-secondary.action-btn-star--active:hover {
+    background: rgba(255, 193, 7, 0.28);
+    border-color: #FFC107;
+    color: #FFC107;
 }
 
 /* ── Stamp TOP 5 ─────────────────────────────── */

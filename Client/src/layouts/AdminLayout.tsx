@@ -25,7 +25,7 @@ export default function AdminLayout() {
         <div className="admin-shell">
             <aside className="admin-sidebar">
                 <div className="admin-sidebar-header">
-                    <span className="admin-logo">FOMO <span className="admin-logo-admin">ADMIN</span></span>
+                    <span className="admin-logo">FOMO<span className="admin-logo-admin">ADMIN</span></span>
                 </div>
 
                 <nav className="admin-nav">
