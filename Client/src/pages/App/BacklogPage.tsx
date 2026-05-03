@@ -72,7 +72,8 @@ export default function BacklogPage() {
   const cargarBacklog = async () => {
     if (!user) return;
     const data = await getBacklog(user.id);
-    setBacklog(data);
+    console.log('[BacklogPage] respuesta getBacklog →', data);
+    setBacklog(Array.isArray(data) ? data : []);
   };
 
   useEffect(() => {

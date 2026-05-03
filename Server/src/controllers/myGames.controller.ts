@@ -24,7 +24,7 @@ export const getBacklog = async (req: Request, res: Response) => {
                 }
             },
             include: [{ model: Game, include: [{ model: Genre }, { model: Platform }] }],
-            order: [['createdAt', 'DESC']]
+            order: [['gameId', 'DESC']]
         });
         res.status(200).json(backlog);
     } catch (error) {
@@ -170,54 +170,6 @@ export const markFinished = async (req: Request, res: Response) => {
     }
 };
 
-export const checkIsPriority = async (req: Request, res: Response) => {
-    try {
-        const { gameId } = req.params;
-        const userId = req.query.userId;
-
-        if (!userId || !gameId) {
-            res.status(400).json({ error: "Faltan parámetros (userId en query, gameId en params)" });
-            return;
-        }
-
-        const userGame = await UserGame.findOne({
-            where: { userId: Number(userId), gameId: Number(gameId) }
-        });
-
-        if (userGame) {
-            res.status(200).json({ isPriority: (userGame as any).isPriority });
-        } else {
-            res.status(404).json({ message: "Juego no encontrado en tu lista" });
-        }
-    } catch (error) {
-        res.status(500).json({ error: "Error al verificar prioridad" });
-    }
-};
-
-export const checkIsFinished = async (req: Request, res: Response) => {
-    try {
-        const { gameId } = req.params;
-        const userId = req.query.userId;
-
-        if (!userId || !gameId) {
-            res.status(400).json({ error: "Faltan parámetros (userId en query, gameId en params)" });
-            return;
-        }
-
-        const userGame = await UserGame.findOne({
-            where: { userId: Number(userId), gameId: Number(gameId) }
-        });
-
-        if (userGame) {
-            res.status(200).json({ isFinished: (userGame as any).isFinished });
-        } else {
-            res.status(404).json({ message: "Juego no encontrado en tu lista" });
-        }
-    } catch (error) {
-        res.status(500).json({ error: "Error al verificar completado" });
-    }
-};
-
 export const clearBacklog = async (req: Request, res: Response) => {
     try {
         const userId = req.query.userId;
@@ -242,29 +194,3 @@ export const clearBacklog = async (req: Request, res: Response) => {
     }
 };
 
-export const dropGame = async (req: Request, res: Response) => {
-    try {
-        const { gameId } = req.params;
-        const userId = req.query.userId;
-
-        if (!userId) {
-            res.status(400).json({ error: "Falta userId en query params" });
-            return;
-        }
-
-        const deleted = await UserGame.destroy({
-            where: {
-                userId: Number(userId),
-                gameId: Number(gameId)
-            }
-        });
-
-        if (deleted) {
-            res.status(200).json({ message: "Juego eliminado de tu lista" });
-        } else {
-            res.status(404).json({ message: "El juego no estaba en tu lista" });
-        }
-    } catch (error) {
-        res.status(500).json({ error: "Error al eliminar del backlog" });
-    }
-};

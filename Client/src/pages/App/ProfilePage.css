@@ -199,6 +199,23 @@
     white-space: nowrap;
 }
 
+.profile-marquee-wrap {
+    overflow: hidden;
+    display: block;
+    text-overflow: unset;
+}
+
+.profile-marquee-inner {
+    display: inline-block;
+    white-space: nowrap;
+    animation: profile-marquee 9s linear infinite;
+}
+
+@keyframes profile-marquee {
+    0%    { transform: translateX(0); }
+    100%  { transform: translateX(-50%); }
+}
+
 .profile-edit-btn {
     width: 100%;
     padding: 14px 16px;
