@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef } from 'react';
-import { getCollections, getCollectionGames, searchGames, updateStatus } from '../../services/api';
+import { getCollections, getCollectionGames, searchGames, updateStatus, getBacklog } from '../../services/api';
 import GameInfoModal from '../../components/modals/GameInfoModal';
 import SwipeView from '../../components/SwipeView';
 import Paginador from '../../components/Paginador';
@@ -20,7 +20,14 @@ export default function ExplorePage() {
     const [paginaSearch, setPaginaSearch] = useState(1);
     const [paginaColeccion, setPaginaColeccion] = useState(1);
     const [juegoSeleccionado, setJuegoSeleccionado] = useState<any>(null);
-    const [mostrarToast, setMostrarToast] = useState(false);
+    const [toastMsg, setToastMsg] = useState<string | null>(null);
+    const [toastType, setToastType] = useState<'success' | 'error'>('success');
+
+    const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
+        setToastMsg(msg);
+        setToastType(type);
+        setTimeout(() => setToastMsg(null), 2000);
+    };
     const [enBacklog, setEnBacklog] = useState<Set<number>>(new Set());
     const [vista, setVista] = useState<VistaValue>(
         () => {
@@ -29,19 +36,26 @@ export default function ExplorePage() {
         }
     );
     const [swipeIndex, setSwipeIndex] = useState(0);
+    const [swipeDeck, setSwipeDeck] = useState<any[]>([]);
 
     useEffect(() => { localStorage.setItem('fomo_vista_explore', vista); }, [vista]);
     useEffect(() => { setPaginaSearch(1); }, [buscar]);
-    useEffect(() => { setSwipeIndex(0); }, [coleccionSeleccionada?.id]);
+    useEffect(() => { setSwipeIndex(0); setSwipeDeck([]); }, [coleccionSeleccionada?.id]);
 
     const cargaInicial = async () => {
         const data = await getCollections();
         setColecciones(data);
+        if (user) {
+            const backlogData = await getBacklog(user.id);
+            if (Array.isArray(backlogData)) {
+                setEnBacklog(new Set(backlogData.map((ug: any) => ug.gameId)));
+            }
+        }
     };
 
     useEffect(() => {
         cargaInicial();
-    }, []);
+    }, [user?.id]);
 
     const busquedaAfinada = async () => {
         if (buscar.trim().length >= 1) {
@@ -80,8 +94,7 @@ export default function ExplorePage() {
         } else {
             await updateStatus(user.id, gameId, 'LIKED');
             setEnBacklog(prev => new Set(prev).add(gameId));
-            setMostrarToast(true);
-            setTimeout(() => setMostrarToast(false), 1500);
+            showToast('Added to your backlog');
         }
     };
 
@@ -122,7 +135,7 @@ export default function ExplorePage() {
             </button>
             <button
                 className={`view-toggle-btn${vista === 'swipe' ? ' active' : ''}`}
-                onClick={() => { setVista('swipe'); setSwipeIndex(0); }}
+                onClick={() => { setSwipeIndex(0); setSwipeDeck([...(coleccionSeleccionada?.Games ?? [])].sort(() => Math.random() - 0.5)); setVista('swipe'); }}
                 title="Swipe view"
             >
                 <i className="fa-solid fa-layer-group" />
@@ -220,7 +233,7 @@ export default function ExplorePage() {
                 </div>
 
                 <SwipeView
-                    items={coleccionSeleccionada.Games}
+                    items={swipeDeck.length > 0 ? swipeDeck : coleccionSeleccionada.Games}
                     index={swipeIndex}
                     onIndexChange={setSwipeIndex}
                     getGame={(game) => ({
@@ -234,24 +247,28 @@ export default function ExplorePage() {
                         Platforms: game.Platforms,
                         Genres: game.Genres,
                     })}
+                    canSwipe={(game, direction) => {
+                        if (direction === 'right' && enBacklog.has(game.id)) {
+                            showToast('Already in your backlog', 'error');
+                            return false;
+                        }
+                        return true;
+                    }}
                     onLeft={async () => { /* skip */ }}
                     onRight={async (game) => {
                         if (!user) return;
-                        if (!enBacklog.has(game.id)) {
-                            await updateStatus(user.id, game.id, 'LIKED');
-                            setEnBacklog(prev => new Set(prev).add(game.id));
-                            setMostrarToast(true);
-                            setTimeout(() => setMostrarToast(false), 1500);
-                        }
+                        await updateStatus(user.id, game.id, 'LIKED');
+                        setEnBacklog(prev => new Set(prev).add(game.id));
+                        showToast('Added to your backlog');
                     }}
                     leftLabel="Skip"
                     rightLabel="Backlog"
                     doneMessage="You've explored the whole collection"
                 />
 
-                {mostrarToast && (
+                {toastMsg && (
                     <div className="toast-container">
-                        <div className="toast"><i className="fa-solid fa-heart" /> Added to your backlog</div>
+                        <div className={`toast${toastType === 'error' ? ' toast-error' : ''}`}>{toastMsg}</div>
                     </div>
                 )}
             </div>
@@ -352,12 +369,9 @@ export default function ExplorePage() {
                 game={juegoSeleccionado}
             />
 
-            {mostrarToast && (
+            {toastMsg && (
                 <div className="toast-container">
-                    <div className="toast">
-                        <i className="fa-solid fa-heart"></i>
-                        Added to your backlog
-                    </div>
+                    <div className={`toast${toastType === 'error' ? ' toast-error' : ''}`}>{toastMsg}</div>
                 </div>
             )}
         </div>

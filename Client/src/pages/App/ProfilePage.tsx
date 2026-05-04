@@ -154,16 +154,6 @@ export default function ProfilePage() {
             </p>
 
             <div className="profile-identity-tags">
-              {worldMeta && (
-                <div className="profile-identity-tag">
-                  <span className="profile-identity-label">
-                    Favorite genre
-                  </span>
-                  <span className="profile-identity-value">
-                    {worldMeta.label}
-                  </span>
-                </div>
-              )}
               {prefs?.minYear && prefs?.maxYear && (
                 <div className="profile-identity-tag">
                   <span className="profile-identity-label">Preferred era</span>

@@ -332,6 +332,23 @@
     border-radius: inherit;
 }
 
+/* ── Bounce-back animation ───────────────────────── */
+@keyframes swipe-bounce-right {
+    0%   { transform: translateX(0) rotate(0deg); }
+    38%  { transform: translateX(72px) rotate(5deg); }
+    100% { transform: translateX(0) rotate(0deg); }
+}
+
+@keyframes swipe-bounce-left {
+    0%   { transform: translateX(0) rotate(0deg); }
+    38%  { transform: translateX(-72px) rotate(-5deg); }
+    100% { transform: translateX(0) rotate(0deg); }
+}
+
+.swipe-card-bounce-right  { animation: swipe-bounce-right 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.swipe-card-bounce-left   { animation: swipe-bounce-left  0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.swipe-card-bounce-extra  { animation: swipe-bounce-left  0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
 /* ── Action buttons ──────────────────────────────── */
 .swipe-actions {
     display: flex;

@@ -48,6 +48,7 @@ export default function BacklogPage() {
     }
   );
   const [swipeIndex, setSwipeIndex] = useState(0);
+  const [swipeDeck, setSwipeDeck] = useState<any[]>([]);
   const wasInSwipeRef = useRef(false);
   const prevVistaRef = useRef<"lista" | "cards">("lista");
 
@@ -186,7 +187,10 @@ export default function BacklogPage() {
   const ordenLabel = ORDEN_OPCIONES.find(o => o.value === ordenActivo)?.label ?? "Ordenar";
 
   const handleSetVista = (v: VistaValue) => {
-    if (v === "swipe" && vista !== "swipe") prevVistaRef.current = vista as "lista" | "cards";
+    if (v === "swipe" && vista !== "swipe") {
+      prevVistaRef.current = vista as "lista" | "cards";
+      setSwipeDeck([...filteredGames].sort(() => Math.random() - 0.5));
+    }
     setVista(v);
   };
 
@@ -226,15 +230,15 @@ export default function BacklogPage() {
             </button>
             <div>
               <div className="section-title">My Backlog</div>
-              <div className="section-sub">{filteredGames.length} games</div>
+              <div className="section-sub">{swipeDeck.length} games</div>
             </div>
           </div>
           {viewToggle}
         </div>
 
-        {filteredGames.length > 0 ? (
+        {swipeDeck.length > 0 ? (
           <SwipeView
-            items={filteredGames}
+            items={swipeDeck}
             index={swipeIndex}
             onIndexChange={setSwipeIndex}
             getGame={(item) => ({
@@ -258,13 +262,26 @@ export default function BacklogPage() {
               }
             }}
             onRight={async () => { /* keep — no action needed */ }}
+            canSwipe={(item, direction) => {
+              if (direction === "extra") {
+                if (item.isPriority) {
+                  showToast("Already in Top 5", "error");
+                  return false;
+                }
+                const priorityCount = backlog.filter((g: any) => g.isPriority).length;
+                if (priorityCount >= 5) {
+                  showToast("You already have 5 games in Top 5", "error");
+                  return false;
+                }
+              }
+              return true;
+            }}
             onExtra={async (item) => {
               if (!user) return;
-              const newPriority = !item.isPriority;
               try {
-                const response = await setPriority(user.id, item.gameId, newPriority);
+                const response = await setPriority(user.id, item.gameId, true);
                 if (response.ok) {
-                  showToast(newPriority ? "Added to Top 5" : "Removed from Top 5");
+                  showToast("Added to Top 5");
                 } else {
                   const data = await response.json();
                   showToast(

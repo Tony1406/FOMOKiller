@@ -24,7 +24,7 @@ export const getBacklog = async (req: Request, res: Response) => {
                 }
             },
             include: [{ model: Game, include: [{ model: Genre }, { model: Platform }] }],
-            order: [['gameId', 'DESC']]
+            order: [['added_at', 'DESC']]
         });
         res.status(200).json(backlog);
     } catch (error) {
@@ -69,14 +69,24 @@ export const updateStatus = async (req: Request, res: Response) => {
             return;
         }
 
+        const BACKLOG_STATUSES = ['LIKED', 'COMPLETED'];
         const userGameDef = { userId: Number(userId), gameId: Number(gameId) };
         const [userGame, created] = await UserGame.findOrCreate({
             where: userGameDef,
-            defaults: { ...userGameDef, status, isPriority: false, isFinished: false }
+            defaults: { ...userGameDef, status, isPriority: false, isFinished: false, addedAt: new Date() }
         });
 
         if (!created) {
-            await userGame.update({ status });
+            const wasOut = !BACKLOG_STATUSES.includes(userGame.get('status') as string);
+            const goingIn = BACKLOG_STATUSES.includes(status);
+            const leavingBacklog = !BACKLOG_STATUSES.includes(status);
+            const updatePayload: any = { status };
+            if (wasOut && goingIn) updatePayload.addedAt = new Date();
+            if (leavingBacklog) {
+                updatePayload.isPriority = false;
+                updatePayload.priorityOrder = null;
+            }
+            await userGame.update(updatePayload);
         }
 
         res.status(200).json({ message: "Estado guardado o actualizado correctamente" });

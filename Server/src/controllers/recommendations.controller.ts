@@ -221,6 +221,18 @@ export const getRecommendations = async (req: Request, res: Response) => {
         const minYear: number | null = prefData.minYear ?? null;
         const maxYear: number | null = prefData.maxYear ?? null;
 
+        const sessionFilterFn = (g: any): boolean => {
+            if (slArr.includes('any') || slArr.length === 0) return true;
+            const pt = g.get('playtime') as number | null;
+            if (pt == null) return true;
+            return slArr.some((s: string) => {
+                if (s === 'short')  return pt <= 10;
+                if (s === 'medium') return pt > 10 && pt <= 30;
+                if (s === 'long')   return pt > 30;
+                return true;
+            });
+        };
+
         const gameDocuments = unseenGames
             .filter((g: any) => {
                 if (!minYear && !maxYear) return true;
@@ -230,6 +242,7 @@ export const getRecommendations = async (req: Request, res: Response) => {
                 if (maxYear && year > maxYear) return false;
                 return true;
             })
+            .filter(sessionFilterFn)
             .map((g: any) => {
                 const data = g.toJSON();
                 const genres = (data.Genres ?? []).map((g: any) => g.name.toLowerCase().replace(/\s+/g, '-'));
