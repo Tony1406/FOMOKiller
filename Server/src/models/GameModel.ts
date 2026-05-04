@@ -35,7 +35,6 @@ export const Game = sequelize.define('Game', {
     },
     rawgId: {
         type: DataTypes.INTEGER,
-        unique: true,
         field: 'rawg_id'
     },
     rawgSlug: {

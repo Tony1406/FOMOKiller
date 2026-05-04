@@ -1,5 +1,4 @@
 import type { Request, Response } from 'express';
-import { Op } from 'sequelize';
 import { User } from '../models/UserModel.js';
 import { UserPreference } from '../models/UserPreferenceModel.js';
 import { UserGame } from '../models/UserGameModel.js';
@@ -13,66 +12,78 @@ import ContentBasedRecommender from 'content-based-recommender';
 // ─── MAPEO: respuestas del wizard → vocabulario de géneros ────────────────────
 //
 // El recomendador trabaja con similitud de texto (TF-IDF + coseno).
-// Convertimos tanto los juegos como el perfil del usuario en strings de texto
-// con el mismo vocabulario. La librería mide cuánto se parecen esos strings.
+// Los tokens deben coincidir con géneros RAWG normalizados y slugs de tags RAWG
+// incluidos en el documento del juego.
 
-// IMPORTANTE: los tokens deben coincidir con:
-//   - géneros RAWG normalizados: g.name.toLowerCase().replace(/\s+/g, '-')
-//     ej. "Role-playing Games" → "role-playing-games", "Indie" → "indie"
-//   - slugs de tags RAWG incluidos en el documento del juego
-//     ej. "rpg", "survival", "horror", "sandbox", "roguelike", "open-world"
-
-const FEELING_MAP: Record<string, string> = {
-    tension:    'action shooter fighting survival horror',
-    story:      'adventure role-playing-games rpg indie story-rich',
-    relax:      'casual simulation puzzle platformer',
-    adrenaline: 'shooter racing sports action fighting',
-    build:      'strategy simulation indie sandbox',
-    any:        'action shooter fighting survival horror adventure role-playing-games rpg indie story-rich casual simulation puzzle platformer racing sports strategy sandbox',
-};
-
-const WORLD_MAP: Record<string, string> = {
-    fantasy:    'role-playing-games rpg adventure action fantasy open-world',
-    scifi:      'shooter strategy adventure science-fiction',
-    horror:     'action adventure indie horror survival',
-    openworld:  'adventure role-playing-games rpg simulation open-world sandbox',
-    realism:    'sports simulation adventure realistic',
-    any:        'role-playing-games rpg adventure action fantasy open-world shooter strategy science-fiction indie horror survival sports simulation realistic sandbox',
-};
-
-const DEPTH_MAP: Record<string, string> = {
-    casual:    'casual puzzle platformer arcade indie',
-    complex:   'strategy role-playing-games rpg simulation management',
-    narrative: 'adventure indie role-playing-games rpg story-rich',
-    challenge: 'action shooter fighting roguelike',
-    any:       'casual puzzle platformer arcade indie strategy role-playing-games rpg simulation management adventure story-rich action shooter fighting roguelike',
+const GAMETYPE_MAP: Record<string, string> = {
+    action:    'action shooter fighting combat action-adventure fast-paced',
+    adventure: 'adventure story-rich atmospheric narrative exploration',
+    horror:    'horror survival survival-horror dark stealth',
+    rpg:       'role-playing-games rpg fantasy magic medieval dark-fantasy',
+    scifi:     'sci-fi futuristic cyberpunk post-apocalyptic space aliens dystopian',
+    strategy:  'strategy simulation management tactical turn-based base-building',
+    sports:    'sports racing',
+    casual:    'casual puzzle platformer arcade relaxing',
+    sandbox:   'sandbox open-world exploration crafting building',
+    anime:     'anime jrpg visual-novel manga',
+    any:       'action shooter fighting combat action-adventure fast-paced adventure story-rich atmospheric narrative exploration horror survival survival-horror dark stealth role-playing-games rpg fantasy magic medieval dark-fantasy sci-fi futuristic cyberpunk post-apocalyptic space aliens dystopian strategy simulation management tactical turn-based base-building sports racing casual puzzle platformer arcade relaxing sandbox open-world exploration crafting building anime jrpg visual-novel manga',
 };
 
 const SESSION_MAP: Record<string, string> = {
     short:  'short quick casual',
     medium: 'medium balanced',
-    long:   'long epic immersive role-playing-games rpg strategy simulation',
+    long:   'long epic immersive',
     any:    'short quick casual medium balanced long epic immersive',
+};
+
+const PLAYMODE_MAP: Record<string, string> = {
+    solo:  'singleplayer story-rich atmospheric narrative',
+    multi: 'multiplayer co-op online cooperative online-co-op pvp local-multiplayer',
+    any:   'singleplayer story-rich atmospheric narrative multiplayer co-op online cooperative online-co-op pvp local-multiplayer',
 };
 
 // ─── GUARDAR PREFERENCIAS ─────────────────────────────────────────────────────
 
 export const savePreferences = async (req: Request, res: Response) => {
     try {
-        const { userId, platforms, sessionLength, feeling, worldType, depth, minYear, maxYear } = req.body;
+        const userId: number = (req as any).user?.id;
+        const rawBody = req.body;
+        const { platforms, gameType, sessionLength, playMode, minYear, maxYear } = rawBody;
 
-        if (!userId || !sessionLength || !feeling || !worldType || !depth) {
-            res.status(400).json({ error: 'Faltan campos obligatorios' });
+        console.log('[savePreferences] RAW body →', JSON.stringify(rawBody));
+        console.log('[savePreferences] recibido →', { userId, platforms, gameType, sessionLength, playMode, minYear, maxYear });
+
+        if (!Array.isArray(gameType) || gameType.length === 0
+            || !Array.isArray(sessionLength) || sessionLength.length === 0 || !playMode) {
+            console.warn('[savePreferences] validación fallida →', { gameType, sessionLength, playMode });
+            res.status(400).json({ error: 'Faltan campos obligatorios', debug: { userId, gameType, sessionLength, playMode, rawBody } });
             return;
         }
 
         const [pref, created] = await UserPreference.findOrCreate({
             where: { userId: Number(userId) },
-            defaults: { userId: Number(userId), platforms, sessionLength, feeling, worldType, depth, ignoreHistory: false, minYear: minYear ?? null, maxYear: maxYear ?? null }
+            defaults: {
+                userId: Number(userId),
+                platforms,
+                gameType,
+                sessionLength,
+                playMode,
+                ignoreHistory: false,
+                minYear: minYear ?? null,
+                maxYear: maxYear ?? null,
+            }
         });
 
         if (!created) {
-            await pref.update({ platforms, sessionLength, feeling, worldType, depth, historyResetAt: new Date(), minYear: minYear ?? null, maxYear: maxYear ?? null });
+            await pref.update({
+                platforms,
+                gameType,
+                sessionLength,
+                playMode,
+                historyResetAt: new Date(),
+                minYear: minYear ?? null,
+                maxYear: maxYear ?? null,
+            });
         }
 
         await User.update(
@@ -80,6 +91,7 @@ export const savePreferences = async (req: Request, res: Response) => {
             { where: { id: Number(userId) } }
         );
 
+        console.log('[savePreferences] guardado OK para userId', userId);
         res.json({ ok: true });
     } catch (err) {
         console.error(err);
@@ -116,8 +128,6 @@ export const toggleIgnoreHistory = async (req: Request, res: Response) => {
 };
 
 // ─── RESET HISTORIAL ──────────────────────────────────────────────────────────
-// No borra los likes del backlog — solo activa ignoreHistory permanentemente
-// hasta que el usuario lo desactive o rehaga el onboarding.
 
 export const resetHistory = async (req: Request, res: Response) => {
     try {
@@ -135,7 +145,7 @@ export const resetHistory = async (req: Request, res: Response) => {
 
 export const getRecommendations = async (req: Request, res: Response) => {
     try {
-        const { userId } = req.params;
+        const userId: number = (req as any).user.id;
         const explore = req.query.explore === 'true';
 
         const games = await Game.findAll({
@@ -147,16 +157,13 @@ export const getRecommendations = async (req: Request, res: Response) => {
 
         if (games.length === 0) { res.json([]); return; }
 
-        // Solo excluir juegos que el usuario tiene activamente (backlog, completados, abandonados).
-        // DISLIKED vuelve al pool para que el mazo nunca se quede vacío.
         const userGames = await UserGame.findAll({
-            where: { userId: Number(userId), status: { [Op.ne]: 'DISLIKED' } },
+            where: { userId: Number(userId), status: 'LIKED' },
         });
         const alreadySeen = new Set(userGames.map((ug: any) => String(ug.get('gameId'))));
 
         const unseenGames = games.filter((g: any) => !alreadySeen.has(String(g.get('id'))));
 
-        // Modo exploración: devolver todos los juegos no vistos en orden aleatorio
         if (explore) {
             const all = unseenGames
                 .map((g: any) => g.toJSON())
@@ -165,26 +172,66 @@ export const getRecommendations = async (req: Request, res: Response) => {
             return;
         }
 
-        // Modo filtrado: usar preferencias del onboarding para ordenar por relevancia
         const pref = await UserPreference.findOne({ where: { userId: Number(userId) } });
         if (!pref) { res.status(404).json({ error: 'El usuario no ha completado el onboarding' }); return; }
 
         const prefData = pref.toJSON() as any;
 
-        // Perfil del usuario solo desde el onboarding (sin likes)
+        const expandPlatform = (p: string): string[] => {
+            if (p.toLowerCase() === 'mobile') return ['ios', 'android'];
+            if (p.toLowerCase() === 'playstation') return ['playstation-5', 'playstation-4'];
+            return [p.toLowerCase().replace(/\s+/g, '-')];
+        };
+
+        // gameType es array; si incluye 'any' usamos todos los tokens
+        const gameTypeArr: string[] = prefData.gameType ?? [];
+        const gameTypeTokens = gameTypeArr.includes('any')
+            ? GAMETYPE_MAP['any']
+            : gameTypeArr.map((t: string) => GAMETYPE_MAP[t] ?? '').join(' ');
+
+        // sessionLength puede ser array (nuevo) o string (legacy)
+        const slRaw = prefData.sessionLength;
+        const slArr: string[] = Array.isArray(slRaw) ? slRaw : (slRaw ? [slRaw] : []);
+        const sessionTokens = slArr.includes('any')
+            ? SESSION_MAP['any']
+            : slArr.map((s: string) => SESSION_MAP[s] ?? '').join(' ');
+
         const userContent = [
-            FEELING_MAP[prefData.feeling] ?? '',
-            WORLD_MAP[prefData.worldType] ?? '',
-            DEPTH_MAP[prefData.depth] ?? '',
-            SESSION_MAP[prefData.sessionLength] ?? '',
-            ...(prefData.platforms ?? []).map((p: string) => p.toLowerCase().replace(/\s+/g, '-')),
+            gameTypeTokens,
+            sessionTokens,
+            PLAYMODE_MAP[prefData.playMode] ?? '',
+            ...(prefData.platforms ?? []).flatMap(expandPlatform),
         ].join(' ').trim();
 
+        console.log('[getRecommendations] prefData →', { gameType: prefData.gameType, sessionLength: prefData.sessionLength, playMode: prefData.playMode, platforms: prefData.platforms });
+        console.log('[getRecommendations] userContent →', userContent || '(vacío)');
+
+        const fallbackRandom = () => {
+            console.warn('[getRecommendations] fallback a orden aleatorio');
+            res.json(unseenGames.map((g: any) => g.toJSON()).sort(() => Math.random() - 0.5));
+        };
+
+        if (!userContent) {
+            console.warn('[getRecommendations] userContent vacío — usando fallback aleatorio');
+            return fallbackRandom();
+        }
+
         const userTokens = new Set(userContent.split(/\s+/).filter(Boolean));
-        const userPlatformTokens = (prefData.platforms ?? [])
-            .map((p: string) => p.toLowerCase().replace(/\s+/g, '-')) as string[];
+        const userPlatformTokens = (prefData.platforms ?? []).flatMap(expandPlatform) as string[];
         const minYear: number | null = prefData.minYear ?? null;
         const maxYear: number | null = prefData.maxYear ?? null;
+
+        const sessionFilterFn = (g: any): boolean => {
+            if (slArr.includes('any') || slArr.length === 0) return true;
+            const pt = g.get('playtime') as number | null;
+            if (pt == null) return true;
+            return slArr.some((s: string) => {
+                if (s === 'short')  return pt <= 10;
+                if (s === 'medium') return pt > 10 && pt <= 30;
+                if (s === 'long')   return pt > 30;
+                return true;
+            });
+        };
 
         const gameDocuments = unseenGames
             .filter((g: any) => {
@@ -195,13 +242,13 @@ export const getRecommendations = async (req: Request, res: Response) => {
                 if (maxYear && year > maxYear) return false;
                 return true;
             })
+            .filter(sessionFilterFn)
             .map((g: any) => {
                 const data = g.toJSON();
                 const genres = (data.Genres ?? []).map((g: any) => g.name.toLowerCase().replace(/\s+/g, '-'));
                 const platforms = (data.Platforms ?? []).map((p: any) => p.name.toLowerCase().replace(/\s+/g, '-'));
                 const tags = (data.tags ?? '').split(',').filter(Boolean).slice(0, 12);
 
-                // Incluir descripción (primeros 500 chars) para enriquecer el matching
                 const descText = (data.description ?? '').slice(0, 500).toLowerCase()
                     .replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim();
 
@@ -223,13 +270,18 @@ export const getRecommendations = async (req: Request, res: Response) => {
                 return {
                     id: String(data.id),
                     content: fullContent,
-                    hasMatch: onUserPlatform && matchCount >= 2,
+                    hasMatch: onUserPlatform && matchCount >= 1,
                 };
             })
             .filter(doc => doc.hasMatch && doc.content)
             .map(({ id, content }) => ({ id, content }));
 
-        if (gameDocuments.length === 0) { res.json([]); return; }
+        console.log(`[getRecommendations] gameDocuments tras filtro hasMatch: ${gameDocuments.length}`);
+
+        if (gameDocuments.length === 0) {
+            console.warn('[getRecommendations] 0 documentos tras filtro — fallback aleatorio');
+            return fallbackRandom();
+        }
 
         const recommender = new ContentBasedRecommender({ maxSimilarDocuments: gameDocuments.length });
         const USER_DOC_ID = `user_${userId}`;
@@ -239,10 +291,12 @@ export const getRecommendations = async (req: Request, res: Response) => {
             ...gameDocuments,
         ]);
 
-        // Pedir todos los documentos similares (sin límite artificial)
         const similar: { id: string; score: number }[] = recommender.getSimilarDocuments(USER_DOC_ID, 0, gameDocuments.length);
 
-        if (!similar || similar.length === 0) { res.json([]); return; }
+        if (!similar || similar.length === 0) {
+            console.warn('[getRecommendations] getSimilarDocuments vacío — fallback aleatorio');
+            return fallbackRandom();
+        }
 
         const gameMap = new Map(games.map((g: any) => [String(g.get('id')), g.toJSON()]));
 
@@ -254,9 +308,10 @@ export const getRecommendations = async (req: Request, res: Response) => {
             .filter(r => r.id !== undefined)
             .sort(() => Math.random() - 0.5);
 
+        console.log(`[getRecommendations] enviando ${recommendations.length} recomendaciones`);
         res.json(recommendations);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error al generar recomendaciones' });
+    } catch (err: any) {
+        console.error('[getRecommendations] excepción:', err?.message ?? err);
+        res.status(500).json({ error: 'Error al generar recomendaciones', detail: err?.message ?? String(err) });
     }
 };

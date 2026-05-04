@@ -25,6 +25,7 @@ interface SwipeViewProps {
     onLeft: (item: any) => Promise<void>;
     onRight: (item: any) => Promise<void>;
     onExtra?: (item: any) => Promise<void>;
+    canSwipe?: (item: any, direction: "left" | "right" | "extra") => boolean;
     leftLabel?: string;
     rightLabel?: string;
     extraLabel?: string;
@@ -41,6 +42,7 @@ export default function SwipeView({
     onLeft,
     onRight,
     onExtra,
+    canSwipe,
     leftLabel = "Drop",
     rightLabel = "Keep",
     extraLabel = "Top 5",
@@ -53,6 +55,7 @@ export default function SwipeView({
     const [flyOut, setFlyOut] = useState<"left" | "right" | "extra" | null>(null);
     const [flyIn, setFlyIn] = useState(false);
     const [slidingIn, setSlidingIn] = useState(false);
+    const [bounceBack, setBounceBack] = useState<"left" | "right" | "extra" | null>(null);
     const isDraggingRef = useRef(false);
     const startXRef = useRef(0);
     const swipingRef = useRef(false);
@@ -66,10 +69,18 @@ export default function SwipeView({
 
     const triggerSwipe = async (direction: "left" | "right" | "extra") => {
         if (swipingRef.current || index >= items.length) return;
+        const item = items[index];
+
+        if (canSwipe && !canSwipe(item, direction)) {
+            setDragX(0);
+            setBounceBack(direction);
+            setTimeout(() => setBounceBack(null), 420);
+            return;
+        }
+
         swipingRef.current = true;
         setFlyOut(direction);
         await new Promise((r) => setTimeout(r, 380));
-        const item = items[index];
         if (direction === "left") await onLeftRef.current(item);
         else if (direction === "right") await onRightRef.current(item);
         else if (direction === "extra" && onExtraRef.current) await onExtraRef.current(item);
@@ -221,12 +232,12 @@ export default function SwipeView({
                 )}
 
                 <div
-                    className="swipe-card swipe-card-front"
+                    className={`swipe-card swipe-card-front${bounceBack ? ` swipe-card-bounce-${bounceBack}` : ""}`}
                     onPointerDown={onPointerDown}
                     onPointerMove={onPointerMove}
                     onPointerUp={onPointerUp}
                     onPointerCancel={onPointerUp}
-                    style={{
+                    style={bounceBack ? { touchAction: "none" } : {
                         transform: `translateX(${translateX}) rotate(${rotation}deg)`,
                         transition: cardTransition,
                         touchAction: "none",

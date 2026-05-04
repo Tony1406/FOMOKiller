@@ -359,6 +359,14 @@
     font-size: 20px;
 }
 
+.swipe-error-detail {
+    font-size: 13px;
+    color: rgba(255, 100, 100, 0.85);
+    margin-top: 8px;
+    text-align: center;
+    max-width: 280px;
+}
+
 .swipe-retry-btn {
     margin-top: 16px;
     padding: 8px 20px;

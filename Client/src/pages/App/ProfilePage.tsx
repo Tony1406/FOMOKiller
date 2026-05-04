@@ -39,7 +39,7 @@ export default function ProfilePage() {
       const userData = await getUserProfile(user.id);
       setUsuario(userData);
       const backlogData = await getBacklog(user.id);
-      const listaCompletados = backlogData.filter((juego: any) => {
+      const listaCompletados = (Array.isArray(backlogData) ? backlogData : []).filter((juego: any) => {
         if (juego.isFinished === true) return true;
         if (juego.status === "COMPLETED") return true;
         return false;
@@ -154,16 +154,6 @@ export default function ProfilePage() {
             </p>
 
             <div className="profile-identity-tags">
-              {worldMeta && (
-                <div className="profile-identity-tag">
-                  <span className="profile-identity-label">
-                    Favorite genre
-                  </span>
-                  <span className="profile-identity-value">
-                    {worldMeta.label}
-                  </span>
-                </div>
-              )}
               {prefs?.minYear && prefs?.maxYear && (
                 <div className="profile-identity-tag">
                   <span className="profile-identity-label">Preferred era</span>
@@ -174,9 +164,15 @@ export default function ProfilePage() {
               )}
               <div className="profile-identity-tag">
                 <span className="profile-identity-label">Playing now</span>
-                <span className="profile-identity-value">
-                  {topGame ?? "..."}
-                </span>
+                {topGame && topGame.length > 15 ? (
+                  <span className="profile-identity-value profile-marquee-wrap">
+                    <span className="profile-marquee-inner">
+                      {topGame}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{topGame}
+                    </span>
+                  </span>
+                ) : (
+                  <span className="profile-identity-value">{topGame ?? "..."}</span>
+                )}
               </div>
             </div>
 

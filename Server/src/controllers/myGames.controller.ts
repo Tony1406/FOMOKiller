@@ -24,7 +24,7 @@ export const getBacklog = async (req: Request, res: Response) => {
                 }
             },
             include: [{ model: Game, include: [{ model: Genre }, { model: Platform }] }],
-            order: [['createdAt', 'DESC']]
+            order: [['added_at', 'DESC']]
         });
         res.status(200).json(backlog);
     } catch (error) {
@@ -69,14 +69,24 @@ export const updateStatus = async (req: Request, res: Response) => {
             return;
         }
 
+        const BACKLOG_STATUSES = ['LIKED', 'COMPLETED'];
         const userGameDef = { userId: Number(userId), gameId: Number(gameId) };
         const [userGame, created] = await UserGame.findOrCreate({
             where: userGameDef,
-            defaults: { ...userGameDef, status, isPriority: false, isFinished: false }
+            defaults: { ...userGameDef, status, isPriority: false, isFinished: false, addedAt: new Date() }
         });
 
         if (!created) {
-            await userGame.update({ status });
+            const wasOut = !BACKLOG_STATUSES.includes(userGame.get('status') as string);
+            const goingIn = BACKLOG_STATUSES.includes(status);
+            const leavingBacklog = !BACKLOG_STATUSES.includes(status);
+            const updatePayload: any = { status };
+            if (wasOut && goingIn) updatePayload.addedAt = new Date();
+            if (leavingBacklog) {
+                updatePayload.isPriority = false;
+                updatePayload.priorityOrder = null;
+            }
+            await userGame.update(updatePayload);
         }
 
         res.status(200).json({ message: "Estado guardado o actualizado correctamente" });
@@ -170,54 +180,6 @@ export const markFinished = async (req: Request, res: Response) => {
     }
 };
 
-export const checkIsPriority = async (req: Request, res: Response) => {
-    try {
-        const { gameId } = req.params;
-        const userId = req.query.userId;
-
-        if (!userId || !gameId) {
-            res.status(400).json({ error: "Faltan parámetros (userId en query, gameId en params)" });
-            return;
-        }
-
-        const userGame = await UserGame.findOne({
-            where: { userId: Number(userId), gameId: Number(gameId) }
-        });
-
-        if (userGame) {
-            res.status(200).json({ isPriority: (userGame as any).isPriority });
-        } else {
-            res.status(404).json({ message: "Juego no encontrado en tu lista" });
-        }
-    } catch (error) {
-        res.status(500).json({ error: "Error al verificar prioridad" });
-    }
-};
-
-export const checkIsFinished = async (req: Request, res: Response) => {
-    try {
-        const { gameId } = req.params;
-        const userId = req.query.userId;
-
-        if (!userId || !gameId) {
-            res.status(400).json({ error: "Faltan parámetros (userId en query, gameId en params)" });
-            return;
-        }
-
-        const userGame = await UserGame.findOne({
-            where: { userId: Number(userId), gameId: Number(gameId) }
-        });
-
-        if (userGame) {
-            res.status(200).json({ isFinished: (userGame as any).isFinished });
-        } else {
-            res.status(404).json({ message: "Juego no encontrado en tu lista" });
-        }
-    } catch (error) {
-        res.status(500).json({ error: "Error al verificar completado" });
-    }
-};
-
 export const clearBacklog = async (req: Request, res: Response) => {
     try {
         const userId = req.query.userId;
@@ -242,29 +204,3 @@ export const clearBacklog = async (req: Request, res: Response) => {
     }
 };
 
-export const dropGame = async (req: Request, res: Response) => {
-    try {
-        const { gameId } = req.params;
-        const userId = req.query.userId;
-
-        if (!userId) {
-            res.status(400).json({ error: "Falta userId en query params" });
-            return;
-        }
-
-        const deleted = await UserGame.destroy({
-            where: {
-                userId: Number(userId),
-                gameId: Number(gameId)
-            }
-        });
-
-        if (deleted) {
-            res.status(200).json({ message: "Juego eliminado de tu lista" });
-        } else {
-            res.status(404).json({ message: "El juego no estaba en tu lista" });
-        }
-    } catch (error) {
-        res.status(500).json({ error: "Error al eliminar del backlog" });
-    }
-};

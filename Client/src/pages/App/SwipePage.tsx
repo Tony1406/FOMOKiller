@@ -14,6 +14,7 @@ export default function SwipePage() {
   const [juegos, setJuegos] = useState<any[]>([]);
   const [idJuego, setIdJuego] = useState(0);
   const [cargando, setCargando] = useState(true);
+  const [serverError, setServerError] = useState<string | null>(null);
   const [mostrarInfo, setMostrarInfo] = useState(false);
   const [dragX, setDragX] = useState(0);
   const [flyOut, setFlyOut] = useState<"left" | "right" | null>(null);
@@ -41,7 +42,9 @@ export default function SwipePage() {
     try {
       const data = await getRecommendations(user.id, modo);
       if (!Array.isArray(data)) {
-        console.error('Recomendaciones: respuesta inválida del servidor', data);
+        const msg = data?.detail ?? data?.error ?? 'Respuesta inválida del servidor';
+        console.error('Recomendaciones: error del servidor:', msg, data);
+        setServerError(msg);
         setCargando(false);
         return;
       }
@@ -159,9 +162,10 @@ export default function SwipePage() {
       <div className="swipe-page page-enter">
         <div className="swipe-loading-container">
           <div className="swipe-loading-text">Couldn't load recommendations</div>
+          {serverError && <div className="swipe-error-detail">{serverError}</div>}
           <button
             className="swipe-retry-btn"
-            onClick={() => { sessionStorage.removeItem(STORAGE_JUEGOS); sessionStorage.removeItem(STORAGE_INDICE); cargarJuegos(); }}
+            onClick={() => { setServerError(null); sessionStorage.removeItem(STORAGE_JUEGOS); sessionStorage.removeItem(STORAGE_INDICE); cargarJuegos(); }}
           >
             Retry
           </button>

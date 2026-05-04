@@ -7,13 +7,25 @@ import PrismaticBurst from '../../components/reactbits/PrismaticBurst';
 import './OnboardingPage.css';
 
 const PLATFORMS = [
-    { id: 'PC', label: 'PC', icon: 'fa-solid fa-desktop' },
-    { id: 'PlayStation 5', label: 'PS5', icon: 'fa-brands fa-playstation' },
-    { id: 'PlayStation 4', label: 'PS4', icon: 'fa-brands fa-playstation' },
-    { id: 'Xbox Series S/X', label: 'Xbox', icon: 'fa-brands fa-xbox' },
-    { id: 'Nintendo Switch', label: 'Switch', icon: 'fa-solid fa-gamepad' },
-    { id: 'iOS', label: 'iOS', icon: 'fa-brands fa-apple' },
-    { id: 'Android', label: 'Android', icon: 'fa-brands fa-android' },
+    { id: 'PC',              label: 'PC',          icon: 'fa-solid fa-desktop' },
+    { id: 'PlayStation',     label: 'PlayStation',  icon: 'fa-brands fa-playstation' },
+    { id: 'Xbox Series S/X', label: 'Xbox',         icon: 'fa-brands fa-xbox' },
+    { id: 'Nintendo Switch', label: 'Nintendo',     icon: 'fa-solid fa-gamepad' },
+    { id: 'Mobile',          label: 'Mobile',       icon: 'fa-solid fa-mobile-screen' },
+];
+
+const GAME_TYPES = [
+    { id: 'action',    label: 'Action / Combat' },
+    { id: 'adventure', label: 'Adventure / Story' },
+    { id: 'horror',    label: 'Horror / Survival' },
+    { id: 'rpg',       label: 'RPG / Fantasy' },
+    { id: 'scifi',     label: 'Sci-fi / Cyberpunk' },
+    { id: 'strategy',  label: 'Strategy / Management' },
+    { id: 'sports',    label: 'Sports / Racing' },
+    { id: 'casual',    label: 'Casual / Puzzle' },
+    { id: 'sandbox',   label: 'Sandbox / Exploration' },
+    { id: 'anime',     label: 'Anime / JRPG' },
+    { id: 'any',       label: "Doesn't matter" },
 ];
 
 const STEPS = [
@@ -25,56 +37,35 @@ const STEPS = [
         options: PLATFORMS,
     },
     {
+        key: 'gameType',
+        question: 'What kind of games do you enjoy?',
+        subtitle: 'Pick as many as you want.',
+        type: 'multi',
+        options: GAME_TYPES,
+    },
+    {
         key: 'sessionLength',
-        question: 'What do your gaming sessions usually look like?',
+        question: 'How long do you want your games to be?',
+        subtitle: 'You can pick more than one.',
+        type: 'multi',
+        layout: 'list',
+        options: [
+            { id: 'short',  label: 'Less than 10 hours', icon: 'fa-solid fa-clock' },
+            { id: 'medium', label: '10 to 30 hours',     icon: 'fa-solid fa-mug-hot' },
+            { id: 'long',   label: 'More than 30 hours', icon: 'fa-solid fa-moon' },
+            { id: 'any',    label: "Doesn't matter",     icon: 'fa-solid fa-shuffle' },
+        ],
+    },
+    {
+        key: 'playMode',
+        question: 'Do you prefer to play alone or with others?',
         subtitle: 'Pick the one that best describes you.',
         type: 'single',
+        layout: 'list',
         options: [
-            { id: 'short',  label: 'Short bursts whenever I can',       icon: 'fa-solid fa-clock' },
-            { id: 'medium', label: 'Long weekend afternoons',           icon: 'fa-solid fa-mug-hot' },
-            { id: 'long',   label: 'I lose track of time for hours',    icon: 'fa-solid fa-moon' },
-            { id: 'any',    label: "Doesn't matter, I go with anything", icon: 'fa-solid fa-shuffle' },
-        ],
-    },
-    {
-        key: 'feeling',
-        question: 'When you open a game, what are you looking for?',
-        subtitle: 'What makes you hit that power button.',
-        type: 'single',
-        options: [
-            { id: 'tension',    label: 'Tension, sitting on the edge of my seat', icon: 'fa-solid fa-bolt' },
-            { id: 'story',      label: "Getting lost in a story I won't forget",  icon: 'fa-solid fa-book-open' },
-            { id: 'relax',      label: 'Relaxing, no pressure, at my own pace',   icon: 'fa-solid fa-leaf' },
-            { id: 'adrenaline', label: 'Pure adrenaline',                          icon: 'fa-solid fa-fire' },
-            { id: 'build',      label: 'Building something from scratch',          icon: 'fa-solid fa-cubes' },
-            { id: 'any',        label: "Doesn't matter, I go with anything",       icon: 'fa-solid fa-shuffle' },
-        ],
-    },
-    {
-        key: 'worldType',
-        question: 'What kind of world appeals to you most?',
-        subtitle: 'The universe you want to get lost in.',
-        type: 'single',
-        options: [
-            { id: 'fantasy',   label: 'Epic fantasy and magic',              icon: 'fa-solid fa-hat-wizard' },
-            { id: 'scifi',     label: 'Sci-fi and dystopian futures',        icon: 'fa-solid fa-rocket' },
-            { id: 'horror',    label: 'Horror and the unknown',              icon: 'fa-solid fa-skull' },
-            { id: 'openworld', label: 'Open worlds to explore without direction', icon: 'fa-solid fa-compass' },
-            { id: 'realism',   label: 'Realism, history or sports',         icon: 'fa-solid fa-trophy' },
-            { id: 'any',       label: "Doesn't matter, I go with anything", icon: 'fa-solid fa-shuffle' },
-        ],
-    },
-    {
-        key: 'depth',
-        question: 'When a game hooks you, what does it?',
-        subtitle: 'Your reason to keep playing.',
-        type: 'single',
-        options: [
-            { id: 'casual',    label: 'Easy to pick up and put down',     icon: 'fa-solid fa-hand' },
-            { id: 'complex',   label: 'Complex systems to master',        icon: 'fa-solid fa-brain' },
-            { id: 'narrative', label: 'A story that makes me think',      icon: 'fa-solid fa-comment-dots' },
-            { id: 'challenge', label: 'Constantly challenging me',        icon: 'fa-solid fa-shield-halved' },
-            { id: 'any',       label: "Doesn't matter, I go with anything", icon: 'fa-solid fa-shuffle' },
+            { id: 'solo',  label: 'Solo / Story mode', icon: 'fa-solid fa-user' },
+            { id: 'multi', label: 'Multiplayer',        icon: 'fa-solid fa-users' },
+            { id: 'any',   label: "Doesn't matter",     icon: 'fa-solid fa-shuffle' },
         ],
     },
     {
@@ -96,10 +87,9 @@ export default function OnboardingPage() {
     const [step, setStep] = useState(0);
     const [answers, setAnswers] = useState<Record<string, any>>({
         platforms: [] as string[],
-        sessionLength: '',
-        feeling: '',
-        worldType: '',
-        depth: '',
+        gameType: [] as string[],
+        sessionLength: [] as string[],
+        playMode: '',
     });
     const [yearFilter, setYearFilter] = useState({ enabled: false, min: 2000, max: MAX_YEAR });
     const [loading, setLoading] = useState(false);
@@ -108,12 +98,16 @@ export default function OnboardingPage() {
     const current = STEPS[step];
     const isLast = step === STEPS.length - 1;
 
-    const togglePlatform = (id: string) => {
+    const toggleMulti = (key: string, id: string) => {
         setAnswers(prev => {
-            const list: string[] = prev.platforms;
+            const list: string[] = prev[key];
+            if (id === 'any') {
+                return { ...prev, [key]: list.includes('any') ? [] : ['any'] };
+            }
+            const withoutAny = list.filter(p => p !== 'any');
             return {
                 ...prev,
-                platforms: list.includes(id) ? list.filter(p => p !== id) : [...list, id],
+                [key]: withoutAny.includes(id) ? withoutAny.filter(p => p !== id) : [...withoutAny, id],
             };
         });
     };
@@ -123,7 +117,7 @@ export default function OnboardingPage() {
     };
 
     const canContinue = () => {
-        if (current.type === 'multi') return (answers.platforms as string[]).length > 0;
+        if (current.type === 'multi') return (answers[current.key] as string[]).length > 0;
         if (current.type === 'yearRange') return true;
         return !!answers[current.key];
     };
@@ -138,9 +132,11 @@ export default function OnboardingPage() {
             minYear: yearFilter.enabled ? yearFilter.min : null,
             maxYear: yearFilter.enabled ? yearFilter.max : null,
         };
-        await savePreferences(user!.id, payload);
-        sessionStorage.removeItem('swipe_deck_v2');
-        sessionStorage.removeItem('swipe_index_v2');
+        console.log('[Onboarding] userId →', user?.id, '| payload →', payload);
+        const result = await savePreferences(user!.id, payload);
+        console.log('[Onboarding] respuesta servidor →', result);
+        sessionStorage.removeItem('swipe_deck_v3');
+        sessionStorage.removeItem('swipe_index_v3');
 
         const messages = [
             'Saving your preferences...',
@@ -177,7 +173,6 @@ export default function OnboardingPage() {
         );
     }
 
-
     return (
         <div className="onboarding-root">
             <div className="onboarding-prismatic-bg">
@@ -185,13 +180,11 @@ export default function OnboardingPage() {
                     colors={['#5227FF', '#1000f5', '#10bff9']} distort={1} hoverDampness={0} rayCount={0} />
             </div>
             <div className="onboarding-container">
-                {/* Logo */}
                 <div className="onboarding-logo">
                     <img src={logoSimple} alt="FOMOKiller" className="onboarding-logo-img" />
                     <span className="onboarding-logo-text">FOMO<span className="onboarding-logo-accent">Killer</span></span>
                 </div>
 
-                {/* Barra de progreso */}
                 <div className="onboarding-progress">
                     {STEPS.map((_, i) => (
                         <div key={i} className={`onboarding-progress-dot ${i <= step ? 'active' : ''} ${i < step ? 'done' : ''}`} />
@@ -199,7 +192,6 @@ export default function OnboardingPage() {
                 </div>
                 <p className="onboarding-step-count">{step + 1} / {STEPS.length}</p>
 
-                {/* Pregunta */}
                 <div className="onboarding-card">
                     <h2 className="onboarding-question">{current.question}</h2>
                     <p className="onboarding-subtitle">{current.subtitle}</p>
@@ -263,21 +255,21 @@ export default function OnboardingPage() {
                             )}
                         </div>
                     ) : (
-                        <div className={`onboarding-options ${current.type === 'multi' ? 'grid-multi' : 'grid-single'}`}>
+                        <div className={`onboarding-options ${'layout' in current && current.layout === 'list' ? 'list-options' : current.type === 'multi' ? 'grid-multi' : 'grid-single'}`}>
                             {current.options.map(opt => {
                                 const selected = current.type === 'multi'
-                                    ? (answers.platforms as string[]).includes(opt.id)
+                                    ? (answers[current.key] as string[]).includes(opt.id)
                                     : answers[current.key] === opt.id;
                                 return (
                                     <button
                                         key={opt.id}
                                         className={`onboarding-option ${selected ? 'selected' : ''} ${opt.id === 'any' ? 'any-option' : ''}`}
                                         onClick={() => current.type === 'multi'
-                                            ? togglePlatform(opt.id)
+                                            ? toggleMulti(current.key, opt.id)
                                             : selectSingle(current.key, opt.id)
                                         }
                                     >
-                                        <i className={opt.icon} />
+                                        {'icon' in opt && <i className={opt.icon} />}
                                         <span>{opt.label}</span>
                                     </button>
                                 );
@@ -286,7 +278,6 @@ export default function OnboardingPage() {
                     )}
                 </div>
 
-                {/* Navegación */}
                 <div className="onboarding-nav">
                     {step > 0 && (
                         <button className="onboarding-btn-back" onClick={() => setStep(s => s - 1)}>

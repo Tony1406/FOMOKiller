@@ -42,6 +42,11 @@ export const UserGame = sequelize.define('UserGame', {
         type: DataTypes.INTEGER,
         defaultValue: null,
         field: 'priority_order'
+    },
+    addedAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        field: 'added_at'
     }
 }, {
     tableName: 'user_games',

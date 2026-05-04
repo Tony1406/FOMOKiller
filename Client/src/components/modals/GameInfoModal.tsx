@@ -36,8 +36,10 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [trailerUrl, setTrailerUrl] = useState<string | null>(null);
     const [trailerOpen, setTrailerOpen] = useState(false);
+    const [loadingTrailer, setLoadingTrailer] = useState(false);
     const [gameplayUrl, setGameplayUrl] = useState<string | null>(null);
     const [gameplayOpen, setGameplayOpen] = useState(false);
+    const [loadingGameplay, setLoadingGameplay] = useState(false);
     const [slideIndex, setSlideIndex] = useState(0);
     const [descExpanded, setDescExpanded] = useState(false);
 
@@ -51,16 +53,30 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
         setSlideIndex(0);
         setDescExpanded(false);
         setLoadingDetails(true);
-        Promise.all([
-            getGameDetails(game.rawgSlug),
-            getGameTrailer(game.rawgSlug),
-            getGameplayVideo(game.rawgSlug),
-        ]).then(([detailData, trailer, gameplay]) => {
-            setDetails(detailData);
-            setTrailerUrl(trailer);
-            setGameplayUrl(gameplay);
-        }).finally(() => setLoadingDetails(false));
+        getGameDetails(game.rawgSlug)
+            .then(setDetails)
+            .finally(() => setLoadingDetails(false));
     }, [isOpen, game?.rawgSlug]);
+
+    const handleTrailerClick = async () => {
+        if (trailerOpen) { setTrailerOpen(false); return; }
+        if (trailerUrl) { setTrailerOpen(true); return; }
+        setLoadingTrailer(true);
+        const url = await getGameTrailer(game.rawgSlug);
+        setTrailerUrl(url);
+        setLoadingTrailer(false);
+        if (url) setTrailerOpen(true);
+    };
+
+    const handleGameplayClick = async () => {
+        if (gameplayOpen) { setGameplayOpen(false); return; }
+        if (gameplayUrl) { setGameplayOpen(true); return; }
+        setLoadingGameplay(true);
+        const url = await getGameplayVideo(game.rawgSlug);
+        setGameplayUrl(url);
+        setLoadingGameplay(false);
+        if (url) setGameplayOpen(true);
+    };
 
     useEffect(() => {
         if (!isOpen) return;
@@ -196,16 +212,17 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
                         </div>
                     )}
 
-                    {trailerUrl && (
+                    {game.rawgSlug && (
                         <div className="modal-trailer-block">
                             <button
                                 className={`modal-trailer-toggle ${trailerOpen ? 'open' : ''}`}
-                                onClick={() => setTrailerOpen(v => !v)}
+                                onClick={handleTrailerClick}
+                                disabled={loadingTrailer}
                             >
-                                <i className={`fa-solid ${trailerOpen ? 'fa-chevron-up' : 'fa-play'}`} />
-                                {trailerOpen ? 'Hide trailer' : 'Watch Trailer'}
+                                <i className={`fa-solid ${loadingTrailer ? 'fa-spinner fa-spin' : trailerOpen ? 'fa-chevron-up' : 'fa-play'}`} />
+                                {loadingTrailer ? 'Loading...' : trailerOpen ? 'Hide trailer' : 'Watch Trailer'}
                             </button>
-                            {trailerOpen && (
+                            {trailerOpen && trailerUrl && (
                                 <div className="modal-trailer-wrapper">
                                     <iframe
                                         className="modal-trailer-iframe"
@@ -219,16 +236,17 @@ export default function GameInfoModal({ game, isOpen, onClose }: GameInfoModalPr
                         </div>
                     )}
 
-                    {gameplayUrl && (
+                    {game.rawgSlug && (
                         <div className="modal-trailer-block">
                             <button
                                 className={`modal-trailer-toggle ${gameplayOpen ? 'open' : ''}`}
-                                onClick={() => setGameplayOpen(v => !v)}
+                                onClick={handleGameplayClick}
+                                disabled={loadingGameplay}
                             >
-                                <i className={`fa-solid ${gameplayOpen ? 'fa-chevron-up' : 'fa-play'}`} />
-                                {gameplayOpen ? 'Hide gameplay' : 'Watch Gameplay'}
+                                <i className={`fa-solid ${loadingGameplay ? 'fa-spinner fa-spin' : gameplayOpen ? 'fa-chevron-up' : 'fa-play'}`} />
+                                {loadingGameplay ? 'Loading...' : gameplayOpen ? 'Hide gameplay' : 'Watch Gameplay'}
                             </button>
-                            {gameplayOpen && (
+                            {gameplayOpen && gameplayUrl && (
                                 <div className="modal-trailer-wrapper">
                                     <iframe
                                         className="modal-trailer-iframe"

@@ -1,7 +1,6 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/db.js';
 
-// Guarda las respuestas del wizard de onboarding como JSON
 export const UserPreference = sequelize.define('UserPreference', {
     id: {
         type: DataTypes.INTEGER,
@@ -13,28 +12,44 @@ export const UserPreference = sequelize.define('UserPreference', {
         allowNull: false,
         field: 'user_id'
     },
-    // Plataformas seleccionadas: ["PC", "PlayStation 5", ...]
+    // Plataformas seleccionadas: ["PC", "PlayStation", ...]
     platforms: {
         type: DataTypes.JSON,
         defaultValue: []
     },
-    // Respuesta a "¿Cómo son tus sesiones?" → "short" | "medium" | "long"
+    // Tipos de juego seleccionados (multi): ["action", "rpg", ...]
+    gameType: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: [],
+        field: 'game_type'
+    },
+    // Duración preferida (multi): ["short", "long", ...]
     sessionLength: {
-        type: DataTypes.ENUM('short', 'medium', 'long'),
-        field: 'session_length'
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: [],
+        field: 'session_pref'
     },
-    // Respuesta a "¿Qué buscas al abrir un juego?" → "tension" | "story" | "relax" | "adrenaline" | "build"
+    // Modo de juego: "solo" | "multi" | "any"
+    playMode: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        field: 'play_mode'
+    },
+    // Campos legacy — mantenidos para usuarios con onboarding anterior
     feeling: {
-        type: DataTypes.ENUM('tension', 'story', 'relax', 'adrenaline', 'build')
+        type: DataTypes.STRING,
+        allowNull: true
     },
-    // Respuesta a "¿Qué ambientación te llama?" → "fantasy" | "scifi" | "horror" | "openworld" | "realism"
     worldType: {
-        type: DataTypes.ENUM('fantasy', 'scifi', 'horror', 'openworld', 'realism'),
+        type: DataTypes.STRING,
+        allowNull: true,
         field: 'world_type'
     },
-    // Respuesta a "¿Qué te engancha?" → "casual" | "complex" | "narrative" | "challenge"
     depth: {
-        type: DataTypes.ENUM('casual', 'complex', 'narrative', 'challenge')
+        type: DataTypes.STRING,
+        allowNull: true
     },
     // Modo exploración: ignora el historial de likes, solo usa onboarding
     ignoreHistory: {
@@ -42,8 +57,6 @@ export const UserPreference = sequelize.define('UserPreference', {
         defaultValue: false,
         field: 'ignore_history'
     },
-    // Fecha desde la que se cuentan los likes para el algoritmo
-    // Los likes anteriores a esta fecha se ignoran aunque ignoreHistory sea false
     historyResetAt: {
         type: DataTypes.DATE,
         allowNull: true,
