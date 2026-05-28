@@ -6,6 +6,18 @@ import { Platform } from '../models/PlatformModel.js';
 const RAWG_KEY = process.env.RAWG_API_KEY;
 const RAWG_BASE = 'https://api.rawg.io/api';
 
+const ADULT_TAGS = new Set([
+    'adult', 'adults-only', 'nudity', 'sexual-content', 'hentai',
+    'eroge', 'nsfw', 'pornographic', 'sexual', 'explicit-content',
+    'adult-content', 'mature-content', '18+', 'ecchi',
+]);
+
+const isAdultContent = (game: any): boolean => {
+    if (game.esrb_rating?.slug === 'adults-only') return true;
+    const tags: string[] = (game.tags ?? []).map((t: any) => t.slug as string);
+    return tags.some(t => ADULT_TAGS.has(t));
+};
+
 export const adminGetAllGames = async (_req: Request, res: Response) => {
     try {
         const games = await Game.findAll({
@@ -84,7 +96,7 @@ export const searchRawg = async (req: Request, res: Response) => {
     try {
         const r = await fetch(`${RAWG_BASE}/games?key=${RAWG_KEY}&search=${encodeURIComponent(q)}&page_size=12&page=${page}`);
         const data = await r.json() as any;
-        const results = (data.results ?? []).map((g: any) => ({
+        const results = (data.results ?? []).filter((g: any) => !isAdultContent(g)).map((g: any) => ({
             rawgId: g.id,
             rawgSlug: g.slug,
             title: g.name,
@@ -113,6 +125,11 @@ export const importFromRawg = async (req: Request, res: Response) => {
 
         if (!detailRes.ok) { res.status(404).json({ error: 'Juego no encontrado en RAWG' }); return; }
         const detail = await detailRes.json() as any;
+
+        if (isAdultContent(detail)) {
+            res.status(422).json({ error: 'Contenido adulto no permitido' });
+            return;
+        }
 
         const tags = (detail.tags ?? [])
             .map((t: any) => t.slug as string)
