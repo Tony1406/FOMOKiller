@@ -1,56 +1,62 @@
 Setup FOMOKiller en otra PC
+
 Requisitos previos
-Git
-Node.js 20+
-Docker Desktop
+- Git
+- Docker Desktop
+
 1. Clonar el repo
 
 git clone https://github.com/Tony1406/FOMOKiller.git
 cd FOMOKiller
+
 2. Crear el archivo .env del servidor
 
-cp Server/.env.example Server/.env
-Luego edita Server/.env y rellena los valores reales:
+Pide el archivo Server/.env directamente a Anthony — contiene las claves de las APIs (RAWG, YouTube, Cloudinary).
+No está en el repo por seguridad.
 
+El archivo debe quedar en Server/.env con este contenido:
 
 DB_NAME=fomokiller
-DB_HOST=localhost
-DB_USER=root
-DB_PASS=
+DB_HOST=db
+DB_USER=fkuser
+DB_PASS=fkpass
 DB_PORT=3306
 PORT=3000
-JWT_SECRET=pon_algo_secreto_aqui
-RAWG_API_KEY=tu_clave_de_rawg
-Opción A — Con Docker (recomendado, sin instalar MySQL)
-Docker Desktop debe estar corriendo.
+JWT_SECRET=...
+RAWG_API_KEY=...
+YOUTUBE_API_KEY=...
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
 
+3. Levantar todo con Docker
 
-docker compose up --build
-Esto levanta MySQL + Servidor + Cliente todo junto. Listo en http://localhost:5173.
+docker compose up -d --build
 
-Opción B — Sin Docker (manual)
-3. Instalar dependencias
+Esto levanta MySQL + Servidor + Cliente. La base de datos ya viene con los juegos incluidos.
+La app estará en http://localhost:5173
 
+Para parar:
+
+docker compose down
+
+Para parar y borrar la base de datos (reset completo):
+
+docker compose down -v
+
+---
+
+Desarrollo local (sin Docker)
 
 cd Server && npm install
 cd ../Client && npm install
-4. Tener MySQL corriendo con una base de datos vacía llamada fomokiller (el servidor crea las tablas solo al arrancar).
 
-5. Arrancar el servidor
+Cambiar DB_HOST=localhost en Server/.env
 
+Arrancar servidor:
+cd Server && npm run dev
 
-cd Server
-npm run dev
-6. Arrancar el cliente (otra terminal)
+Arrancar cliente (otra terminal):
+cd Client && npm run dev
 
-
-cd Client
-npm run dev
-7. Crear cuenta admin
-
-cd Server
-npm run create:admin
-8. Importar juegos desde RAWG (opcional, tarda ~3 min)
-
-npm run import:rawg
-La app estará en http://localhost:5173 y la API en http://localhost:3000.
+La app estará en http://localhost:5173 y la API en http://localhost:3000
