@@ -2,47 +2,75 @@ services:
   db:
     image: mysql:8.0
     container_name: fomokiller_mysql
-    restart: always
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: fomokiller
-      MYSQL_USER: fkuser
-      MYSQL_PASSWORD: fkpass
-    #healthcheck para que el contenedor se reinicie si falla
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD requerido}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-fomokiller}
+      MYSQL_USER: ${MYSQL_USER:-fkuser}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD requerido}
     healthcheck:
-      test: "mysqladmin ping -h localhost -u$MYSQL_USER -p$MYSQL_PASSWORD > /dev/null 2>&1" # El truco: > /dev/null 2>&1 silencia todo el texto (éxito y errores)
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
       start_period: 30s
-    ports:
-      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    networks:
+      - fomonet
 
   server:
     build:
       context: ./Server
+      dockerfile: Dockerfile
+      target: runtime
     container_name: fomokiller_server
-    restart: always
-    env_file:
-      - ./Server/.env
-    ports:
-      - "3000:3000"
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_DATABASE:-fomokiller}
+      DB_USER: ${MYSQL_USER:-fkuser}
+      DB_PASS: ${MYSQL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET requerido}
+      CLIENT_URL: ${CLIENT_URL:-http://localhost:8080}
+      RAWG_API_KEY: ${RAWG_API_KEY:-}
+      YOUTUBE_API_KEY: ${YOUTUBE_API_KEY:-}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
     depends_on:
       db:
-        condition: service_healthy # ¡Perfecto! Esto esperará al healthcheck
+        condition: service_healthy
+    networks:
+      - fomonet
+    # sin puertos expuestos al host: se accede via el proxy de nginx del cliente
 
   client:
     build:
       context: ./Client
+      dockerfile: Dockerfile
+      target: runtime
+      args:
+        VITE_API_URL: ${VITE_API_URL:-/api}
     container_name: fomokiller_client
-    restart: always
+    restart: unless-stopped
     ports:
-      - "5173:5173"
+      # HOST_BIND=127.0.0.1 cuando hay un nginx reverse proxy delante (recomendado en prod);
+      # dejar vacio para escuchar en todas las interfaces (util en local).
+      - "${HOST_BIND:+${HOST_BIND}:}${CLIENT_PORT:-8080}:80"
     depends_on:
-      - server
+      server:
+        condition: service_started
+    networks:
+      - fomonet
+
+networks:
+  fomonet:
+    driver: bridge
 
 volumes:
   db_data:
