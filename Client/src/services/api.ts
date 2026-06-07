@@ -1,4 +1,4 @@
-const URL = 'http://localhost:3000/api';
+const URL = (import.meta.env.VITE_API_URL as string | undefined) ?? '/api';
 
 export const getCollections = async () => {
     const response = await fetch(`${URL}/explore/collections`, { credentials: 'include' });

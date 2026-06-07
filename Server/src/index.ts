@@ -31,12 +31,23 @@ process.on('unhandledRejection', (reason: any) => {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const clientOrigins = (process.env.CLIENT_URL ?? 'http://localhost:5173')
+    .split(',')
+    .map(o => o.trim())
+    .filter((o): o is string => Boolean(o));
+
+const corsOrigin = clientOrigins.length > 1 ? clientOrigins : (clientOrigins[0] ?? 'http://localhost:5173');
+
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: corsOrigin,
     credentials: true
 }));
 app.use(cookieParser());
 app.use(express.json());
+
+app.get('/api/health', (_req, res) => {
+    res.json({ ok: true });
+});
 
 app.use('/api/home', homeRoutes);
 app.use('/api/users', userRoutes);
